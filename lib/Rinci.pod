@@ -1,0 +1,54 @@
+package Rinci;
+
+=pod
+
+=head1 SPECIFICATION VERSION
+
+ 1.1
+
+
+=head1 REVISION VERSION
+
+ 1.1.0
+
+
+=head1 ABSTRACT
+
+This document specifies B<Rinci>, a set of extensible, language-neutral metadata
+specifications for functions/methods, variables, packages, designed to be
+utilized by various tools to aid DRY (don't repeat yourself) principle in
+programming.
+
+=head1 WHAT IS RINCI?
+
+=head1 WHAT ARE THE BENEFITS OF RINCI?
+
+
+=head1 SPEC HISTORY
+
+Below is the history of the major versions. For more detailed changes between
+releases, see the B<Changes> file in the distribution.
+
+=head1 1.1 (Jan 2012)
+
+Bump specification version from 1.0 to 1.1 due to incompatible C<args> and
+C<result> clauses. Versioning clause (C<v>) now required. Rename specification
+to B<Rinci>, split from the implementation (B<Sub::Spec>).
+
+=head2 1.0 (Aug 2011)
+
+First version of Sub::Spec.
+
+=head2 0.x (2010)
+
+Series of Sub::Spec drafts.
+
+
+=head1 SEE ALSO
+
+L<Data::Sah>
+
+Python Decorators, http://www.python.org/dev/peps/pep-0318/ ,
+http://wiki.python.org/moin/PythonDecorators .
+
+=cut
