@@ -1,54 +1,273 @@
-package Rinci;
+package Rinci; # just to make PodWeaver happy
 
-=pod
+1;
+# ABSTRACT: Language-neutral metadata for your code
 
 =head1 SPECIFICATION VERSION
 
  1.1
 
 
-=head1 REVISION VERSION
-
- 1.1.0
-
-
 =head1 ABSTRACT
 
-This document specifies B<Rinci>, a set of extensible, language-neutral metadata
-specifications for functions/methods, variables, packages, designed to be
-utilized by various tools to aid DRY (don't repeat yourself) principle in
-programming.
+This document describes B<Rinci>, a set of extensible, language-neutral metadata
+specifications for your code (functions/methods, variables, packages, classes,
+and so on), plus a few other stuffs. Rinci allows various helper tools, from
+code generator to web middleware to documentation generator, to act on your
+code, making your life easier as a programmer. Rinci also allows better
+interoperability between programming languages. Rinci is geared towards dynamic
+scripting languages like Perl, Python, Ruby, PHP, JavaScript, but is not limited
+to those languages.
 
-=head1 WHAT IS RINCI?
+
+=head1 WHAT IS RINCI? (TERMINOLOGIES)
+
+B<Rinci> is a set of specifications of metadata for your code entities. Each
+different type of code entity, like function/method, variable, namespace, etc,
+has its own specification. The metadata is a set of name/value pairs stored in a
+regular mapping variable (a.k.a. hash in Perl/Ruby, or dictionary in Python, or
+array in PHP, or object in JavaScript/JSON; but from here on the term I<hash>
+will be used). Each specification will describe what metadata B<property names>
+(a.k.a. hash keys) are known and what value should each property contain. So the
+L<Rinci::Metadata::Func> specification will describe metadata for
+functions/methods, L<Rinci::Metadata::Package> will describe metadata for
+namespace/package, and so on.
+
+Rinci defines properties pertaining to documentation (like C<summary>,
+C<description>, C<examples>), function argument and return value validation
+(C<args> and C<result>), dependencies (C<deps>), standardized feature
+description (C<features>), also a generic undo protocol for supporting undoable
+operations. The specification is extensible: you can define more properties, or
+more deps, or more features.
+
+Rinci also includes a protocol specification, L<Rinci::Protocol::HTTP>, to
+request metadata and call remote functions over HTTP.
+
 
 =head1 WHAT ARE THE BENEFITS OF RINCI?
 
+By adding Rinci metadata to your code, you can write/use tools to do various
+things to your program. Rinci is designed with code generation and function
+wrapping in mind. At the time of this writing, several tools (mostly modules in
+Sub::Spec::* namespace) exist in Perl to do the following:
 
-=head1 SPEC HISTORY
+=over 4
 
-Below is the history of the major versions. For more detailed changes between
-releases, see the B<Changes> file in the distribution.
+=item * L<Sub::Spec::Wrapper>
+
+Wrap functions with a single generated function that can do the following:
+validate input (using information from the C<args> property), validate return
+value (the C<return> property), add execution time-limiting (the C<timeout>
+property), add automatic retries (the C<retry>), interactive confirmation,
+logging, and more.
+
+=item * L<Sub::Spec::Exporter>
+
+A replacement for L<Exporter> or L<Sub::Exporter> if your functions are equipped
+with Rinci metadata. Automatically provide export tags (using information in the
+C<tags> property). Automatically wrap functions using Sub::Spec::Wrapper when
+exporting.
+
+=item * Sub::Spec::To::* modules
+
+Convert function metadata to user/API documentation in POD or other format.
+Basically all they do is just arranging the various available properties like
+C<summary>, C<description>, C<args>, C<return>, C<examples>, C<see> and so on
+and format them to the final target.
+
+=item * L<Sub::Spec::CmdLine>
+
+Run functions on the command line. Automatically convert command-line
+options/arguments to function arguments. Generate help/usage message (for
+C<--help>). Check dependencies (e.g. you can specify that in order to run your
+functions, you need some executables/other functions to exist, an environment
+variable being set, and so on). Even do bash shell completion (using
+L<Sub::Spec::BashComplete>).
+
+=item * L<Serabi>
+
+A L<PSGI> application (a set of PSGI middlewares, really) to serve function
+requests over HTTP, using the L<Rinci::Protocol::HTTP> protocols. Great for
+creating an API service.
+
+=item * L<Sub::Spec::Use>
+
+Use remote packages and import their functions, transparently like you would use
+local Perl modules. The remote server can be any Rinci::Protocol::HTTP-compliant
+service, even when implemented in other languages.
+
+=item * Sub::Spec::Gen::*
+
+Since Rinci metadata are just normal data structure, they can be easily
+generated. The Sub::Spec::Gen::* Perl modules can generate functions as well as
+their metadata, for example to access table data (like from a regular array or
+from a SQL database).
+
+=back
+
+More tools might be written in the future.
+
+
+=head1 RINCI VS ...
+
+Some features offered by Rinci (or Rinci tools) are undoubtedly already offered
+by your language or existing language libraries. For example, for documentation
+Perl already has POD and Python has docstrings. There are numerous libraries for
+argument validation in every language. Python has decorators that can be used to
+implement various features like argument validation and logging. Perl has
+subroutine attributes to stick additional metadata to your subroutines and
+variables. And so on.
+
+The benefits that Rinci offer include richer metadata, language neutrality,
+extensibility, and manipulability.
+
+<Richer metadata>. Rinci strives to provide enough metadata for tools to do
+various useful things. For example, description and summary supports
+translations. Argument specification is pretty rich, with a quite powerful and
+flexible schema language.
+
+B<Language neutrality>. You can share metadata between languages, including
+documentation and rules for argument validation. Perl 6 allows very powerful
+argument validation, for example, but it is language-specific. With Rinci you
+can easily share validation rules and generate validators in Perl and JavaScript
+(and other target languages).
+
+B<Manipulability>. Being a normal data structure, your Rinci metadata is easier
+to manipulate (clone, merge, modify, what have you) as well as access (from your
+language and others).
+
+B<Other things to consider>. If you stack multiple decorators in Python, for
+example, it usually results in wrapping your Python function multiple times,
+which can add overhead. A single wrapper like Sub::Spec::Wrapper, on the other
+hand, uses a single level of wrapping to minimize subroutine call overhead.
+
+B<Working together>. There is no reason why Rinci metadata has to compete
+against existing features from language/libraries. A code generator for Rinci
+metadata can generate code that utilize those features. For example, the
+C<timeout> property can be implemented in Python using decorator, if you want.
+Rinci basically just provides a way for you to express desired
+properties/constraints/behaviours, separate from the implementation. A tool is
+free to implement those properties using whatever technique is appropriate.
+
+
+=head1 PROTOCOL SPECIFICATION
+
+Each protocol is specified on a separate subdocument.
+
+=over 4
+
+=item * L<Rinci::Protocol::HTTP> - Request metadata and call functions over HTTP
+
+=back
+
+
+=head1 COMMON METADATA SPECIFICATION
+
+This section describes specification common to all metadata.
+
+B<Metadata>. Metadata is just a normal hash. Each hash key is called a property.
+Any hash key in the metadata that starts with C<_> (underscore) is ignored, this
+can be used to store extra data, or experimental properties. Otherwise, the
+property must be known and valid. A property is valid if the property name
+matches the regex pattern /\A[A-Za-z][A-Za-z0-9_]*\z/ and is known (listed in
+this specification), and the property values conform to the specification for
+that property.
+
+B<Custom properties>. This specification is extensible: you can add properties
+of your own. Currently the mechanism to formally add a custom property to the
+specification is unspecified, but at least in Perl it is recommended that the
+distribution which does this updates the schema in
+C<Rinci::Metadata::TYPE::Schema>. Popular custom properties might make it into
+core specification in later revision or version.
+
+B<Where to put the metadata>. This specification does not specify where to put
+metadata in, it is up to you or the tools you want to use. It can be separated
+in another file or put alongside the code. In the case of function metadata, for
+example, many of the Sub::Spec::* Perl modules, expect the function metadata to
+be put in the C<%SPEC> package variable, with the name of the function as the
+hash key. Consult the tool that you are using to find out for sure.
+
+
+=head1 ENTITY-SPECIFIC SPECIFICATIONS
+
+Each entity-specific specification is described on a separate subdocument.
+
+Currently these specifications are defined:
+
+=over 4
+
+=item * L<Rinci::Metadata::Func> - Metadata for functions/methods
+
+=item * L<Rinci::Metadata::Package> - Metadata for namespaces/packages
+
+=item * L<Rinci::Metadata::Var> - Metadata for variables
+
+
+=back
+
+These specifications are planned or considered, but not yet defined:
+
+=over 4
+
+=item * L<Rinci::Metadata::Lib> - Metadata for libraries
+
+=item * L<Rinci::Metadata::App> - Metadata for applications
+
+=item * L<Rinci::Metadata::Class> - Metadata for classes
+
+=item * L<Rinci::Metadata::Obj> - Metadata for objects
+
+=back
+
+
+=head1 FAQ
+
+=head2 What does Rinci mean?
+
+Rinci is taken from Indonesian word B<perincian> or B<rincian>, meaning
+I<specification> or I<detail>.
+
+
+=head1 HISTORY
+
+Below is the history of major versions of the specifications (those which break
+backward compatibility). For more detailed changes between revisions, see the
+B<Changes> file in the distribution.
 
 =head1 1.1 (Jan 2012)
 
-Bump specification version from 1.0 to 1.1 due to incompatible C<args> and
-C<result> clauses. Versioning clause (C<v>) now required. Rename specification
-to B<Rinci>, split from the implementation (B<Sub::Spec>).
+To clearly separate specification from implementation, rename specification from
+C<Sub::Spec> to C<Rinci> (the namespace C<Sub::Spec> is still used for
+implementations, along with C<Var::Spec>, C<Package::Spec>). Split
+specification, each for functions, variables, packages, and remote call
+protocol. Bump specification version from 1.0 to 1.1 due to several
+incompatibilities like changed C<args> and C<result> properties, terminologies,
+defaults. Versioning property (C<v>) now required.
 
 =head2 1.0 (Aug 2011)
 
-First version of Sub::Spec.
+First release version of Sub::Spec. First release of Sub::Spec::HTTP.
 
-=head2 0.x (2010)
+=head2 0.x (Feb-Aug 2011)
 
 Series of Sub::Spec drafts.
 
 
 =head1 SEE ALSO
 
-L<Data::Sah>
+=head2 Related specifications
 
-Python Decorators, http://www.python.org/dev/peps/pep-0318/ ,
-http://wiki.python.org/moin/PythonDecorators .
+Sah schema language, L<Data::Sah>
+
+=head2 Related ideas/concepts
+
+B<.NET attributes>, http://msdn.microsoft.com/en-us/library/z0w1kczw.aspx
+
+B<Python Decorators>, http://www.python.org/dev/peps/pep-0318/ ,
+http://wiki.python.org/moin/PythonDecorators
+
+=head2 Other related links
+
+B<Acmeism>, http://www.acmeism.org/
 
 =cut

@@ -1,0 +1,48 @@
+package Rinci::Metadata::Func; # just to make PodWeaver happy
+
+1;
+# ABSTRACT: Metadata for your functions/methods
+
+=head1 SPECIFICATION VERSION
+
+ 1.1
+
+
+=head1 INTRODUCTION
+
+This document describes metadata for functions/methods. This specification is
+part of L<Rinci>. Please do a read up on it first, if you have not already done
+so.
+
+
+=head1 SPECIFICATION
+
+B<Argument style>. XXX
+
+B<Result envelope>. Any function can be given metadata. XXX
+
+B<Functions vs methods>. Since in many programming languages (like Perl 5,
+Python, Ruby, PHP) static functions are not that differentiated from methods,
+functions and methods share the same Rinci spec. But there are certain
+properties that can be used to declare if a function is (also) a method or not.
+See C<is_func>, C<is_meth>, C<is_class_meth> properties below for details.
+
+B<Multiple dispatch>. This specification also does not (yet) have any
+recommendation on how to best handle functions in languages that support
+multiple dispatch, like Perl 6: whether we should create multiple metadata or
+just one. It is more up to the tool and what you want to do with the metadata.
+
+=head2 Property: v => FLOAT (required)
+
+This property declares specification version, and is required. It should have
+the value of 1.1. If C<v> is not specified, it is assumed to be 1.0 and metadata
+is assumed to be the old, Sub::Spec 1.0.x metadata.
+
+=head2 Property: name => STR
+
+
+=head1 SEE ALSO
+
+B<Rinci>
+
+=cut
