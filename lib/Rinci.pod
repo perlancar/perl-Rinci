@@ -12,12 +12,12 @@ package Rinci; # just to make PodWeaver happy
 
 This document describes B<Rinci>, a set of extensible, language-neutral metadata
 specifications for your code (functions/methods, variables, packages, classes,
-and so on), plus a few other stuffs. Rinci allows various helper tools, from
-code generator to web middleware to documentation generator, to act on your
-code, making your life easier as a programmer. Rinci also allows better
-interoperability between programming languages. Rinci is geared towards dynamic
-scripting languages like Perl, Python, Ruby, PHP, JavaScript, but is not limited
-to those languages.
+and so on), plus a protocol on exchanging metadata and remote calling over HTTP.
+Rinci allows various helper tools, from code generator to web middleware to
+documentation generator, to act on your code, making your life easier as a
+programmer. Rinci also allows better interoperability between programming
+languages. Rinci is geared towards dynamic scripting languages like Perl,
+Python, Ruby, PHP, JavaScript, but is not limited to those languages.
 
 
 =head1 WHAT IS RINCI? (TERMINOLOGIES)
