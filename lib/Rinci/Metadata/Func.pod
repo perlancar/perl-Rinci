@@ -863,28 +863,26 @@ the future.
 Example:
 
  {
-     summary => "Copy file",
-     description => "...",
      args => {
          src => {
              summary => "Source path",
              description => "...",
-             req => 1,
              schema => ["str*", {
                  summary => "...",
                  description => "...",
                  ...
              }],
+             ...
          },
          dest => {
              summary => "Target path",
              description => "...",
-             req => 1,
              schema => ["str*", {
                  summary => "...",
                  description => "...",
                  ...
              }],
+             ...
          },
          ...
      },
