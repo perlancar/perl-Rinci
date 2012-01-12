@@ -150,7 +150,13 @@ properties/constraints/behaviours, separate from the implementation. A tool is
 free to implement those properties using whatever technique is appropriate.
 
 
-=head1 PROTOCOL SPECIFICATION
+=head1 SPECIFICATION
+
+Note: Examples are usually written in Perl, but this does not mean they only
+apply to a particular language.
+
+
+=head2 Protocol
 
 Each protocol is specified on a separate subdocument.
 
@@ -161,7 +167,7 @@ Each protocol is specified on a separate subdocument.
 =back
 
 
-=head1 COMMON METADATA SPECIFICATION
+=head1 Specification common to all metadata
 
 This section describes specification common to all kinds of Rinci metadata.
 
@@ -189,7 +195,7 @@ be put in the C<%SPEC> package variable, with the name of the function as the
 hash key. Consult the tool that you are using to find out for sure.
 
 
-=head1 ENTITY-SPECIFIC SPECIFICATIONS
+=head1 Entity-specific specifications
 
 Each entity-specific specification is described on a separate subdocument.
 
@@ -227,6 +233,12 @@ These specifications are planned or considered, but not yet defined:
 
 Rinci is taken from Indonesian word B<perincian> or B<rincian>, meaning
 I<specification> or I<detail>.
+
+=head2 Why use Sah for data schema?
+
+Sah is a flexible and extensible schema language, while still not being
+language-specific, making it easy for code generator tools to generate validator
+code in various target languages (Perl, Ruby, etc).
 
 
 =head1 HISTORY

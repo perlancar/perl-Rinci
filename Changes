@@ -12,27 +12,32 @@ Revision history for Rinci
          + 'v' clause is now required to declare Rinci spec version (with value
            1.1, if unspecified then assumed spec is old Sub::Spec 1.0).
 
-         + Md::Func: Incompatible changes to 'args' and 'result' clauses; 'args'
-           is now a hash of arg names and arg *specs* (instead of arg schemas).
-           'result' is now a hash of data, instead of schema. The purpose is to
-           keep Sah schema clean from custom, non-schema-related schema clauses,
-           like arg_* (thus requiring custom Sah extensions, etc). Mixing them
-           into schemas was not the right way.
+         + Md::Func: Incompatible changes to 'args' and 'result' properties;
+           'args' is now a hash of arg names and arg *specs* (instead of arg
+           schemas). 'result' is now a hash of data, instead of schema. The
+           purpose is to keep Sah schema clean from custom, non-schema-related
+           schema clauses, like arg_* (thus requiring custom Sah extensions,
+           etc). Mixing them into schemas was not the right way.
 
-         + Md::Func: clause 'type' removed, replaced with 'is_func', 'is_meth',
-           'is_static_meth'. This is because a single subroutine/function can
-           act as all.
+         + Md::Func: property 'type' removed, replaced with 'is_func',
+           'is_meth', 'is_static_meth'. This is because a single
+           subroutine/function can act as all.
 
-         + Md::Func: Other clauses which are also removed since they are not
-           deemed as 'core' at the moment: 'timeout', 'retry', 'scope'.
+         + Md::Func: Other properties which are also removed/replaced: 'timeout'
+           (non-core), 'retry' (non-core), 'scope' (can be replaced by using
+           tags), 'result_naked' (replaced by 'result_envelope'), 'args_as'
+           (replaced by 'arg_pass_style').
 
          + Default text markup format changed from Org to Markdown, but a new
-           clause 'text_markup' is added to allow specifying 'org' or
-           'markdown'.
+           properties 'text_markup' is added to allow specifying 'org' or
+           'markdown' (or 'none').
+
+         + Md::Func: property 'deps': terminology change ('dep clause' -> 'dep
+         type'), rename dep types: sub -> func, mod -> module,
 
          Additions:
 
          + Keys beginning with "_" are allowed and ignored. This can be used to
            store extra information.
 
-         + New clause 'tags' and 'see'.
+         + New properties 'tags' and 'see'.

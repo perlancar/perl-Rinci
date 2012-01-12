@@ -17,9 +17,38 @@ so.
 
 =head1 SPECIFICATION
 
-B<Argument style>. XXX
+B<Result envelope>. Any function or method can be given metadata, but it is
+encouraged (and assumed) that you return an enveloped result from your
+function/method. Result envelope is modeled after HTTP or L<PSGI> response, it
+is an array in the following format:
 
-B<Result envelope>. Any function can be given metadata. XXX
+ [STATUS, MESSAGE, RESULT, EXTRA]
+
+STATUS is a 3-digit integer, much like HTTP response status code and is
+explained further in L</"Envelope status codes">. MESSAGE is a string containing
+error message. RESULT is the actual result and can be omitted if the function
+does not return anything. EXTRA is a hash containing extra data, analogous to
+HTTP response headers. Some example of an enveloped results:
+
+ [200, "OK", 42]
+ [404, "Not found"]
+ [500, "Can't delete foo: permission denied", {errno=>51}]
+ [200, "Account created", {id=>9323}, {undo_data=>["delete_account"]}]
+
+An enveloped result can contain error code/message as well as the actual result.
+It can also be easily converted to HTTP response message. And it can also
+contain extra data, useful for things like the undo protocol (explained later).
+
+If your function implementation does not return enveloped result, you can use
+wrapper tools to produce it for you.
+
+B<Special arguments>. Special arguments are some known arguments that start with
+dash (C<->) and serve special purposes. You need not specify them in the C<args>
+metadata property. Examples of special arguments include C<-undo_action>,
+C<-undo_data>, C<-dry_run>, and they will be explained in relevant sections
+below. NOTE: Currently passing special arguments is only possible when function
+accepts named arguments intead of positional (see C<arg_pass_style>), but a way
+to pass special arguments to those functions might be defined in the future.
 
 B<Functions vs methods>. Since in many programming languages (like Perl 5,
 Python, Ruby, PHP) static functions are not that differentiated from methods,
@@ -32,16 +61,909 @@ recommendation on how to best handle functions in languages that support
 multiple dispatch, like Perl 6: whether we should create multiple metadata or
 just one. It is more up to the tool and what you want to do with the metadata.
 
+
+=head2 Envelope status codes
+
+In general, status codes map directly to HTTP response status codes. Below are
+the suggestion on which codes to use (or avoid).
+
+=over 4
+
+=item * 1xx code
+
+Currently not used.
+
+=item * 2xx code
+
+200 should be used to mean success.
+
+206 can be used to signal partial content, for example: a C<read_file()>
+function which accepts C<byte_start> and C<byte_end> arguments should return 206
+when only partial file content is returned. But in general, use 200 as some
+callers will simply check for this exact code (instead of checking for range
+200-299).
+
+=item * 3xx code
+
+301 (moved) can be used to redirect callers to alternate location, although this
+is very rare.
+
+304 (not modified, nothing done). Used for example by setup functions to
+indicate that nothing is being modified or no modifying action has been
+performed (see Setup::* modules in CPAN).
+
+=item * 4xx code
+
+400 (bad request, bad arguments) should be returned when the function encounters
+invalid input. A function wrapper can return this code when the function
+arguments fail the argument schema validation (specified in the C<args>
+property).
+
+401 (authentication required).
+
+403 (forbidden, access denied, authorization failed).
+
+404 (not found). Can be used for example by an object-retrieval functions (like
+C<get_user()>) and the object is not found.
+
+For object-listing functions (like C<list_users()>), when there are no users
+found matching the requested criteria, 200 code should still be returned with an
+empty result (like an empty array or hash).
+
+Also in general, an object-deletion function (like C<delete_user()>) should also
+return 200 (or perhaps 304, but 200 is preferred) instead of 404 when the object
+specified to be deleted is not found, since the goal of the delete function is
+reached anyway.
+
+408 (request timeout).
+
+409 (conflict). Can be used for example by a C<create_user()> function when
+receiving an already existing username.
+
+412 (precondition failed). Similar to 409, but can be used to indicate lack of
+resources, like disk space or bandwidth. For lacking authentication and
+authorization, use 401 and 403 respectively.
+
+=item * 5xx code
+
+500 is the general code to use when a failure occurs during the execution of a
+function. for example when a C<delete_file()> function fails to delete specified
+file (though in this case it can also choose to return 403 instead, which is
+more specific).
+
+501 (not implemented)
+
+503 (service unavailable)
+
+507 (insufficient storage)
+
+53x (bad spec) is used when there is something wrong with the spec.
+
+=back
+
+
 =head2 Property: v => FLOAT (required)
 
-This property declares specification version, and is required. It should have
-the value of 1.1. If C<v> is not specified, it is assumed to be 1.0 and metadata
-is assumed to be the old, Sub::Spec 1.0.x metadata.
+Declare specification version. This property is required. It should have the
+value of 1.1. If C<v> is not specified, it is assumed to be 1.0 and metadata is
+assumed to be the old, Sub::Spec 1.0.x metadata.
+
+
+=head2 Property: is_func => BOOL
+
+Specify that the function can be called as a static function (i.e. procedural,
+not as a method). Default is true if unspecified.
+
+
+=head2 Property: is_meth => BOOL
+
+Specify that the function can be called as an instance (object) method. Default
+is false.
+
+
+=head2 Property: is_class_meth => BOOL
+
+Specify that the function can be called as a class method. Examples of class
+methods include the constructor, but there are others. Default is false.
+
 
 =head2 Property: name => STR
 
+The name of the function. Useful for generating help/usage information, or when
+aliasing functions (and reusing the metadata) and finding out the
+canonical/original name of the function.
+
+
+=head2 Property: summary => STR
+
+A one-line summary. It should be plain text without any markup. It is like the
+C<summary> clause in L<Data::Sah>.
+
+
+=head2 Property: tags => ARRAY OF STR
+
+A list of tags, useful for categorization. Can also be used for exporting tools
+like L<Sub::Spec::Exporter> in Perl, where the tags can be used as export tags.
+
+
+=head2 Property: text_markup => STR
+
+Specify text markup format for the content of properties like C<description>,
+C<examples>, C<cmdline_examples>, C<http_examples>. The default is C<markdown>
+and other valid values include C<none>.
+
+NOTE: Other popular text markup formats might be added in the future. Text
+format should be readable as-is (so-called "plain text markup format") as some
+tools, like L<Sub::Spec::CmdLine> in Perl will just dump the content of some
+marked up properties (like C<description>) as text help message instead of going
+through the trouble of passing the content through some formatters.
+
+NOTE: A way to specify different text markup format for each property (e.g.
+C<markdown> for C<description>, C<org> for C<http_examples>) might be supported
+in the future, but using several different markups in a single metadata is not
+recommended practice.
+
+
+=head2 Property: description => STR
+
+A longer description text. The text should be in marked up in format specified
+by C<text_markup> and is suggested to be formatted to 80 columns or less. It is
+like the C<description> Data::Sah clause.
+
+
+=head2 Property: see => ARRAY OF STR
+
+A list of references to other functions. It is suggested that this URI format is
+used for reference:
+
+ func:foo
+ func:Package::SubPkg::bar
+ pkg:Package::SubPkg
+
+
+=head2 Property: args => HASH
+
+Specify arguments. Property value is hash of argument names and argument
+specification. Argument name must only contain letters, numbers, and underscores
+(and do not start with a number).
+
+Argument specification is a hash containing these keys:
+
+=over 4
+
+=item * B<schema> => SCHEMA
+
+L<Data::Sah> schema for argument value.
+
+=item * B<summary> => STR
+
+A one-line plaintext summary, much like the C<summary> property.
+
+=item * B<req> => BOOL
+
+Specify that argument is required (although its value can be undef/null).
+Default is false.
+
+=item * B<description> => STR
+
+A longer description of marked up text, much like the C<description> property.
+
+=item * B<tags> => ARRAY OF STR
+
+An array of strings, can be used by tools to categorize arguments. Not unlike
+the C<tags> property.
+
+=item * B<pos> => INT
+
+Argument position when specified in an ordered fashion, e.g. in an array. Starts
+from zero.
+
+=item * B<greedy> => BOOL
+
+Only relevant if B<pos> is specified, specify whether argument should gobble up
+all remaining values in an ordered argument list into an array.
+
+=item * B<completion> => CODE
+
+A code to supply argument completion. Will be explained in the examples.
+
+=back
+
+Example function metadata and its implementation in Perl:
+
+ $SPEC{multiply2} = {
+     v => 1.1,
+     summary => 'Multiple two numbers',
+     args => {
+         a => {
+             summary => 'The first operand',
+             description => '... a longer description ...',
+             schema=>'float*',
+             pos => 0,
+             tags => ['category:operand'],
+         },
+         b => {
+             summary => 'The second operand',
+             description => '... a longer description ...',
+             schema => 'float*',
+             pos => 1,
+             tags => ['category:operand'],
+         },
+         round => {
+             summary => 'Whether to round result',
+             description => '... a longer description ...',
+             schema => [bool => {default=>0}],
+             pos => 2,
+             tags => ['category:options'],
+         },
+     }
+ };
+ sub multiply2 {
+     my %args = @_;
+     my $res = $args{a} * $args{b};
+     $res = int($res) if $args{round};
+     [200, "OK", $res];
+ }
+
+By default, without any wrapper, the function is called with a named hash style:
+
+ multiply2(a=>4, b=>3);  # 12
+
+But with the information from the metadata, a wrapper tool like
+Sub::Spec::Wrapper is able to change the calling style to positional:
+
+ multiply2(4, 3.1, 1);  # 12
+
+A command-line tool will also enable the function to be called named options as
+well as positional arguments:
+
+ % multiply2 --a 2 --b 3
+ % multiply2 2 --b 3
+ % multiply2 2 3
+
+Another example (demonstrates the B<greedy> argument specification):
+
+ $SPEC{multiply_many} = {
+     v => 1.1,
+     summary => 'Multiple numbers',
+     args    => {
+         nums   => {
+             schema => ['array*' => {of=>'num*', min_len=>1}],
+             pos    => 0,
+             greedy => 1
+         },
+     },
+ };
+ sub multiply_many {
+     my %args = @_;
+     my $nums = $args{nums};
+
+     my $ans = 1;
+     $ans *= $_ for @$nums;
+     [200, "OK", $ans];
+ }
+
+After wrapping, in positional mode it can then be called:
+
+ multiply_many(2, 3, 4);  # 24
+
+which is the same as (in normal named-argument style):
+
+ multiply_many(nums => [2, 3, 4]);  # 24
+
+In command-line:
+
+ % multiply-many 2 3 4
+
+in addition to the normal:
+
+ % multiply-many --nums '[2, 3, 4]'
+
+B<completion>. This argument specification key specifies how to complete
+argument value (e.g. in shell or L<Rinci::Protocol::HTTP>) and is supplied an
+anonymous function as value. The function will be called with arguments:
+word=>... (which is the formed word so far), args=>... (which is the C<args>
+property value). The function should return an array containing a list of
+possible candidates. For an example of implementation for this, see
+L<Sub::Spec::BashComplete> in Perl which provides tab completion for argument
+values. Example:
+
+ $SPEC{delete_user} = {
+     v => 1.1,
+     args => {
+         username => {
+             schema     => 'str*',
+             pos        => 0,
+             completion => sub {
+                 my %args = @_;
+                 my $word = $args{word} // "";
+
+                 # find users beginning with $word
+                 local $CWD = "/home";
+                 return [grep {-d && $_ ~~ /^\Q$word/} <*>];
+             },
+         },
+         force => {schema=>[bool => {default=>0}]},
+     },
+ };
+
+When C<delete_user> is executed over the command line and the Tab key is
+pressed:
+
+ $ delete-user --force --username fo<tab>
+ $ delete-user fo<tab>
+
+then B<bash> will try to complete with usernames starting with C<fo>.
+
+
+=head2 Property: arg_pass_style => STR (default 'named')
+
+Specify the argument passing style. This information is useful for a function
+wrapper to convert argument calling style, from named to positional and vice
+versa. Valid values include 'named', 'pos'.
+
+Default is 'named'. This means in Perl:
+
+ $SPEC = {
+     v => 1.1,
+     args => {
+         arg1 => {pos=>0},
+         arg2 => {pos=>1},
+     },
+ };
+ sub func {
+     my %args = @_;
+     my $arg1 = $args{arg1};
+     my $arg1 = $args{arg2};
+     ...
+ }
+ func(arg1 => 1, arg2 => 2);
+
+In Python:
+
+ def func(**args):
+     arg1 = args.get('arg1') // or args['arg1']
+     arg2 = args.get('arg2') // or args['arg2']
+ func(arg1=1, arg2=2)
+
+In Ruby:
+
+ def func(args)
+   arg1 = args[:arg1]
+   arg2 = args[:arg2]
+   ...
+ end
+ func(:arg1 => 1, :arg2 => 2)
+
+In PHP:
+
+ function foo($args) {
+     $arg1 = $args['arg1'];
+     $arg2 = $args['arg2'];
+ }
+ foo(array("arg1"=>1, "arg2"=>2));
+
+In JavaScript:
+
+ function func(args) {
+     let arg1 = args.arg1 // or args['arg1']
+     let arg2 = args.arg2 // or args['arg2']
+     ...
+ }
+ func({arg1: 1, arg2: 2})
+
+Passing style 'ref_named' is the same as 'named', except in Perl:
+
+ sub func {
+     my $args = shift;
+     my $arg1 = $args->{arg1};
+     my $arg1 = $args->{arg2};
+     ...
+ }
+ func1({arg1=>1, arg2=>2});
+
+Passing style 'pos' is for positional. In Perl:
+
+ sub func {
+     my ($arg1, $arg2) = @_;
+     ....
+ }
+ func(1, 2);
+
+In Python:
+
+ def func(arg1, arg2):
+     ....
+ func(1, 2)
+
+In Ruby:
+
+ def func(arg1, arg2)
+   ...
+ end
+ func(1, 2)
+
+In PHP:
+
+ function func($arg1, $arg2) {
+     ...
+ }
+ func(1, 2);
+
+In JavaScript:
+
+ function func(arg1, arg2) {
+     ...
+ }
+ func(1, 2)
+
+NOTE: Passing style 'ref_named' (like func({arg1=>1, arg2=>2}) in Perl) and
+'ref_pos' (like func([1, 2]) in Perl) can be added in the future.
+
+
+=head2 Property: result => HASH
+
+Specify function return value. It is a hash containing keys: B<schema> (a Sah
+schema to validate the result), B<summary> (like the C<summary> property),
+B<description> (like the C<description> property).
+
+Note that since by default C<result_envelope> is true, instead of just
+returning:
+
+ RESULT
+
+your functions normally have to return an enveloped result:
+
+ [STATUS, MESSAGE, RESULT, METADATA]
+
+Examples:
+
+ # result is an integer
+ result => {schema => 'int*'}
+
+ # result is an integer starting from zero
+ result => {schema => ['int*' => {ge=>0}]}
+
+ # result is an array of records
+ result => {
+     summary => 'An array of records',
+     schema => ['array*' => {
+         summary => 'blah blah blah ...',
+         of      => ['hash*' => {allowed_keys=>[qw/name age address/]} ]
+     }]
+ }
+
+
+=head2 Property: result_envelope => BOOL
+
+Declare that function generates envelopes for its result. By default it is true.
+Setting this property to false is useful for "legacy" functions which do not yet
+use envelopes, or perhaps for functions which never need to, because it never
+returns results or return only simple/primitive results. In this case, a
+function wrapper can generate result envelope for the such functions.
+
+A "normal" function which return enveloped result:
+
+ $SPEC{is_palindrome} = {
+     v => 1.1,
+     summary => 'Check whether a string is a palindrome',
+     args    => {str => {schema=>'str*'}},
+     result  => {schema=>'bool*'},
+ };
+ sub is_palindrome {
+     my %args = @_;
+     my $str  = $args{str};
+     [200, "OK", $str eq reverse($str) ? 1:0];
+ }
+
+A function which returns "naked" result:
+
+ $SPEC{is_palindrome} = {
+     v => 1.1,
+     summary         => 'Check whether a string is a palindrome',
+     args            => {str => {schema=>'str*'}},
+     result          => {schema=>'bool*'},
+     result_envelope => 0,
+ };
+ sub is_palindrome {
+     my %args = @_;
+     my $str  = $args{str};
+     $str eq reverse($str);
+ }
+
+
+=head2 Property: features => HASH
+
+The C<features> property allows functions to express their features. Each hash
+key contains feature name, which must only contain letters/numbers/underscores.
+
+Below is the list of defined features. New feature names may be defined by
+extension.
+
+=over 4
+
+=item * reverse => BOOL
+
+Default is false. If set to true, specifies that function supports reverse
+operation. To reverse, caller can add special argument C<-reverse>. For example:
+
+ $SPEC{triple} = {
+     v => 1.1,
+     args     => {num=>{schema=>'num*'}},
+     features => {reverse=>1}
+ };
+ sub triple {
+     my %args = @_;
+     my $num  = $args{num};
+     [200, "OK", $args{-reverse} ? $num/3 : $num*3];
+ }
+
+ triple(num=>12);              # => 36
+ triple(num=>12, -reverse=>1); # =>  4
+
+PLANNED: Conditional reversibility.
+
+=item * undo => BOOL
+
+Default is false. If set to true, specifies that function supports undo
+operation. Undo is similar to C<reverse> but needs some state to be saved and
+restored for do/undo operation, while reverse can work solely from the
+arguments.
+
+B<The undo protocol>. Below is the description of the undo protocol works.
+
+Caller must provide one or more special arguments: C<-undo_action>,
+C<-undo_hint>, C<-undo_data> when dealing with do/undo stuffs.
+
+To perform normal (i.e., not an undo) operation, caller must set C<-undo_action>
+to C<do> and optionally pass C<-undo_hint> for hints on how to save undo data.
+You should consult each function's documentation as undo hint depends on each
+function (e.g. if C<undo_data> is to be saved on a file, C<-undo_hint> can
+contain filename or base directory). Function must save undo data, perform
+action, and return result along with saved undo data in the extra part of the
+envelope (the fourth element), example:
+
+ return [200, "OK", $result, {undo_data=>$undo_data}];
+
+Undo data should contain information (or reference to information) to restore to
+previous state later. This information should be persistent (e.g. in a
+file/database) when necessary. For example, if undo data is saved in a file,
+B<undo_data> can contain the filename. If undo data is saved in a memory
+structure, C,undo_data> can refer to this memory structure, and so on. Undo data
+should be serializable. Caller should store this undo data in the undo stack
+(note: undo stack management is the caller's responsibility).
+
+If C<-undo_action> is false/undef, sub must assume caller wants to perform
+action but without saving undo data.
+
+To perform an undo, caller must set C<-undo_action> to C<undo> and pass back the
+undo data in C<-undo_data>. Function must restore previous state using undo data
+(or return 412 if undo data is invalid/unusable). After a successful undo,
+function must return 200. Function should also return B<undo_data>, to undo the
+undo (effectively, redo):
+
+ return [200, "OK", undef, {undo_data=>...}];
+
+Example (in this example, undo data is only stored in memory):
+
+ use Cwd qw(abs_path);
+ use File::Slurp;
+
+ $SPEC{lc_file} = {
+     v => 1.1,
+     summary  => 'Convert the *content* of file into all-lowercase',
+     args     => {path=>{schema=>'str*'}},
+     features => {undo=>1},
+ };
+ sub lc_file {
+     my %args        = @_;
+     my $path        = $args{path};
+     my $undo_action = $args{-undo_action} // '';
+     my $undo_data   = $args{-undo_data};
+
+     $path = abs_path($path)
+         or return [500, "Can't get file absolute path"];
+
+     if ($undo_action eq 'undo') {
+         write_file $path, $undo_data->{content}; # restore original content
+         utime undef, $undo_data->{mtime}, $path; # as well as original mtime
+         return [200, "OK"];
+     } else {
+         my @st = stat($path)
+             or return [500, "Can't stat file"];
+         my $content = read_file($path);
+         my $undo_data = {mtime=>$st[9], content=>$content};
+         write_file $path, lc($content);
+         return [200, "OK", undef, {undo_data=>$undo_data}];
+     }
+ }
+
+To perform action, caller calls C<lc_file()> and store the undo data:
+
+ my $res = lc_file(path=>"/foo/bar", -undo_action=>"do");
+ die "Failed: $res->[0] - $res->[1]" unless $res->[0] == 200;
+ my $undo_data = $res->[3]{undo_data};
+
+To perform undo:
+
+ $res = lc_file(path=>"/foo/bar", -undo_action=>"undo", -undo_data=>$undo_data);
+ die "Can't undo: $res->[0] - $res->[1]" unless $res->[0] == 200;
+
+=item * dry_run => BOOL
+
+Default is false. If set to true, specifies that function supports dry-run
+(simulation) mode. Example:
+
+ use Log::Any '$log';
+
+ $SPEC{rmre} = {
+     summary  => 'Delete files in curdir matching a regex',
+     args     => {re=>{schema=>'str*'}},
+     features => {dry_run=>1}
+ };
+ sub rmre {
+     my %args    = @_;
+     my $re      = qr/$args{re}/;
+     my $dry_run = $args{-dry_run};
+
+     opendir my($dir), ".";
+     while (my $f = readdir($dir)) {
+         next unless $f =~ $re;
+         $log->info("Deleting $f ...");
+         next if $dry_run;
+         unlink $f;
+     }
+     [200, "OK"];
+ }
+
+The above Perl function delete files, but if passed argument C<-dry_run> => 1
+(simulation mode), will not actually delete files, only display what files match
+the criteria and would have be deleted.
+
+=item * pure => BOOL
+
+Default is false. If set to true, specifies that function is "pure" and has no
+"side effects" (these are terms from functional programming / computer science).
+Having a side effect means changing something, somewhere (e.g. setting the value
+of a global variable, modifies its arguments, writing some data to disk,
+changing system date/time, etc.) Specifying a function as pure means, among
+others:
+
+=over 4
+
+=item * the function needs not be involved in undo operation;
+
+=item * you can safely include it during dry run;
+
+=back
+
+=back
+
+
+=head2 Property: deps => HASH
+
+This property specifies function's dependencies to various things. It is a hash
+of dep types and values. Some dep types are special: C<all>, C<any>, and
+C<none>.
+
+ deps => {
+     DEPTYPE => DEPVALUE,
+     ...,
+     all => [
+         {DEPTYPE=>DEPVALUE, ...},
+         ...,
+     },
+     any => [
+         {DEPTYPE => DEPVALUE, ...},
+         ...,
+     ],
+     none => [
+         {DEPTYPE => DEPVALUE, ...},
+         ....,
+     ],
+ }
+
+A dependency can be of any type: another function, environment variables,
+programs, OS software packages, etc. It is up to the dependency checker library
+to make use of this information.
+
+For the dependencies to be declared as satisfied, all of the clauses must be
+satisfied.
+
+Below is the list of defined dependency types. New dependency type may be
+defined by an extension.
+
+=over 4
+
+=item * env => STR
+
+Require that an environment variable exists and is true, where true is in the
+Perl sense (not an empty string or "0"; " " and "0.0" are both true). Example:
+
+ env => 'HTTPS'
+
+=item * exec => STR
+
+Require that an executable exists. If STR doesn't contain path separator
+character '/' it will be searched in PATH. Windows filesystem should also use
+Unix-style path, e.g. "C:/Program Files/Foo/Bar.exe".
+
+ exec => 'rsync'   # any rsync found on PATH
+ exec => '/bin/su' # won't accept any other su
+
+=item * code => CODE
+
+Require that anonymous function returns a true value after called, where the
+notion of true depends on the host language. Example in Perl:
+
+ code => sub {$>}  # i am not being run as root
+
+Example in Ruby:
+
+ "code" => Proc.new { Process.euid > 0 }  # i am not being run as root
+
+=item * all => [DEPHASH, ...]
+
+A "meta" type that allows several dependencies to be joined together in a
+logical-AND fashion. All dependency hashes must be satisfied. For example, to
+declare a dependency to several programs and an environment variable:
+
+ all => [
+     {exec => 'rsync'},
+     {exec => 'tar'},
+     {env => 'FORCE'},
+ ],
+
+=item * any => [DEPHASH, ...]
+
+Like C<all>, but specify a logical-OR relationship. Any one of the dependencies
+will suffice. For example, to specify requirement to alternative Perl modules:
+
+ or => [
+     {perl_mod => 'HTTP::Daemon'},
+     {perl_mod => 'HTTP::Daemon::SSL'},
+ ],
+
+=item * none => [DEPHASH, ...]
+
+Specify that none of the dependencies must be satisfied for this type to be
+satisfied. Example, to specify that the function not run under SUDO or by root:
+
+ none => [
+     {env  => 'SUDO_USER'   },
+     {code => sub {$> != 0} },
+ ],
+
+Note that the above is not equivalent to below:
+
+ none => [
+     {env => 'SUDO_USER', code => sub {$> != 0} },
+ ],
+
+which means that if none or only one of 'env'/'code' is satisfied, the whole
+dependency becomes a success (since it is negated by 'none'). Probably not what
+you want.
+
+=back
+
+If you add a new language-specific dependency type, please prefix it with the
+language code, e.g. C<perl_module>, C<perl_func>, C<ruby_gem>, C<python_egg>.
+These dependency types have also been defined by some existing tools: C<deb>
+(dependency to a Debian package), C<rpm> (dependency to an RPM package),
+C<js_url> (loading a remote JavaScript script URL), C<file> (existence of a),
+C<perl_run_func> (running a Perl subroutine and getting a successful enveloped
+result). Some of these might be declared as part of the core dependency types in
+the future.
+
+
+=head1 FAQ
+
+=head2 What is the difference between C<summary> or C<description> in the Sah schema and arg specification?
+
+Example:
+
+ {
+     summary => "Copy file",
+     description => "...",
+     args => {
+         src => {
+             summary => "Source path",
+             description => "...",
+             req => 1,
+             schema => ["str*", {
+                 summary => "...",
+                 description => "...",
+                 ...
+             }],
+         },
+         dest => {
+             summary => "Target path",
+             description => "...",
+             req => 1,
+             schema => ["str*", {
+                 summary => "...",
+                 description => "...",
+                 ...
+             }],
+         },
+         ...
+     },
+ }
+
+As you can see, each argument has a C<summary> and C<description>, but the
+schema for each argument also has a C<summary> and C<description> schema
+clauses. What are the difference and which should be put into which?
+
+The argument specification's C<summary> (and C<description>) describe the
+argument itself, in this example it says that C<src> means "The source path" and
+C<dest> means "The target path". The argument schema's C<summary> (and
+C<description>) describe the data type and valid values. In this example it
+could say, e.g., "a Unix-path string with a maximum length of 255 characters".
+In fact, C<src> and C<dest> are probably of the same type ("Unix path") and can
+share schema.
+
+ {
+     ...
+     args => {
+         src => {
+             ...
+             schema => "unix_path",
+         },
+         dest => {
+             ...
+             schema => "unix_path",
+         },
+         ...
+     },
+ }
+
+=head2 What are the difference between setting req=>1 in the argument specification and req=>1 in schema?
+
+Example:
+
+ # Note: remember that in Sah, str* is equivalent to [str => {req=>1}]
+ args => {
+     a => {         schema=>"str"  },
+     b => {         schema=>"str*" },
+     c => { req=>1, schema=>"str"  },
+     d => { req=>1, schema=>"str*" },
+ }
+
+In particular look at C<b> and C<c>. C<b> is not a required argument (no req=>1
+in the argument spec) but if it is specified, than it cannot be undef/null
+(since the schema says [str=>{req=>1}], a.k.a "str*"). On the other hand, C<c>
+is a required argument (req=>1 in the argument spec) but you can specify
+undef/null as the value. The following are valid:
+
+ func(c=>undef, d=>1);
+
+But the following are not:
+
+ func(b=>1, d=>1);  # c is not specified
+ func(b=>undef, c=>1, d=>1);  # b has undef value
+ func(b=>1, c=>1, d=>undef);  # d has undef value
+
+=head3 Should I add a new metadata property, or add a new feature name to the C<features> property, or add a new dependency type to the C<deps> property?
+
+If your property describes a dependency to something, it should definitely goes
+to as a new dependency type. If your property only describes what the function
+can do and does not include any wrapper code, then it probably goes into
+C<features>. Otherwise, it should become a new metadata property.
+
+For example, if you want to declare that your function can only be run under a
+certain moon phase (e.g. full moon), it should definitely go as a new dependency
+type, so it becomes: deps => { moon_phase => 'full' }.
+
+Another example, C<reverse> is a feature name, because it just states that if we
+pass C<-reverse> => 1 argument to a sub, it will do a reverse operation. It
+doesn't include any wrapper code. On the other hand, C<timeout> is a metadata
+property because it involves the wrapping code adding a timeout mechanism (e.g.
+an eval() block and alarm() in Perl).
+
 
 =head1 SEE ALSO
+
+B<Data::Sah>
 
 B<Rinci>
 
