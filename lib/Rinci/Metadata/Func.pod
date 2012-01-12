@@ -142,13 +142,6 @@ more specific).
 =back
 
 
-=head2 Property: v => FLOAT (required)
-
-Declare specification version. This property is required. It should have the
-value of 1.1. If C<v> is not specified, it is assumed to be 1.0 and metadata is
-assumed to be the old, Sub::Spec 1.0.x metadata.
-
-
 =head2 Property: is_func => BOOL
 
 Specify that the function can be called as a static function (i.e. procedural,
