@@ -1,0 +1,35 @@
+package Rinci::Metadata::Package; # just to make PodWeaver happy
+
+1;
+# ABSTRACT: Metadata for your namespaces/packages
+
+=head1 SPECIFICATION VERSION
+
+ 1.1
+
+
+=head1 INTRODUCTION
+
+This document describes metadata for namespaces/packages. This specification is
+part of L<Rinci>. Please do a read up on it first, if you have not already done
+so.
+
+
+=head1 SPECIFICATION
+
+B<Namespace? Package?> The term "package" from Perl 5 is used here, where it
+just means namespace. Perl also happens to use package to implement class, but
+metadata for classes will be specified in another specification
+(L<Rinci::Metadata::Class>).
+
+There is currently no metadata properties specific to packages.
+
+
+=head1 FAQ
+
+
+=head1 SEE ALSO
+
+B<Rinci>
+
+=cut

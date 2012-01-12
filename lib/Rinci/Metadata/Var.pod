@@ -1,0 +1,29 @@
+package Rinci::Metadata::Var; # just to make PodWeaver happy
+
+1;
+# ABSTRACT: Metadata for your variables
+
+=head1 SPECIFICATION VERSION
+
+ 1.1
+
+
+=head1 INTRODUCTION
+
+This document describes metadata for variables. This specification is part of
+L<Rinci>. Please do a read up on it first, if you have not already done so.
+
+
+=head1 SPECIFICATION
+
+There is currently no metadata properties specific to variables.
+
+
+=head1 FAQ
+
+
+=head1 SEE ALSO
+
+B<Rinci>
+
+=cut
