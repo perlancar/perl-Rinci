@@ -163,15 +163,16 @@ Each protocol is specified on a separate subdocument.
 
 =head1 COMMON METADATA SPECIFICATION
 
-This section describes specification common to all metadata.
+This section describes specification common to all kinds of Rinci metadata.
 
 B<Metadata>. Metadata is just a normal hash. Each hash key is called a property.
 Any hash key in the metadata that starts with C<_> (underscore) is ignored, this
 can be used to store extra data, or experimental properties. Otherwise, the
 property must be known and valid. A property is valid if the property name
-matches the regex pattern /\A[A-Za-z][A-Za-z0-9_]*\z/ and is known (listed in
-this specification), and the property values conform to the specification for
-that property.
+matches the regex pattern /\A[A-Za-z][A-Za-z0-9_]*([A-Za-z][A-Za-z0-9_]*)*\z/
+(in other words, a word or a dotted word like "foo" or "foo.bar") and the name
+is known (listed in this specification), and the property values conform to the
+specification for that property.
 
 B<Custom properties>. This specification is extensible: you can add properties
 of your own. Currently the mechanism to formally add a custom property to the
