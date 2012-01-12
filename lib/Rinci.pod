@@ -167,7 +167,7 @@ Each protocol is specified on a separate subdocument.
 =back
 
 
-=head1 Specification common to all metadata
+=head2 Specification common to all metadata
 
 This section describes specification common to all kinds of Rinci metadata.
 
@@ -196,14 +196,69 @@ hash key. Consult the tool that you are using to find out for sure.
 
 B<Common properties>. Below are properties common to all metadata:
 
-=head2 Property: v => FLOAT (required)
+
+=head3 Property: v => FLOAT (required)
 
 Declare specification version. This property is required. It should have the
 value of 1.1. If C<v> is not specified, it is assumed to be 1.0 and metadata is
 assumed to be the old, Sub::Spec 1.0.x metadata.
 
 
-=head1 Entity-specific specifications
+=head3 Property: name => STR
+
+The name of the package. Useful when aliasing entity (and reusing the metadata)
+and wanting to find out the canonical/original entity.
+
+
+=head3 Property: summary => STR
+
+A one-line summary. It should be plain text without any markup. It is like the
+C<summary> clause in L<Data::Sah>.
+
+
+=head3 Property: tags => ARRAY OF STR
+
+A list of tags, useful for categorization. Can also be used by tools, e.g.
+L<Sub::Spec::Exporter> in Perl uses the C<tags> property of the function
+metadata as export tags.
+
+
+=head3 Property: text_markup => STR
+
+Specify text markup format for the content of properties like C<description>,
+C<examples>, C<cmdline_examples>, C<http_examples>. The default is C<markdown>
+and other valid values include C<none>.
+
+NOTE: Other popular text markup formats might be added in the future. Text
+format should be readable as-is (so-called "plain text markup format") as some
+tools, like L<Sub::Spec::CmdLine> in Perl will just dump the content of some
+marked up properties (like C<description>) as text help message instead of going
+through the trouble of passing the content through some formatters.
+
+NOTE: A way to specify different text markup format for each property (e.g.
+C<markdown> for C<description>, C<org> for C<http_examples>) might be supported
+in the future, but using several different markups in a single metadata is not
+recommended practice.
+
+
+=head3 Property: description => STR
+
+A longer description text. The text should be in marked up in format specified
+by C<text_markup> and is suggested to be formatted to 80 columns or less. It is
+like the C<description> Data::Sah clause.
+
+
+=head3 Property: see => ARRAY OF STR
+
+A list of references to other entities. It is suggested that this URI format is
+used for reference:
+
+ func:foo
+ func:Package::SubPkg::bar
+ pkg:Package::SubPkg
+
+
+=head2 Entity-specific specifications
 
 Each entity-specific specification is described on a separate subdocument.
 

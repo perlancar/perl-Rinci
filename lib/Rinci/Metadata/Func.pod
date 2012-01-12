@@ -160,60 +160,6 @@ Specify that the function can be called as a class method. Examples of class
 methods include the constructor, but there are others. Default is false.
 
 
-=head2 Property: name => STR
-
-The name of the function. Useful for generating help/usage information, or when
-aliasing functions (and reusing the metadata) and finding out the
-canonical/original name of the function.
-
-
-=head2 Property: summary => STR
-
-A one-line summary. It should be plain text without any markup. It is like the
-C<summary> clause in L<Data::Sah>.
-
-
-=head2 Property: tags => ARRAY OF STR
-
-A list of tags, useful for categorization. Can also be used for exporting tools
-like L<Sub::Spec::Exporter> in Perl, where the tags can be used as export tags.
-
-
-=head2 Property: text_markup => STR
-
-Specify text markup format for the content of properties like C<description>,
-C<examples>, C<cmdline_examples>, C<http_examples>. The default is C<markdown>
-and other valid values include C<none>.
-
-NOTE: Other popular text markup formats might be added in the future. Text
-format should be readable as-is (so-called "plain text markup format") as some
-tools, like L<Sub::Spec::CmdLine> in Perl will just dump the content of some
-marked up properties (like C<description>) as text help message instead of going
-through the trouble of passing the content through some formatters.
-
-NOTE: A way to specify different text markup format for each property (e.g.
-C<markdown> for C<description>, C<org> for C<http_examples>) might be supported
-in the future, but using several different markups in a single metadata is not
-recommended practice.
-
-
-=head2 Property: description => STR
-
-A longer description text. The text should be in marked up in format specified
-by C<text_markup> and is suggested to be formatted to 80 columns or less. It is
-like the C<description> Data::Sah clause.
-
-
-=head2 Property: see => ARRAY OF STR
-
-A list of references to other functions. It is suggested that this URI format is
-used for reference:
-
- func:foo
- func:Package::SubPkg::bar
- pkg:Package::SubPkg
-
-
 =head2 Property: args => HASH
 
 Specify arguments. Property value is hash of argument names and argument
