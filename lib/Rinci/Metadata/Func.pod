@@ -945,10 +945,10 @@ But the following are not:
 
 =head2 Should I add a new metadata property, or add a new feature name to the C<features> property, or add a new dependency type to the C<deps> property?
 
-If your property describes a dependency to something, it should definitely goes
-to as a new dependency type. If your property only describes what the function
-can do and does not include any wrapper code, then it probably goes into
-C<features>. Otherwise, it should become a new metadata property.
+If your property describes a dependency to something, it should definitely be a
+new dependency type. If your property only describes what the function can do
+and does not include any wrapper code, then it probably goes into C<features>.
+Otherwise, it should probably become a new metadata property.
 
 For example, if you want to declare that your function can only be run under a
 certain moon phase (e.g. full moon), it should definitely go as a new dependency
