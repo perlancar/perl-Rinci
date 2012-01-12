@@ -820,8 +820,8 @@ Like C<all>, but specify a logical-OR relationship. Any one of the dependencies
 will suffice. For example, to specify requirement to alternative Perl modules:
 
  or => [
-     {perl_mod => 'HTTP::Daemon'},
-     {perl_mod => 'HTTP::Daemon::SSL'},
+     {perl_module => 'HTTP::Daemon'},
+     {perl_module => 'HTTP::Daemon::SSL'},
  ],
 
 =item * none => [DEPHASH, ...]
