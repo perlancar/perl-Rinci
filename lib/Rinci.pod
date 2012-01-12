@@ -171,20 +171,20 @@ can be used to store extra data, or experimental properties. Otherwise, the
 property must be known and valid. A property is valid if the property name
 matches the regex pattern /\A[A-Za-z][A-Za-z0-9_]*([A-Za-z][A-Za-z0-9_]*)*\z/
 (in other words, a word or a dotted word like "foo" or "foo.bar") and the name
-is known (listed in this specification), and the property values conform to the
+is known (listed in the specification), and the property values conform to the
 specification for that property.
 
-B<Custom properties>. This specification is extensible: you can add properties
-of your own. Currently the mechanism to formally add a custom property to the
+B<Custom properties>. The specification is extensible: you can add properties of
+your own. Currently the mechanism to formally add a custom property to the
 specification is unspecified, but at least in Perl it is recommended that the
 distribution which does this updates the schema in
 C<Rinci::Metadata::TYPE::Schema>. Popular custom properties might make it into
 core specification in later revision or version.
 
-B<Where to put the metadata>. This specification does not specify where to put
+B<Where to put the metadata>. The specification does not specify where to put
 metadata in, it is up to you or the tools you want to use. It can be separated
 in another file or put alongside the code. In the case of function metadata, for
-example, many of the Sub::Spec::* Perl modules, expect the function metadata to
+example, many of the Sub::Spec::* Perl modules expect the function metadata to
 be put in the C<%SPEC> package variable, with the name of the function as the
 hash key. Consult the tool that you are using to find out for sure.
 
