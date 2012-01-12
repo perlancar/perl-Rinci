@@ -186,6 +186,7 @@ Default is false.
 =item * B<description> => STR
 
 A longer description of marked up text, much like the C<description> property.
+It is suggested to format the text to 74 columns.
 
 =item * B<tags> => ARRAY OF STR
 
@@ -335,7 +336,7 @@ pressed:
 then B<bash> will try to complete with usernames starting with C<fo>.
 
 
-=head2 Property: arg_pass_style => STR (default 'named')
+=head2 Property: arg_pass_style => STR
 
 Specify the argument passing style. This information is useful for a function
 wrapper to convert argument calling style, from named to positional and vice
@@ -442,9 +443,23 @@ NOTE: Passing style 'ref_named' (like func({arg1=>1, arg2=>2}) in Perl) and
 
 =head2 Property: result => HASH
 
-Specify function return value. It is a hash containing keys: B<schema> (a Sah
-schema to validate the result), B<summary> (like the C<summary> property),
-B<description> (like the C<description> property).
+Specify function return value. It is a hash containing keys:
+
+=over 4
+
+=item * B<schema>
+
+A Sah schema to validate the result
+
+=item * B<summary>
+
+Like the C<summary> property.
+
+=item * B<description>
+
+Like the C<description> property. Suggested to be formatted to 78 columns.
+
+=back
 
 Note that since by default C<result_envelope> is true, instead of just
 returning:
@@ -509,6 +524,51 @@ A function which returns "naked" result:
      my $str  = $args{str};
      $str eq reverse($str);
  }
+
+
+=head2 Property: examples => ARRAY
+
+This property allowed you to put examples in a detailed and structured way, as
+an alternative to putting everything in C<description>.
+
+Each example shows what arguments are used, what the results are, and some
+description. It can be used when generating API/usage documentation, as well as
+for testing data. It is expressed a hash containing these keys:
+
+=over 4
+
+=item * args => HASH
+
+Arguments used to produce result.
+
+=item * cmdline => STR
+
+Command line used to produce result, should the function is called from the
+command-line (as an alternative to show, for command line help).
+
+=item * http_url => STR
+
+URL used to produce result, should the function is called over HTTP (an
+alternative to show in HTTP API documentation).
+
+=item * result => DATA
+
+Result data.
+
+=item * summary => STR
+
+A one-line summary of the example.
+
+=item * description => STR.
+
+Longer marked up text about the example (e.g. discussion), suggested to be
+formatted to 72 columns.
+
+=back
+
+Example:
+
+ XXX
 
 
 =head2 Property: features => HASH

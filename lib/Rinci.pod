@@ -244,8 +244,8 @@ recommended practice.
 =head3 Property: description => STR
 
 A longer description text. The text should be in marked up in format specified
-by C<text_markup> and is suggested to be formatted to 80 columns or less. It is
-like the C<description> Data::Sah clause.
+by C<text_markup> and is suggested to be formatted to 78 columns. It is like the
+C<description> Data::Sah clause.
 
 
 =head3 Property: see => ARRAY OF STR
