@@ -33,11 +33,11 @@ Revision history for Rinci
            'markdown' (or 'none').
 
          + Md::Func: property 'deps': terminology change ('dep clause' -> 'dep
-         type'), rename dep types: sub -> func, mod -> perl_module,
+           type'), rename dep types: 'sub' -> 'func', 'mod' -> 'perl_module'.
 
          Additions:
 
          + Keys beginning with "_" are allowed and ignored. This can be used to
            store extra information.
 
-         + New properties 'tags' and 'see'.
+         + New properties: 'tags', 'see', 'examples'.
