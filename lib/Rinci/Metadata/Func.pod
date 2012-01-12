@@ -943,7 +943,7 @@ But the following are not:
  func(b=>undef, c=>1, d=>1);  # b has undef value
  func(b=>1, c=>1, d=>undef);  # d has undef value
 
-=head3 Should I add a new metadata property, or add a new feature name to the C<features> property, or add a new dependency type to the C<deps> property?
+=head2 Should I add a new metadata property, or add a new feature name to the C<features> property, or add a new dependency type to the C<deps> property?
 
 If your property describes a dependency to something, it should definitely goes
 to as a new dependency type. If your property only describes what the function
