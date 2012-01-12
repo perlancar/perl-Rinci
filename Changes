@@ -33,7 +33,7 @@ Revision history for Rinci
            'markdown' (or 'none').
 
          + Md::Func: property 'deps': terminology change ('dep clause' -> 'dep
-         type'), rename dep types: sub -> func, mod -> module,
+         type'), rename dep types: sub -> func, mod -> perl_module,
 
          Additions:
 
