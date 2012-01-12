@@ -955,10 +955,11 @@ certain moon phase (e.g. full moon), it should definitely go as a new dependency
 type, so it becomes: deps => { moon_phase => 'full' }.
 
 Another example, C<reverse> is a feature name, because it just states that if we
-pass C<-reverse> => 1 argument to a sub, it will do a reverse operation. It
-doesn't include any wrapper code. On the other hand, C<timeout> is a metadata
-property because it involves the wrapping code adding a timeout mechanism (e.g.
-an eval() block and alarm() in Perl).
+pass C<-reverse> => 1 special argument to a reversible function, it can do a
+reverse operation. It doesn't include any wrapper code, all functionality is
+realized by the function itself. On the other hand, C<timeout> is a metadata
+property because it involves adding adding some wrapping code (a timeout
+mechanism, e.g. an eval() block and alarm() in Perl).
 
 
 =head1 SEE ALSO
