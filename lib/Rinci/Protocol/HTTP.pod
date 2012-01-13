@@ -1,7 +1,7 @@
 package Rinci::Protocol::HTTP; # just to make PodWeaver happy
 
 1;
-# ABSTRACT: Request metadata and call functions over HTTP
+# ABSTRACT: Actions on code entities over HTTP
 
 =head1 SPECIFICATION VERSION
 
@@ -9,33 +9,76 @@ package Rinci::Protocol::HTTP; # just to make PodWeaver happy
 
 =head1 ABSTRACT
 
-This document specifies a protocol for requesting metadata and calling remote
-functions operations over HTTP. The protocol is geared towards remote API
-service
+This document specifies a protocol for performing actions on code entities over
+HTTP, which include: requesting metadata, remote call on functions, etc. The
+protocol can be used for REST/HTTP API service, RPC, remote code management,
+etc.
+
+The specification is called 'Rinci HTTP' for short.
+
+
+=head1 RATIONALE
+
+REST/HTTP API service is now popular, provided by many websites. However, there
+is no uniform access: service is slightly different from website to website.
+Even for calling a single simple function you will need to consult the API
+documentation for each website. First of all, the URL scheme is slightly
+different: some use C<http://api.example.org/FUNC?ARG=VAL>, other would prefer
+C<http://example.org/api/v1/FUNC/VAL>, and there are many other varieties. Some
+websites directly utilize HTTP methods (verbs) for action names, some avoid this
+and only use GET/POST. Some accept JSON as input/output decoding format, others
+only XML. There is no common way to select which format you want: some look in
+the C<Accept> request header, others use a query parameter. And so on.
+
+So the first goal of Rinci HTTP protocol is to let websites keep their own
+preferred URL schemes, but provide a common way that is guaranteed to work
+across all Rinci-compliant web API service. This is accomplished using special
+HTTP request headers and query parameters (detailed later).
+
+The second goal of Rinci HTTP is to provide more capabilities than just remote
+calling (which is what an API service essentially is). It provides a way to
+request metadata on functions (for self-documenting API service, since function
+metadata contains documentation, among others). It also provides access and
+metadata to other code entities, like variables, packages, and more. This can be
+used for remote code management. (Actually, a set of API functions can be used
+for providing those capabilities; the Rinci protocol just abstracts/standardizes
+the capabilities.)
+
+Rinci HTTP also defines some other features like passing logging messages from
+the server, for debugging.
+
+By using Rinci HTTP you can create a web service that has uniform access
+mechanism. By opening access to metadata you allow for powerful and convenient
+client tools to use your service, from self-documentation, remote tab
+completion, logging/debugging messages, and more.
 
 
 =head1 TERMINOLOGIES
 
 =over 4
 
-=item * SS request
+=item * Server
 
-An SS request (SS being a short for Sub::Spec) is a hash containing some keys
-like: C<command>, C<uri>, C<args>, C<output_format>, C<log_level>, C<mark_log>.
-See L</"SS REQUEST">
+A server is an HTTP service (e.g. a web application or middleware running on top
+of a webserver), listening for HTTP requests. Its responsibility is to accept
+HTTP request, extract/parse Rinci request from the HTTP request, process the
+Rinci request, and return an enveloped result inside the HTTP response.
 
-=item * SS server
+=item * Client
 
-An SS server is an HTTP server. It should parse SS request from HTTP request and
-then execute the SS request and return the result as HTTP response.
-L<Sub::Spec::HTTP::Server> is the de facto Perl server implementation.
+A client can be any normal bare HTTP client (like the B<curl> or B<wget>
+program), or some library which understands Rinci HTTP protocol and can provide
+additional abstraction and convenience. For example, the L<Sub::Spec::Use> Perl
+module can provide the illusion of "loading" remote modules and functions from a
+Rinci HTTP server as if they were local. The L<apicli> command-line client
+offers documentation, remote tab completion, and more.
 
-=item * SS client
+=item * Rinci request
 
-An SS client is a library or program which sends requests to an SS server over
-HTTP. It should provide some transparency to its user, creating some level of
-illusion that the user is accessing a local sub/spec. L<Sub::Spec::URI::http> is
-the de facto Perl client implementation.
+Rinci request is a hash containing at least these keys: B<uri> which is the URI
+to code entity, and B<action> which is the action to perform on the code entity.
+The specification requires a minimal set of actions that can be performed on a
+compliant server.
 
 =back
 
@@ -163,12 +206,18 @@ will result in the following SS request:
 
 =head1 FAQ
 
-=head2 Is there a command to change/delete/add metadata on the server? How about for modifying entities (like setting a variable or creating a namespace) on the server?
+=head2 Why not directly use status code and message from enveloped result as HTTP response status code and message?
 
-The Rinci HTTP protocol is originally created for requesting metadata and
-calling remote functions. Changing metadata or entities on the server is not one
-of the goals, but this can be implemented by writing appropriate functions on
-the server-side and calling the functions.
+To be able to differentiate between errors from the HTTP service and from the
+API functions.
+
+Suppose you use an API service to manage some email accounts. You call an API
+function to get information on a certain mail account, and you keep getting a
+404 Not Found error. If the status code were mixed with that from the webserver,
+how would you know that the error is from the webserver or from the API
+function? In the first case, your email account might still exist but the
+webserver/API service might be misconfigured or moved. In the second case, your
+desired email might really be gone.
 
 
 =head1 SEE ALSO
