@@ -40,4 +40,4 @@ Revision history for Rinci
          + Keys beginning with "_" are allowed and ignored. This can be used to
            store extra information.
 
-         + New properties: 'tags', 'see', 'examples'.
+         + New properties: 'tags', 'links', 'examples'.

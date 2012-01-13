@@ -156,7 +156,37 @@ Note: Examples are usually written in Perl, but this does not mean they only
 apply to a particular language.
 
 
-=head2 Protocol
+=head2 Terminologies
+
+B<Entities> are elements in your code that can be given metadata. Currently
+supported entities are function/method, namespace/package, and variable. Other
+entities planned to be supported: class, object, library, application.
+
+B<Entity URIs>. Sometimes entities need to be expressed as URIs, for example as
+links or when requesting over Rinci HTTP protocol. To refer to local entities,
+use the C<ent> scheme (which can be optional in places). Namespace parts is
+separated by C<::>, independent of what the implementation language uses (e.g.
+Perl and Ruby use C<::> but Python uses C<.>, all should use C<::> regardless).
+
+ ent:Package::SubPkg::func
+ Package::SubPkg::func      # ent: scheme is optional
+ ent:Package::SubPkg        # namespaces are entities themselves
+ ent:Package::SubPkg::      # ending "::" is optional for namespaces
+ ent:                       # the top level namespace
+ ent:Package::SubPkg::$var  # notice the different syntax from, say, Perl
+
+To refer to remote entities served using Rinci HTTP protocol, you can just use
+the normal C<http> or C<https> scheme, where the URL scheme might differ
+according to each server's policy (but there are standardized ways to refer to
+entity and entity action, see the L<Rinci::Protocol::HTTP> specification):
+
+ http://example.org/api/Package/SubPkg/func
+ http://example.org/api/Package/SubPkg/func?-ri-action=get-meta
+ https://example.org/Package::SubPkg/$var
+ http://example.org/?-ri-entity=ent:&-ri-action=search&type=func&q=payment
+
+
+=head2 Protocols
 
 Each protocol is specified on a separate subdocument.
 
@@ -196,32 +226,27 @@ hash key. Consult the tool that you are using to find out for sure.
 
 B<Common properties>. Below are properties common to all metadata:
 
-
 =head3 Property: v => FLOAT (required)
 
 Declare specification version. This property is required. It should have the
 value of 1.1. If C<v> is not specified, it is assumed to be 1.0 and metadata is
 assumed to be the old, Sub::Spec 1.0.x metadata.
 
-
 =head3 Property: name => STR
 
 The name of the package. Useful when aliasing entity (and reusing the metadata)
 and wanting to find out the canonical/original entity.
-
 
 =head3 Property: summary => STR
 
 A one-line summary. It should be plain text without any markup. It is like the
 C<summary> clause in L<Data::Sah>.
 
-
 =head3 Property: tags => ARRAY OF STR
 
 A list of tags, useful for categorization. Can also be used by tools, e.g.
 L<Sub::Spec::Exporter> in Perl uses the C<tags> property of the function
 metadata as export tags.
-
 
 =head3 Property: text_markup => STR
 
@@ -240,23 +265,40 @@ C<markdown> for C<description>, C<org> for C<http_examples>) might be supported
 in the future, but using several different markups in a single metadata is not
 recommended practice.
 
-
 =head3 Property: description => STR
 
 A longer description text. The text should be in marked up in format specified
 by C<text_markup> and is suggested to be formatted to 78 columns. It is like the
 C<description> Data::Sah clause.
 
+=head3 Property: links => ARRAY OF HASHES
 
-=head3 Property: see => ARRAY OF STR
+List to related entities or resources. Can be used to generate a SEE ALSO and/or
+LINKS sections in documentation. Each link is a hash with the following keys:
 
-A list of references to other entities. It is suggested that this URI format is
-used for reference:
+=over 4
 
- func:foo
- func:Package::SubPkg::bar
- pkg:Package::SubPkg
+=item * uri => STR (required)
 
+=item * title => STR
+
+A short plaintext title for the link.
+
+=item * summary => STR
+
+A one-line plaintext description for the link.
+
+=item * description => STR
+
+A longer marked up text description for the link. Suggested to be formatted to
+76 columns.
+
+=item * tags => ARRAY OF STR
+
+Can be used to categorize or select links. For generating SEE ALSO sections, use
+the tag 'see'.
+
+=back
 
 =head2 Entity-specific specifications
 
@@ -279,13 +321,13 @@ These specifications are planned or considered, but not yet defined:
 
 =over 4
 
-=item * L<Rinci::Metadata::Lib> - Metadata for libraries
-
-=item * L<Rinci::Metadata::App> - Metadata for applications
-
 =item * L<Rinci::Metadata::Class> - Metadata for classes
 
 =item * L<Rinci::Metadata::Obj> - Metadata for objects
+
+=item * L<Rinci::Metadata::Lib> - Metadata for libraries
+
+=item * L<Rinci::Metadata::App> - Metadata for applications
 
 =back
 
