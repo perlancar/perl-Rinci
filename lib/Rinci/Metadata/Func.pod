@@ -145,7 +145,14 @@ more specific).
 =head2 Property: is_func => BOOL
 
 Specify that the function can be called as a static function (i.e. procedural,
-not as a method). Default is true if unspecified.
+not as a method). Default is true if unspecified, but becomes false if is_meth
+or is_class_meth is set to true.
+
+Example:
+
+ # specify that function can be called a method *as well as* a static function
+ is_meth => 1,
+ is_func => 1, # if not specified, will default to false after is_meth set to 1
 
 
 =head2 Property: is_meth => BOOL
@@ -153,11 +160,21 @@ not as a method). Default is true if unspecified.
 Specify that the function can be called as an instance (object) method. Default
 is false.
 
+Example:
+
+ # specify that function is a method
+ is_meth => 1,
+
 
 =head2 Property: is_class_meth => BOOL
 
 Specify that the function can be called as a class method. Examples of class
 methods include the constructor, but there are others. Default is false.
+
+Example:
+
+ # specify that function is a class method
+ is_class_meth => 1,
 
 
 =head2 Property: args => HASH
@@ -551,6 +568,10 @@ command-line (as an alternative to show, for command line help).
 URL used to produce result, should the function is called over HTTP (an
 alternative to show in HTTP API documentation).
 
+=item * status => INT
+
+Status from envelope. If unspecified, assumed to be 200.
+
 =item * result => DATA
 
 Result data.
@@ -568,7 +589,23 @@ formatted to 72 columns.
 
 Example:
 
- XXX
+ # part of metadata for Math::is_prime function
+ examples => [
+     {
+         args => {num=>10},
+         result => 0,
+     },
+     {
+         args => {num=>-5},
+         result => 1,
+         summary => 'Also works for negative integers',
+     },
+     {
+         args => {},
+         result => 400,
+         summary => 'Num argument is required',
+     },
+ ],
 
 
 =head2 Property: features => HASH
@@ -600,7 +637,7 @@ operation. To reverse, caller can add special argument C<-reverse>. For example:
  triple(num=>12);              # => 36
  triple(num=>12, -reverse=>1); # =>  4
 
-PLANNED: Conditional reversibility.
+NOTE: Abilitity to express conditional reversibility is considered.
 
 =item * undo => BOOL
 
