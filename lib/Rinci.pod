@@ -34,8 +34,8 @@ functions/methods, L<Rinci::Metadata::Package> will describe metadata for
 namespace/package, and so on.
 
 Rinci defines properties pertaining to documentation (like C<summary>,
-C<description>, C<examples>), function argument and return value validation
-(C<args> and C<result>), dependencies (C<deps>), standardized feature
+C<description>, C<examples>, C<links>), function argument and return value
+validation (C<args> and C<result>), dependencies (C<deps>), standardized feature
 description (C<features>), also a generic undo protocol for supporting undoable
 operations. The specification is extensible: you can define more properties, or
 more deps, or more features.
@@ -158,15 +158,17 @@ apply to a particular language.
 
 =head2 Terminologies
 
-B<Entities> are elements in your code that can be given metadata. Currently
-supported entities are function/method, namespace/package, and variable. Other
-entities planned to be supported: class, object, library, application.
+B<Code entities>, or just B<entities> for short, are elements in your code that
+can be given metadata. Currently supported entities are function/method,
+namespace/package, and variable. Other entities planned to be supported: class,
+object, library, application.
 
-B<Entity URIs>. Sometimes entities need to be expressed as URIs, for example as
-links or when requesting over Rinci HTTP protocol. To refer to local entities,
-use the C<ent> scheme (which can be optional in places). Namespace parts is
-separated by C<::>, independent of what the implementation language uses (e.g.
-Perl and Ruby use C<::> but Python uses C<.>, all should use C<::> regardless).
+B<Entity URIs>. Sometimes code entities need to be expressed as URIs, for
+example as links or when requesting over Rinci HTTP protocol. To refer to local
+entities, use the C<ent> scheme (which can be optional in places). Namespace
+parts is separated by C<::>, independent of what the implementation language
+uses (e.g. Perl and Ruby use C<::> but Python uses C<.>, all should use C<::>
+regardless).
 
  ent:Package::SubPkg::func
  Package::SubPkg::func      # ent: scheme is optional
