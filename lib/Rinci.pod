@@ -194,7 +194,7 @@ Each protocol is specified on a separate subdocument.
 
 =over 4
 
-=item * L<Rinci::Protocol::HTTP> - Request metadata and call functions over HTTP
+=item * L<Rinci::Protocol::HTTP> - Actions on code entities over HTTP
 
 =back
 
@@ -234,21 +234,44 @@ Declare specification version. This property is required. It should have the
 value of 1.1. If C<v> is not specified, it is assumed to be 1.0 and metadata is
 assumed to be the old, Sub::Spec 1.0.x metadata.
 
+Example:
+
+ v => 1.1
+
+
 =head3 Property: name => STR
 
-The name of the package. Useful when aliasing entity (and reusing the metadata)
+The name of the entity. Useful when aliasing entity (and reusing the metadata)
 and wanting to find out the canonical/original entity.
+
+Examples:
+
+ name => 'foo'
+ name => '$var'  # only in languages where variables have prefix
+
 
 =head3 Property: summary => STR
 
 A one-line summary. It should be plain text without any markup. It is like the
 C<summary> clause in L<Data::Sah>.
 
+Example:
+
+ name => 'foo',
+ summary => 'Perform the foo ritual',
+
+
 =head3 Property: tags => ARRAY OF STR
 
 A list of tags, useful for categorization. Can also be used by tools, e.g.
 L<Sub::Spec::Exporter> in Perl uses the C<tags> property of the function
 metadata as export tags.
+
+Example:
+
+ # tag a function as beta
+ tags => ['beta']
+
 
 =head3 Property: text_markup => STR
 
@@ -267,11 +290,33 @@ C<markdown> for C<description>, C<org> for C<http_examples>) might be supported
 in the future, but using several different markups in a single metadata is not
 recommended practice.
 
+ # use Org format for all marked up text
+ text_markup => 'org'
+
+
 =head3 Property: description => STR
 
 A longer description text. The text should be in marked up in format specified
 by C<text_markup> and is suggested to be formatted to 78 columns. It is like the
 C<description> Data::Sah clause.
+
+Example:
+
+ {
+     name => 'foo',
+     summary => 'Perform the foo ritual',
+     description => <<EOT,
+
+ Foo ritual can be performed by humans or machines. This program will perform a
+ machine-based ritual using [the best available
+ algorithm](http://example.org/foo-with-bar-algo.html).
+
+ Note that you still have to perform foo ritual manually from time to time, just
+ to be safe.
+
+
+ EOT
+ }
 
 =head3 Property: links => ARRAY OF HASHES
 
@@ -286,10 +331,6 @@ LINKS sections in documentation. Each link is a hash with the following keys:
 
 A short plaintext title for the link.
 
-=item * summary => STR
-
-A one-line plaintext description for the link.
-
 =item * description => STR
 
 A longer marked up text description for the link. Suggested to be formatted to
@@ -301,6 +342,22 @@ Can be used to categorize or select links. For generating SEE ALSO sections, use
 the tag 'see'.
 
 =back
+
+Example:
+
+ # links in the Bar::foo function metadata
+ links => [
+     {
+         url   => "http://example.org/foo-with-bar-algo.html",
+         title => "Article describing foo using Bar algorithm",
+     },
+     {
+         url   => "Baz::foo",
+         title => "Another implementation of foo using the Bar algorithm",
+         tags  => ['related']
+     },
+ ],
+
 
 =head2 Entity-specific specifications
 
