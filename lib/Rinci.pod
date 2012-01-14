@@ -174,13 +174,10 @@ regardless).
 
 To refer to remote entities served using Rinci HTTP protocol, you can just use
 the normal C<http> or C<https> scheme, where the URL scheme might differ
-according to each server's policy (but there are standardized ways to refer to
-entity and entity action, see the L<Rinci::HTTP> specification):
+according to each server's policy:
 
  http://example.org/api/v1/Package/SubPkg/func
- http://example.org/api/v1/Package/SubPkg/func?-ri-action=get_meta
  https://example.org/Package.SubPkg.$var
- http://example.org/?-ri-entity=ent:&-ri-action=search&-ri-type=function
 
 
 =head2 Specification common to all metadata

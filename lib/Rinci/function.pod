@@ -361,13 +361,6 @@ versa. Valid values include 'named', 'pos'.
 
 Default is 'named'. This means in Perl:
 
- $SPEC = {
-     v => 1.1,
-     args => {
-         arg1 => {pos=>0},
-         arg2 => {pos=>1},
-     },
- };
  sub func {
      my %args = @_;
      my $arg1 = $args{arg1};
