@@ -137,7 +137,7 @@ more specific).
 
 507 (insufficient storage)
 
-53x (bad spec) is used when there is something wrong with the spec.
+53x (bad metadata) is used when there is something wrong with the metadata.
 
 =back
 
