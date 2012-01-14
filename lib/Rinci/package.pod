@@ -1,4 +1,4 @@
-package Rinci::Metadata::Package; # just to make PodWeaver happy
+package Rinci::Package; # just to make PodWeaver happy
 
 1;
 # ABSTRACT: Metadata for your namespaces/packages
@@ -20,7 +20,7 @@ so.
 B<Namespace? Package?> The term "package" from Perl 5 is used here, where it
 just means namespace. Perl also happens to use package to implement class, but
 metadata for classes will be specified in another specification
-(L<Rinci::Metadata::Class>).
+(L<Rinci::class>).
 
 There is currently no metadata properties specific to packages.
 

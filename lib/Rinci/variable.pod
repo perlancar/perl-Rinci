@@ -1,4 +1,4 @@
-package Rinci::Metadata::Var; # just to make PodWeaver happy
+package Rinci::variable; # just to make PodWeaver happy
 
 1;
 # ABSTRACT: Metadata for your variables

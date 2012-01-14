@@ -1,4 +1,4 @@
-package Rinci::Metadata::Func; # just to make PodWeaver happy
+package Rinci::function; # just to make PodWeaver happy
 
 1;
 # ABSTRACT: Metadata for your functions/methods

@@ -12,12 +12,12 @@ package Rinci; # just to make PodWeaver happy
 
 This document describes B<Rinci>, a set of extensible, language-neutral metadata
 specifications for your code (functions/methods, variables, packages, classes,
-and so on), plus a protocol on exchanging metadata and remote calling over HTTP.
-Rinci allows various helper tools, from code generator to web middleware to
-documentation generator, to act on your code, making your life easier as a
-programmer. Rinci also allows better interoperability between programming
-languages. Rinci is geared towards dynamic scripting languages like Perl,
-Python, Ruby, PHP, JavaScript, but is not limited to those languages.
+and so on). Rinci allows various helper tools, from code generator to web
+middleware to documentation generator to other protocols, to act on your code,
+making your life easier as a programmer. Rinci also allows better
+interoperability between programming languages. Rinci is geared towards dynamic
+scripting languages like Perl, Python, Ruby, PHP, JavaScript, but is not limited
+to those languages.
 
 
 =head1 WHAT IS RINCI? (TERMINOLOGIES)
@@ -29,9 +29,8 @@ regular mapping variable (a.k.a. hash in Perl/Ruby, or dictionary in Python, or
 array in PHP, or object in JavaScript/JSON; but from here on the term I<hash>
 will be used). Each specification will describe what metadata B<property names>
 (a.k.a. hash keys) are known and what value should each property contain. So the
-L<Rinci::Metadata::Func> specification will describe metadata for
-functions/methods, L<Rinci::Metadata::Package> will describe metadata for
-namespace/package, and so on.
+L<Rinci::function> specification will describe metadata for functions/methods,
+L<Rinci::package> will describe metadata for namespace/package, and so on.
 
 Rinci defines properties pertaining to documentation (like C<summary>,
 C<description>, C<examples>, C<links>), function argument and return value
@@ -39,9 +38,6 @@ validation (C<args> and C<result>), dependencies (C<deps>), standardized feature
 description (C<features>), also a generic undo protocol for supporting undoable
 operations. The specification is extensible: you can define more properties, or
 more deps, or more features.
-
-Rinci also includes a protocol specification, L<Rinci::Protocol::HTTP>, to
-request metadata and call remote functions over HTTP.
 
 
 =head1 WHAT ARE THE BENEFITS OF RINCI?
@@ -87,14 +83,14 @@ L<Sub::Spec::BashComplete>).
 =item * L<Serabi>
 
 A L<PSGI> application (a set of PSGI middlewares, really) to serve function
-requests over HTTP, using the L<Rinci::Protocol::HTTP> protocols. Great for
-creating an API service.
+requests over HTTP, using the L<Rinci::HTTP> protocols. Suitable for creating an
+API service.
 
 =item * L<Sub::Spec::Use>
 
 Use remote packages and import their functions, transparently like you would use
-local Perl modules. The remote server can be any Rinci::Protocol::HTTP-compliant
-service, even when implemented in other languages.
+local Perl modules. The remote server can be any Rinci::HTTP-compliant service,
+even when implemented in other languages.
 
 =item * Sub::Spec::Gen::*
 
@@ -166,37 +162,25 @@ object, library, application.
 B<Entity URIs>. Sometimes code entities need to be expressed as URIs, for
 example as links or when requesting over Rinci HTTP protocol. To refer to local
 entities, use the C<ent> scheme (which can be optional in places). Namespace
-parts is separated by C<::>, independent of what the implementation language
-uses (e.g. Perl and Ruby use C<::> but Python uses C<.>, all should use C<::>
+parts is separated by C<.>, independent of what the implementation language uses
+(e.g. Perl and Ruby use C<::> but Python uses C<.>, all should use C<.>
 regardless).
 
- ent:Package::SubPkg::func
- Package::SubPkg::func      # ent: scheme is optional
- ent:Package::SubPkg        # namespaces are entities themselves
- ent:Package::SubPkg::      # ending "::" is optional for namespaces
+ ent:Package.SubPkg.func
+ Package.SubPkg.func        # ent: scheme is sometimes optional
+ ent:Package.SubPkg         # namespaces are entities themselves
  ent:                       # the top level namespace
- ent:Package::SubPkg::$var  # notice the different syntax from, say, Perl
+ ent:Package.SubPkg.$var    # notice the syntax
 
 To refer to remote entities served using Rinci HTTP protocol, you can just use
 the normal C<http> or C<https> scheme, where the URL scheme might differ
 according to each server's policy (but there are standardized ways to refer to
-entity and entity action, see the L<Rinci::Protocol::HTTP> specification):
+entity and entity action, see the L<Rinci::HTTP> specification):
 
- http://example.org/api/Package/SubPkg/func
- http://example.org/api/Package/SubPkg/func?-ri-action=get-meta
- https://example.org/Package::SubPkg/$var
- http://example.org/?-ri-entity=ent:&-ri-action=search&type=func&q=payment
-
-
-=head2 Protocols
-
-Each protocol is specified on a separate subdocument.
-
-=over 4
-
-=item * L<Rinci::Protocol::HTTP> - Actions on code entities over HTTP
-
-=back
+ http://example.org/api/v1/Package/SubPkg/func
+ http://example.org/api/v1/Package/SubPkg/func?-ri-action=get_meta
+ https://example.org/Package.SubPkg.$var
+ http://example.org/?-ri-entity=ent:&-ri-action=search&-ri-type=function
 
 
 =head2 Specification common to all metadata
@@ -215,9 +199,9 @@ specification for that property.
 B<Custom properties>. The specification is extensible: you can add properties of
 your own. Currently the mechanism to formally add a custom property to the
 specification is unspecified, but at least in Perl it is recommended that the
-distribution which does this updates the schema in
-C<Rinci::Metadata::TYPE::Schema>. Popular custom properties might make it into
-core specification in later revision or version.
+distribution which does this updates the schema in C<Rinci::METATYPE::Schema>.
+Popular custom properties might make it into core specification in later
+revision or version.
 
 B<Where to put the metadata>. The specification does not specify where to put
 metadata in, it is up to you or the tools you want to use. It can be separated
@@ -273,27 +257,6 @@ Example:
  tags => ['beta']
 
 
-=head3 Property: text_markup => STR
-
-Specify text markup format for the content of properties like C<description>,
-C<examples>, C<cmdline_examples>, C<http_examples>. The default is C<markdown>
-and other valid values include C<none>.
-
-NOTE: Other popular text markup formats might be added in the future. Text
-format should be readable as-is (so-called "plain text markup format") as some
-tools, like L<Sub::Spec::CmdLine> in Perl will just dump the content of some
-marked up properties (like C<description>) as text help message instead of going
-through the trouble of passing the content through some formatters.
-
-NOTE: A way to specify different text markup format for each property (e.g.
-C<markdown> for C<description>, C<org> for C<http_examples>) might be supported
-in the future, but using several different markups in a single metadata is not
-recommended practice.
-
- # use Org format for all marked up text
- text_markup => 'org'
-
-
 =head3 Property: description => STR
 
 A longer description text. The text should be in marked up in format specified
@@ -314,9 +277,9 @@ Example:
  Note that you still have to perform foo ritual manually from time to time, just
  to be safe.
 
-
  EOT
  }
+
 
 =head3 Property: links => ARRAY OF HASHES
 
@@ -359,19 +322,40 @@ Example:
  ],
 
 
+=head3 Property: text_markup => STR
+
+Specify text markup format for the content of properties which contain marked-up
+text, like C<description>. The default is C<markdown> and other valid values
+include C<none>.
+
+NOTE: Other popular text markup formats might be added in the future. Text
+format should be readable as-is (so-called "plain text markup format") as some
+tools, like L<Sub::Spec::CmdLine> in Perl will just dump the content
+C<description> as text help message instead of going through the trouble of
+passing the content through some formatters.
+
+ # use Org format for all marked up text
+ text_markup => 'org'
+
+NOTE: Supporting different markup format for different properties, e.g.
+C<markdown> for C<description> but C<org> for other properties (or perhaps
+different format between arg's description and link's description) might be
+considered in the future if necessary, but for now such practice is not
+recommended.
+
+
 =head2 Entity-specific specifications
 
 Each entity-specific specification is described on a separate subdocument.
-
 Currently these specifications are defined:
 
 =over 4
 
-=item * L<Rinci::Metadata::Func> - Metadata for functions/methods
+=item * L<Rinci::function> - Metadata for functions/methods
 
-=item * L<Rinci::Metadata::Package> - Metadata for namespaces/packages
+=item * L<Rinci::package> - Metadata for namespaces/packages
 
-=item * L<Rinci::Metadata::Var> - Metadata for variables
+=item * L<Rinci::variable> - Metadata for variables
 
 
 =back
@@ -380,13 +364,23 @@ These specifications are planned or considered, but not yet defined:
 
 =over 4
 
-=item * L<Rinci::Metadata::Class> - Metadata for classes
+=item * L<Rinci::class> - Metadata for classes
 
-=item * L<Rinci::Metadata::Obj> - Metadata for objects
+=item * L<Rinci::object> - Metadata for objects
 
-=item * L<Rinci::Metadata::Lib> - Metadata for libraries
+=item * L<Rinci::application> - Metadata for applications
 
-=item * L<Rinci::Metadata::App> - Metadata for applications
+=item * L<Rinci::library> - Metadata for libraries
+
+=item * L<Rinci::distribution> - Metadata for software distribution
+
+=item * L<Rinci::language> - Metadata for programming languages
+
+=item * L<Rinci::author> - Metadata for software authors
+
+=item * L<Rinci::project> - Metadata for software projects
+
+=item * L<Rinci::repository> - Metadata for code repository (like git, svn)
 
 =back
 
@@ -416,14 +410,14 @@ B<Changes> file in the distribution.
 To clearly separate specification from implementation, rename specification from
 C<Sub::Spec> to C<Rinci> (the namespace C<Sub::Spec> is still used for
 implementations, along with C<Var::Spec>, C<Package::Spec>). Split
-specification, each for functions, variables, packages, and remote call
-protocol. Bump specification version from 1.0 to 1.1 due to several
-incompatibilities like changed C<args> and C<result> properties, terminologies,
-defaults. Versioning property (C<v>) now required.
+specification, each for functions, variables, packages. Bump specification
+version from 1.0 to 1.1 due to several incompatibilities like changed C<args>
+and C<result> properties, terminologies, defaults. Versioning property (C<v>)
+now required.
 
 =head2 1.0 (Aug 2011)
 
-First release version of Sub::Spec. First release of Sub::Spec::HTTP.
+First release version of Sub::Spec.
 
 =head2 0.x (Feb-Aug 2011)
 
@@ -435,6 +429,8 @@ Series of Sub::Spec drafts.
 =head2 Related specifications
 
 Sah schema language, L<Data::Sah>
+
+L<Rinci::HTTP>
 
 =head2 Related ideas/concepts
 
