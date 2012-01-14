@@ -558,15 +558,10 @@ for testing data. It is expressed a hash containing these keys:
 
 Arguments used to produce result.
 
-=item * cmdline => STR
+=item * argv => ARRAY
 
-Command line used to produce result, should the function is called from the
-command-line (as an alternative to show, for command line help).
-
-=item * http_url => STR
-
-URL used to produce result, should the function is called over HTTP (an
-alternative to show in HTTP API documentation).
+An alternative to C<args>, for example when function is run from the command
+line.
 
 =item * status => INT
 
@@ -596,7 +591,7 @@ Example:
          result => 0,
      },
      {
-         args => {num=>-5},
+         argv => [-5],
          result => 1,
          summary => 'Also works for negative integers',
      },
