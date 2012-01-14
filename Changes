@@ -2,37 +2,37 @@ Revision history for Rinci
 
 1.1.0    2012-01-15
 
-         First release. Spun off from Sub::Spec and Sub::Spec::HTTP.
+         First release. Spun off from Sub::Spec.
 
          Incompatible differences with Sub::Spec 1.0.x:
 
          + Terminology: 'spec clause' becomes 'property'. This is to avoid
            confusion with 'clause' as used in Sah schema language.
 
+         + Default text markup format changed from Org to Markdown, but a new
+           properties 'text_markup' is added to allow specifying 'org' or
+           'markdown' (or 'none').
+
          + 'v' clause is now required to declare Rinci spec version (with value
            1.1, if unspecified then assumed spec is old Sub::Spec 1.0).
 
-         + Md::Func: Incompatible changes to 'args' and 'result' properties;
+         + function: Incompatible changes to 'args' and 'result' properties;
            'args' is now a hash of arg names and arg *specs* (instead of arg
            schemas). 'result' is now a hash of data, instead of schema. The
            purpose is to keep Sah schema clean from custom, non-schema-related
            schema clauses, like arg_* (thus requiring custom Sah extensions,
            etc). Mixing them into schemas was not the right way.
 
-         + Md::Func: property 'type' removed, replaced with 'is_func',
+         + function: property 'type' removed, replaced with 'is_func',
            'is_meth', 'is_static_meth'. This is because a single
            subroutine/function can act as all.
 
-         + Md::Func: Other properties which are also removed/replaced: 'timeout'
+         + function: Other properties which are also removed/replaced: 'timeout'
            (non-core), 'retry' (non-core), 'scope' (can be replaced by using
            tags), 'result_naked' (replaced by 'result_envelope'), 'args_as'
            (replaced by 'arg_pass_style').
 
-         + Default text markup format changed from Org to Markdown, but a new
-           properties 'text_markup' is added to allow specifying 'org' or
-           'markdown' (or 'none').
-
-         + Md::Func: property 'deps': terminology change ('dep clause' -> 'dep
+         + function: property 'deps': terminology change ('dep clause' -> 'dep
            type'), rename dep types: 'sub' -> 'func', 'mod' -> 'perl_module'.
 
          Additions:
