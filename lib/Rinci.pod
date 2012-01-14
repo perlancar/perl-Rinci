@@ -325,8 +325,9 @@ Example:
 =head3 Property: text_markup => STR
 
 Specify text markup format for the content of properties which contain marked-up
-text, like C<description>. The default is C<markdown> and other valid values
-include C<none>.
+text, like C<description>. The default is C<markdown>
+(http://en.wikipedia.org/wiki/Markdown) and other valid values include C<org>
+(http://orgmode.org/) and C<none>.
 
 NOTE: Other popular text markup formats might be added in the future. Text
 format should be readable as-is (so-called "plain text markup format") as some
