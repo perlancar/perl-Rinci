@@ -72,4 +72,12 @@ the argument.
 Accordingly, the C<result> property is also now a hash, instead of schema. Move
 the schema into the C<schema> hash key.
 
+=head2 Sub::Spec::HTTP
+
+Specification is now L<Rinci::HTTP>. Terminology changes. B<SS request> now
+becomes B<Rinci request>. Some key names changed (shortened). Special headers
+are now prefixed with B<X-Ri-*> instead of B<X-SS-*>.
+
+Log level are now numeric only (1-6) instead of numeric/string.
+
 =cut
