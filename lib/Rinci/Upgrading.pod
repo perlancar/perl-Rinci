@@ -12,7 +12,7 @@ This document gives guide on how to convert your metadata from older version.
 Examples are written in Perl, but are not limited to this language.
 
 
-=head1 UPGRADING FROM SUB::SPEC 1.0
+=head1 UPGRADING FROM SUB::SPEC 1.0 TO RINCI 1.1
 
 =head2 Upgrading function metadata
 
