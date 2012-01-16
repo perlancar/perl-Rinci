@@ -1,0 +1,75 @@
+package Rinci::Upgrading; # just to make PodWeaver happy
+
+# VERSION
+
+1;
+# ABSTRACT: Upgrading from previous version of specification
+
+=head1 DESCRIPTION
+
+This document gives guide on how to convert your metadata from older version.
+
+Examples are written in Perl, but are not limited to this language.
+
+
+=head1 UPGRADING FROM SUB::SPEC 1.0
+
+=head2 Upgrading function metadata
+
+Terminology change: B<(sub) spec> is now called metadata: reason is there are
+now metadata for functions as well as other code entities like variables,
+packages, etc. B<clause> is now called B<property>: reason is to avoid confusion
+with L<Data::Sah>'s clause.
+
+The C<v> (spec version) property is required, add
+
+ v => 1.1
+
+to your function metadata.
+
+Each argument in the C<args> property is now a hash, instead of a schema. Move
+the schema to the C<schema> key of the hash. To specify required argument, add
+C<req> set to 1 to hash key. Move C<arg_pos> Sah clause to C<pos> hash key. Move
+C<arg_greedy> Sah clause to C<greedy> hash key. Move C<arg_completion> Sah
+clause to C<completion> hash key.
+
+Example, change this:
+
+ args => {
+     # a required argument
+     arg1 => ['int*', {
+         summary => 'Blah ...',
+         min => 1, max => 100,
+         arg_pos => 0,
+     }],
+
+     # an optional argument
+     arg2 => ['bool', {
+         summary => 'Blah ...',
+         default => 0,
+     }],
+ }
+
+Into this:
+
+ args => {
+     arg1 => {
+         summary => 'Blah ...',
+         schema => ['int*', {min=>1, max=>100}],
+         req => 1,
+         pos => 0,
+     },
+
+     arg2 => {
+         summary => 'Blah ...',
+         schema => [bool => {default=>0}],
+     },
+ }
+
+It is now possible to give summary and description to the schema as well as to
+the argument.
+
+Accordingly, the C<result> property is also now a hash, instead of schema. Move
+the schema into the C<schema> hash key.
+
+=cut

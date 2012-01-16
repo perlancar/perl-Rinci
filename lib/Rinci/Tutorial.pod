@@ -1,0 +1,12 @@
+package Rinci::Tutorial; # just to make PodWeaver happy
+
+# VERSION
+
+1;
+# ABSTRACT: Using Rinci
+
+=head1 DESCRIPTION
+
+To be written.
+
+=cut

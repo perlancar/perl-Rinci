@@ -45,63 +45,62 @@ more deps, or more features.
 By adding Rinci metadata to your code, you can write/use tools to do various
 things to your program. Rinci is designed with code generation and function
 wrapping in mind. At the time of this writing, several tools (mostly modules in
-Sub::Spec::* namespace) exist in Perl to do the following:
+L<Rias::*> namespace) exist in Perl to do the following:
 
 =over 4
 
-=item * L<Sub::Spec::Wrapper>
+=item * L<Rias::Sub::Wrapper>
 
 Wrap functions with a single generated function that can do the following:
 validate input (using information from the C<args> property), validate return
-value (the C<return> property), add execution time-limiting (the C<timeout>
+value (the C<result> property), add execution time-limiting (the C<timeout>
 property), add automatic retries (the C<retry>), interactive confirmation,
 logging, and more.
 
-=item * L<Sub::Spec::Exporter>
+=item * L<Rias::Sub::Exporter>
 
 A replacement for L<Exporter> or L<Sub::Exporter> if your functions are equipped
 with Rinci metadata. Automatically provide export tags (using information in the
-C<tags> property). Automatically wrap functions using Sub::Spec::Wrapper when
-exporting.
+C<tags> property). Can automatically wrap functions using Rias::Sub::Wrapper
+when exporting.
 
-=item * Sub::Spec::To::* modules
+=item * Rias::Sub::To::* modules
 
 Convert function metadata to user/API documentation in POD or other format.
 Basically all they do is just arranging the various available properties like
-C<summary>, C<description>, C<args>, C<return>, C<examples>, C<see> and so on
+C<summary>, C<description>, C<args>, C<result>, C<examples>, C<links> and so on
 and format them to the final target.
 
-=item * L<Sub::Spec::CmdLine>
+=item * L<Rias::Sub::CmdLine>
 
 Run functions on the command line. Automatically convert command-line
 options/arguments to function arguments. Generate help/usage message (for
 C<--help>). Check dependencies (e.g. you can specify that in order to run your
 functions, you need some executables/other functions to exist, an environment
 variable being set, and so on). Even do bash shell completion (using
-L<Sub::Spec::BashComplete>).
+L<Rias::Sub::BashComplete>).
 
 =item * L<Serabi>
 
-A L<PSGI> application (a set of PSGI middlewares, really) to serve function
-requests over HTTP, using the L<Rinci::HTTP> protocols. Suitable for creating an
-API service.
+A L<PSGI> application (a set of PSGI middlewares, really) to serve metadata and
+function call requests over HTTP, according to the L<Rinci::HTTP> protocol.
 
-=item * L<Sub::Spec::Use>
+=item * L<Rias::Sub::Use>
 
 Use remote packages and import their functions, transparently like you would use
 local Perl modules. The remote server can be any Rinci::HTTP-compliant service,
 even when implemented in other languages.
 
-=item * Sub::Spec::Gen::*
+=item * C<Rias::Sub::Gen::*>
 
 Since Rinci metadata are just normal data structure, they can be easily
-generated. The Sub::Spec::Gen::* Perl modules can generate functions as well as
+generated. The Rias::Sub::Gen::* Perl modules can generate functions as well as
 their metadata, for example to access table data (like from a regular array or
 from a SQL database).
 
 =back
 
-More tools might be written in the future.
+More tools will be written in the future.
 
 
 =head1 RINCI VS ...
@@ -134,7 +133,7 @@ language and others).
 
 B<Other things to consider>. If you stack multiple decorators in Python, for
 example, it usually results in wrapping your Python function multiple times,
-which can add overhead. A single wrapper like Sub::Spec::Wrapper, on the other
+which can add overhead. A single wrapper like Rias::Sub::Wrapper, on the other
 hand, uses a single level of wrapping to minimize subroutine call overhead.
 
 B<Working together>. There is no reason why Rinci metadata has to compete
@@ -203,9 +202,9 @@ revision or version.
 B<Where to put the metadata>. The specification does not specify where to put
 metadata in, it is up to you or the tools you want to use. It can be separated
 in another file or put alongside the code. In the case of function metadata, for
-example, many of the Sub::Spec::* Perl modules expect the function metadata to
-be put in the C<%SPEC> package variable, with the name of the function as the
-hash key. Consult the tool that you are using to find out for sure.
+example, many of the Rias::* Perl modules expect the function metadata to be put
+in the C<%SPEC> package variable, with the name of the function as the hash key.
+Consult the tool that you are using to find out for sure.
 
 B<Common properties>. Below are properties common to all metadata:
 
@@ -245,7 +244,7 @@ Example:
 =head3 Property: tags => ARRAY OF STR
 
 A list of tags, useful for categorization. Can also be used by tools, e.g.
-L<Sub::Spec::Exporter> in Perl uses the C<tags> property of the function
+L<Rias::Sub::Exporter> in Perl uses the C<tags> property of the function
 metadata as export tags.
 
 Example:
@@ -328,7 +327,7 @@ text, like C<description>. The default is C<markdown>
 
 NOTE: Other popular text markup formats might be added in the future. Text
 format should be readable as-is (so-called "plain text markup format") as some
-tools, like L<Sub::Spec::CmdLine> in Perl will just dump the content
+tools, like L<Rias::Sub::CmdLine> in Perl will just dump the content
 C<description> as text help message instead of going through the trouble of
 passing the content through some formatters.
 
@@ -406,12 +405,11 @@ B<Changes> file in the distribution.
 =head1 1.1 (Jan 2012)
 
 To clearly separate specification from implementation, rename specification from
-C<Sub::Spec> to C<Rinci> (the namespace C<Sub::Spec> is still used for
-implementations, along with C<Var::Spec>, C<Package::Spec>). Split
-specification, each for functions, variables, packages. Bump specification
-version from 1.0 to 1.1 due to several incompatibilities like changed C<args>
-and C<result> properties, terminologies, defaults. Versioning property (C<v>)
-now required.
+C<Sub::Spec> to C<Rinci> (the namespace L<Rias> is now used for the Perl
+implementation). Support code entities other than functions/methods. Bump
+specification version from 1.0 to 1.1 due to several incompatibilities like
+changed C<args> and C<result> properties, terminologies, defaults. Versioning
+property (C<v>) now required.
 
 =head2 1.0 (Aug 2011)
 
