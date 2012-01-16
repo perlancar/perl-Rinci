@@ -384,10 +384,13 @@ These specifications are planned or considered, but not yet defined:
 
 =head1 FAQ
 
-=head2 What does Rinci mean?
+=head2 What does Rinci, Rias mean?
 
-Rinci is taken from Indonesian word B<perincian> or B<rincian>, meaning
-I<specification> or I<detail>.
+Rinci is taken from Indonesian word B<perincian> or B<rincian>, meaning:
+specification, detail.
+
+Rias is also an Indonesian word meaning: to dress up, to decorate, to put on a
+make up.
 
 =head2 Why use Sah for data schema?
 
