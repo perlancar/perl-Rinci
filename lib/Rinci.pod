@@ -45,11 +45,11 @@ more deps, or more features.
 By adding Rinci metadata to your code, you can write/use tools to do various
 things to your program. Rinci is designed with code generation and function
 wrapping in mind. At the time of this writing, several tools (mostly modules in
-L<Rias::*> namespace) exist in Perl to do the following:
+L<Perinci::*> namespace) exist in Perl to do the following:
 
 =over 4
 
-=item * L<Rias::Sub::Wrapper>
+=item * L<Perinci::Sub::Wrapper>
 
 Wrap functions with a single generated function that can do the following:
 validate input (using information from the C<args> property), validate return
@@ -57,46 +57,46 @@ value (the C<result> property), add execution time-limiting (the C<timeout>
 property), add automatic retries (the C<retry>), interactive confirmation,
 logging, and more.
 
-=item * L<Rias::Sub::Exporter>
+=item * L<Perinci::Exporter>
 
 A replacement for L<Exporter> or L<Sub::Exporter> if your functions are equipped
 with Rinci metadata. Automatically provide export tags (using information in the
-C<tags> property). Can automatically wrap functions using Rias::Sub::Wrapper
+C<tags> property). Can automatically wrap functions using Perinci::Sub::Wrapper
 when exporting.
 
-=item * Rias::Sub::To::* modules
+=item * Perinci::Sub::To::* modules
 
 Convert function metadata to user/API documentation in POD or other format.
 Basically all they do is just arranging the various available properties like
 C<summary>, C<description>, C<args>, C<result>, C<examples>, C<links> and so on
 and format them to the final target.
 
-=item * L<Rias::Sub::CmdLine>
+=item * L<Perinci::CmdLine>
 
-Run functions on the command line. Automatically convert command-line
-options/arguments to function arguments. Generate help/usage message (for
-C<--help>). Check dependencies (e.g. you can specify that in order to run your
-functions, you need some executables/other functions to exist, an environment
-variable being set, and so on). Even do bash shell completion (using
-L<Rias::Sub::BashComplete>).
+L<Riap> command-line client. Call local/remote functions. Automatically convert
+command-line options/arguments to function arguments. Generate help/usage
+message (for C<--help>). Check dependencies (e.g. you can specify that in order
+to run your functions, you need some executables/other functions to exist, an
+environment variable being set, and so on). Even do bash shell completion (using
+L<Perinci::BashComplete>).
 
 =item * L<Serabi>
 
 A L<PSGI> application (a set of PSGI middlewares, really) to serve metadata and
-function call requests over HTTP, according to the L<Rinci::HTTP> protocol.
+function call requests over HTTP, according to the L<Riap::HTTP> protocol.
 
-=item * L<Rias::Sub::Use>
+=item * L<Perinci::Use>
 
-Use remote packages and import their functions, transparently like you would use
-local Perl modules. The remote server can be any Rinci::HTTP-compliant service,
-even when implemented in other languages.
+Use remote packages and import their functions/variables transparently like you
+would use local Perl modules. The remote server can be any Riap-compliant
+service, even when implemented in other languages.
 
-=item * C<Rias::Sub::Gen::*>
+=item * C<Perinci::Sub::Gen::*>
 
 Since Rinci metadata are just normal data structure, they can be easily
-generated. The Rias::Sub::Gen::* Perl modules can generate functions as well as
-their metadata, for example to access table data (like from a regular array or
-from a SQL database).
+generated. The Perinci::Sub::Gen::* Perl modules can generate functions as well
+as their metadata, for example to access table data (like from a regular array
+or from a SQL database).
 
 =back
 
@@ -133,8 +133,9 @@ language and others).
 
 B<Other things to consider>. If you stack multiple decorators in Python, for
 example, it usually results in wrapping your Python function multiple times,
-which can add overhead. A single wrapper like Rias::Sub::Wrapper, on the other
-hand, uses a single level of wrapping to minimize subroutine call overhead.
+which can add overhead. A single wrapper like Perinci::Sub::Wrapper, on the
+other hand, uses a single level of wrapping to minimize subroutine call
+overhead.
 
 B<Working together>. There is no reason why Rinci metadata has to compete
 against existing features from language/libraries. A code generator for Rinci
@@ -202,9 +203,9 @@ revision or version.
 B<Where to put the metadata>. The specification does not specify where to put
 metadata in, it is up to you or the tools you want to use. It can be separated
 in another file or put alongside the code. In the case of function metadata, for
-example, many of the Rias::* Perl modules expect the function metadata to be put
-in the C<%SPEC> package variable, with the name of the function as the hash key.
-Consult the tool that you are using to find out for sure.
+example, many of the Perinci::* Perl modules expect the function metadata to be
+put in the C<%SPEC> package variable, with the name of the function as the hash
+key. Consult the tool that you are using to find out for sure.
 
 B<Common properties>. Below are properties common to all metadata:
 
@@ -244,8 +245,8 @@ Example:
 =head3 Property: tags => ARRAY OF STR
 
 A list of tags, useful for categorization. Can also be used by tools, e.g.
-L<Rias::Sub::Exporter> in Perl uses the C<tags> property of the function
-metadata as export tags.
+L<Perinci::Exporter> in Perl uses the C<tags> property of the function metadata
+as export tags.
 
 Example:
 
@@ -327,7 +328,7 @@ text, like C<description>. The default is C<markdown>
 
 NOTE: Other popular text markup formats might be added in the future. Text
 format should be readable as-is (so-called "plain text markup format") as some
-tools, like L<Rias::Sub::CmdLine> in Perl will just dump the content
+tools, like L<Perinci::CmdLine> in Perl will just dump the content
 C<description> as text help message instead of going through the trouble of
 passing the content through some formatters.
 
@@ -384,13 +385,10 @@ These specifications are planned or considered, but not yet defined:
 
 =head1 FAQ
 
-=head2 What does Rinci, Rias mean?
+=head2 What does Rinci, Perinci mean?
 
-Rinci is taken from Indonesian word B<perincian> or B<rincian>, meaning:
-specification, detail.
-
-Rias is also an Indonesian word meaning: to dress up, to decorate, to put on a
-make up.
+Rinci and Perinci is taken from Indonesian word B<perincian> or B<rincian>,
+meaning: specification, detail.
 
 =head2 Why use Sah for data schema?
 
@@ -408,7 +406,7 @@ B<Changes> file in the distribution.
 =head1 1.1 (Jan 2012)
 
 To clearly separate specification from implementation, rename specification from
-C<Sub::Spec> to C<Rinci> (the namespace L<Rias> is now used for the Perl
+C<Sub::Spec> to C<Rinci> (the namespace C<Perinci> is now used for the Perl
 implementation). Support code entities other than functions/methods. Bump
 specification version from 1.0 to 1.1 due to several incompatibilities like
 changed C<args> and C<result> properties, terminologies, defaults. Versioning

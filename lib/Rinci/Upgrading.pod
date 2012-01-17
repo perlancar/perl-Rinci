@@ -75,13 +75,13 @@ the schema into the C<schema> hash key.
 =head2 Sub::Spec::HTTP
 
 For the most part, you only need to upgrade client and server library. Client
-library is now L<Rias::Sub::URI> (L<Rias::Sub::URI::http>). Server library is
-now L<Serabi> (L<Rias::Sub::HTTP::Server>).
+library is now Perinci::CmdLine and Perinci::Client. Server library is now
+L<Serabi> (C<Perinci::HTTP::Server>).
 
-Specification is now L<Rinci::HTTP>. Terminology changes. B<SS request> now
-becomes B<Rinci request>. Some key names changed (shortened). Special headers
-are now prefixed with B<X-Ri-*> instead of B<X-SS-*>.
+Specification is now L<Riap> and L<Riap::HTTP>. Terminology changes. B<SS
+request> now becomes B<Riap request>. Some key names changed (shortened).
+Special headers are now prefixed with B<X-Riap-*> instead of B<X-SS-Req-*>.
 
-Log level are now numeric only (1-6) instead of numeric/string.
+Log levels are now numeric only (1-6) instead of numeric/string.
 
 =cut
