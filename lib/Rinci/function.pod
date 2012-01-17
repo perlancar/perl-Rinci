@@ -133,7 +133,8 @@ more specific).
 
 501 (not implemented)
 
-503 (service unavailable)
+503 (service unavailable). You can use this when service is temporarily
+unavailable. Users should try again at a later time.
 
 507 (insufficient storage)
 
