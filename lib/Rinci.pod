@@ -306,6 +306,10 @@ property instead), arguments that the function accepts (C<args>), examples
 (C<examples>), function's features (C<features>) and dependencies/requirements
 (C<deps>).
 
+For function, description should probably contain a more detailed description of
+what the function does (steps, algorithm used, effects and other things of
+note).
+
 Example:
 
  {
