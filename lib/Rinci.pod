@@ -222,16 +222,16 @@ Example:
  v => 1.1
 
 
-=head3 Property: default_locale => STR
+=head3 Property: default_lang => STR
 
-Specify default locale used in the text properties like C<summary> and
+Specify default language used in the text properties like C<summary> and
 C<description>. Default is 'en_US'.
 
 To specify translation texts in other languages, you can use
-C<PROPERTY.alt.locale.CODE>, e.g.:
+C<PROPERTY.alt.lang.CODE>, e.g.:
 
  summary => "Perform the foo ritual",
- "summary.alt.locale.id_ID" => "Laksanakan ritual foo",
+ "summary.alt.lang.id_ID" => "Laksanakan ritual foo",
 
 =head3 Property: name => STR
 
@@ -270,17 +270,17 @@ preamble like "This function ..." since that is redundant. Also avoid describing
 the arguments and its values like "..., accepts a single integer argument" as
 that should go to the C<args> property.
 
-To specify translations in other language, use the L<summary.alt.locale.CODE>.
-Or change the C<default_locale> property. Examples:
+To specify translations in other language, use the L<summary.alt.lang.CODE>.
+Or change the C<default_lang> property. Examples:
 
- # default locale is 'en_US'
+ # default language is 'en_US'
  summary => 'Perform the foo ritual',
- "summary.alt.locale.id_ID" => 'Laksanakan ritual foo',
+ "summary.alt.lang.id_ID" => 'Laksanakan ritual foo',
 
- # change default locale to id_ID, so all summaries are in Indonesian
- default_locale => 'id_ID',
+ # change default language to id_ID, so all summaries are in Indonesian
+ default_lang => 'id_ID',
  summary => 'Laksanakan ritual foo',
- "summary.alt.locale.en_US" => 'Perform the foo ritual',
+ "summary.alt.lang.en_US" => 'Perform the foo ritual',
 
 =head3 Property: tags => ARRAY OF STR
 
@@ -324,7 +324,7 @@ Example:
  }
 
 Like in C<summary>, to specify translations in other language, use the
-L<description.alt.locale.CODE> property.
+L<description.alt.lang.CODE> property.
 
 =head3 Property: links => ARRAY OF HASHES
 
