@@ -193,6 +193,8 @@ matches the regex pattern /\A[A-Za-z][A-Za-z0-9_]*([A-Za-z][A-Za-z0-9_]*)*\z/
 is known (listed in the specification), and the property values conform to the
 specification for that property.
 
+Metadata should be written in Unicode (UTF-8).
+
 B<Custom properties>. The specification is extensible: you can add properties of
 your own. Currently the mechanism to formally add a custom property to the
 specification is unspecified, but at least in Perl it is recommended that the
@@ -219,6 +221,17 @@ Example:
 
  v => 1.1
 
+
+=head3 Property: default_locale => STR
+
+Specify default locale used in the text properties like C<summary> and
+C<description>. Default is 'en_US'.
+
+To specify translation texts in other languages, you can use
+C<PROPERTY.alt.locale.CODE>, e.g.:
+
+ summary => "Perform the foo ritual",
+ "summary.alt.locale.id_ID" => "Laksanakan ritual foo",
 
 =head3 Property: name => STR
 
@@ -256,6 +269,18 @@ use active, bare infinitive verb like in the example (not "Performs ..."). Avoid
 preamble like "This function ..." since that is redundant. Also avoid describing
 the arguments and its values like "..., accepts a single integer argument" as
 that should go to the C<args> property.
+
+To specify translations in other language, use the L<summary.alt.locale.CODE>.
+Or change the C<default_locale> property. Examples:
+
+ # default locale is 'en_US'
+ summary => 'Perform the foo ritual',
+ "summary.alt.locale.id_ID" => 'Laksanakan ritual foo',
+
+ # change default locale to id_ID, so all summaries are in Indonesian
+ default_locale => 'id_ID',
+ summary => 'Laksanakan ritual foo',
+ "summary.alt.locale.en_US" => 'Perform the foo ritual',
 
 =head3 Property: tags => ARRAY OF STR
 
@@ -298,6 +323,8 @@ Example:
  EOT
  }
 
+Like in C<summary>, to specify translations in other language, use the
+L<description.alt.locale.CODE> property.
 
 =head3 Property: links => ARRAY OF HASHES
 
