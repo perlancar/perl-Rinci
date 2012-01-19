@@ -275,6 +275,12 @@ A longer description text. The text should be in marked up in format specified
 by C<text_markup> and is suggested to be formatted to 78 columns. It is like the
 C<description> Data::Sah clause.
 
+To avoid redundancy, you should mentioning things that are already expressed as
+properties, for example: return value of function (specify it in C<result>
+property instead), arguments that the function accepts (C<args>), examples
+(C<examples>), function's features (C<features>) and dependencies/requirements
+(C<deps>).
+
 Example:
 
  {
