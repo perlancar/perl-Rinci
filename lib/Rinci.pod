@@ -129,8 +129,8 @@ can easily share validation rules and generate validators in Perl and JavaScript
 (and other target languages).
 
 B<Manipulability>. Being a normal data structure, your Rinci metadata is easier
-to manipulate (clone, merge, modify, what have you) as well as access (from your
-language and others).
+to manipulate (clone, merge, modify, export, what have you) as well as access
+(from your language and others).
 
 B<Other things to consider>. If you stack multiple decorators in Python, for
 example, it usually results in wrapping your Python function multiple times,
