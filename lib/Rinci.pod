@@ -117,7 +117,7 @@ variables. And so on.
 The benefits that Rinci offer include richer metadata, language neutrality,
 extensibility, and manipulability.
 
-<Richer metadata>. Rinci strives to provide enough metadata for tools to do
+B<Richer metadata>. Rinci strives to provide enough metadata for tools to do
 various useful things. For example, description and summary supports
 translations. Argument specification is pretty rich, with a quite powerful and
 flexible schema language.
