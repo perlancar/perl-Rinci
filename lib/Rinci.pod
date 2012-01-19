@@ -55,9 +55,8 @@ L<Perinci::*> namespace) exist in Perl to do the following:
 
 Wrap functions with a single generated function that can do the following:
 validate input (using information from the C<args> property), validate return
-value (the C<result> property), add execution time-limiting (the C<timeout>
-property), add automatic retries (the C<retry>), interactive confirmation,
-logging, and more.
+value (the C<result> property), add execution time-limiting (C<timeout>), add
+automatic retries (C<retry>), interactive confirmation, logging, and more.
 
 =item * L<Perinci::Exporter>
 
