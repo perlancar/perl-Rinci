@@ -233,14 +233,29 @@ Examples:
 
 =head3 Property: summary => STR
 
-A one-line summary. It should be plain text without any markup. It is like the
-C<summary> clause in L<Data::Sah>.
+A one-line summary. It should be plain text without any markup. Please limit to
+around 72 characters. It is like the C<summary> clause in L<Data::Sah>.
 
 Example:
 
- name => 'foo',
+ # in variable metadata for $Answer
+ summary => 'The answer to the question: what is the meaning of life'
+
+ # in function metadata foo
  summary => 'Perform the foo ritual',
 
+For variable metadata, it should describe what the variable contain. You do not
+need to say "Contains ..." or "A variable that ..." since that's redundant; just
+say directly the content of the variable (noun). You also do not need to say
+what kinds of values the variable should contain, like "An integer, answer to
+the ..." or "..., should be between 1..100" since that should go to the
+C<schema> property.
+
+For function metadata, it should describe what the function does. Suggestion:
+use active, bare infinitive verb like in the example (not "Performs ..."). Avoid
+preamble like "This function ..." since that is redundant. Also avoid describing
+the arguments and its values like "..., accepts a single integer argument" as
+that should go to the C<args> property.
 
 =head3 Property: tags => ARRAY OF STR
 

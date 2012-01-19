@@ -197,7 +197,8 @@ L<Data::Sah> schema for argument value.
 
 =item * B<summary> => STR
 
-A one-line plaintext summary, much like the C<summary> property.
+A one-line plaintext summary, much like the C<summary> property in variable
+metadata.
 
 =item * B<req> => BOOL
 
@@ -467,7 +468,7 @@ A Sah schema to validate the result
 
 =item * B<summary>
 
-Like the C<summary> property.
+Like the C<summary> property in variable metadata.
 
 =item * B<description>
 
@@ -494,7 +495,7 @@ Examples:
 
  # result is an array of records
  result => {
-     summary => 'An array of records',
+     summary => 'Matching addressbook entries',
      schema => ['array*' => {
          summary => 'blah blah blah ...',
          of      => ['hash*' => {allowed_keys=>[qw/name age address/]} ]
@@ -570,12 +571,15 @@ Result data.
 
 =item * summary => STR
 
-A one-line summary of the example.
+A one-line summary of the example, much like C<summary> property. You should
+describe, in one phrase or sentence, what the example tries to demonstrate. You
+can skip the summary if the example is pretty basic or things are already clear
+from the C<args> alone.
 
 =item * description => STR.
 
-Longer marked up text about the example (e.g. discussion), suggested to be
-formatted to 72 columns.
+Longer marked up text about the example (e.g. discussion or things to note),
+suggested to be formatted to 72 columns.
 
 =back
 
@@ -586,6 +590,7 @@ Example:
      {
          args => {num=>10},
          result => 0,
+         # summary no needed here, already clear.
      },
      {
          argv => [-5],
