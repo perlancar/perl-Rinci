@@ -1,5 +1,13 @@
 Revision history for Rinci
 
+1.1.2    2012-01-19
+
+         + Add 'default_lang' property. Add guidelines on what to put in 'summary'
+           and 'description'.
+
+         + variable: Add 'schema' property.
+
+
 1.1.1    2012-01-18
 
          No spec changes. Update module names (Rinci::HTTP -> Riap, Rias ->
