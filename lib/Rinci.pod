@@ -245,10 +245,10 @@ Example:
  summary => 'Perform the foo ritual',
 
 For variable metadata, it should describe what the variable contain. You do not
-need to say "Contains ..." or "A variable that ..." since that's redundant; just
-say directly the content of the variable (noun). You also do not need to say
-what kinds of values the variable should contain, like "An integer, answer to
-the ..." or "..., should be between 1..100" since that should go to the
+need to say "Contains ..." or "A variable that ..." since that is redundant;
+just say directly the content of the variable (noun). You also do not need to
+say what kinds of values the variable should contain, like "An integer, answer
+to the ..." or "..., should be between 1..100" since that should go to the
 C<schema> property.
 
 For function metadata, it should describe what the function does. Suggestion:
