@@ -1,4 +1,4 @@
-package Rinci; # just to make PodWeaver happy
+ackage Rinci; # just to make PodWeaver happy
 
 1;
 # ABSTRACT: Language-neutral metadata for your code
@@ -24,13 +24,14 @@ to those languages.
 
 B<Rinci> is a set of specifications of metadata for your code entities. Each
 different type of code entity, like function/method, variable, namespace, etc,
-has its own specification. The metadata is a set of name/value pairs stored in a
-regular mapping variable (a.k.a. hash in Perl/Ruby, or dictionary in Python, or
-array in PHP, or object in JavaScript/JSON; but from here on the term I<hash>
-will be used). Each specification will describe what metadata B<property names>
-(a.k.a. hash keys) are known and what value should each property contain. So the
-L<Rinci::function> specification will describe metadata for functions/methods,
-L<Rinci::package> will describe metadata for namespace/package, and so on.
+has its own metadata specification. The metadata is a set of name/value pairs
+stored in a regular mapping variable (a.k.a. hash in Perl/Ruby, or dictionary in
+Python, or array in PHP, or object in JavaScript/JSON; but from here on the term
+I<hash> will be used). Each specification will describe what metadata B<property
+names> (a.k.a. hash keys) are known and what value should each property contain.
+So the L<Rinci::function> specification will describe metadata for
+functions/methods, L<Rinci::package> will describe metadata for
+namespace/package, and so on.
 
 Rinci defines properties pertaining to documentation (like C<summary>,
 C<description>, C<examples>, C<links>), function argument and return value
