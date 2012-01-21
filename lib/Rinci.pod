@@ -477,8 +477,9 @@ Series of Sub::Spec drafts.
 
 I started using some metadata for API functions, calling them spec and putting
 them in %spec instead of in POD, so I can list and grab all the summaries easily
-as a single dump for API catalog. Later on I kept adding more and more stuffs to
-this, from argument specification, requirements, and so on.
+as a single dump for API catalog (instead of having to parse POD from my source
+code files). Later on I kept adding more and more stuffs to this, from argument
+specification, requirements, and so on.
 
 
 =head1 SEE ALSO
