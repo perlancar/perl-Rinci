@@ -46,8 +46,8 @@ more deps, or more features.
 
 By adding Rinci metadata to your code, you can write/use tools to do various
 things to your program. Rinci is designed with code generation and function
-wrapping in mind. At the time of this writing, several tools (mostly modules in
-L<Perinci::*> namespace) exist in Perl to do the following:
+wrapping in mind. At the time of this writing, in Perl there exists several
+tools (mostly modules under L<Perinci> namespace) to do the following:
 
 =over 4
 
@@ -83,8 +83,9 @@ L<Perinci::BashComplete>).
 
 =item * L<Serabi>
 
-A L<PSGI> application (a set of PSGI middlewares, really) to serve metadata and
-function call requests over HTTP, according to the L<Riap::HTTP> protocol.
+A.k.a. L<Perinci::HTTP::Server>. A L<PSGI> application (a set of PSGI
+middlewares, really) to serve metadata and function call requests over HTTP,
+according to the L<Riap::HTTP> protocol.
 
 =item * L<Perinci::Use>
 
@@ -204,11 +205,12 @@ Popular custom properties might make it into core specification in later
 revision or version.
 
 B<Where to put the metadata>. The specification does not specify where to put
-metadata in, it is up to you or the tools you want to use. It can be separated
-in another file or put alongside the code. In the case of function metadata, for
-example, many of the Perinci::* Perl modules expect the function metadata to be
-put in the C<%SPEC> package variable, with the name of the function as the hash
-key. Consult the tool that you are using to find out for sure.
+metadata in: it might be put alongside the code, separated in another source
+code, encoded in YAML/JSON, put in database, or whatever. It is up to the
+tools/implementations to provide the mechanism. If you use L<Perinci> in Perl,
+there is a great deal of flexibility, you basically can do all of the above,
+even split the metadata in several files. See its documentation for more
+details.
 
 B<Common properties>. Below are properties common to all metadata:
 
@@ -438,10 +440,10 @@ These specifications are planned or considered, but not yet defined:
 
 =head1 FAQ
 
-=head2 What does Rinci, Perinci mean?
+=head2 What does Rinci mean?
 
-Rinci and Perinci is taken from Indonesian word B<perincian> or B<rincian>,
-meaning: specification, detail.
+Rinci is taken from Indonesian word B<perincian> or B<rincian>, meaning:
+specification, detail.
 
 =head2 Why use Sah for data schema?
 
