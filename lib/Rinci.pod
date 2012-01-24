@@ -161,26 +161,6 @@ can be given metadata. Currently supported entities are function/method,
 namespace/package, and variable. Other entities planned to be supported: class,
 object, library, application.
 
-B<Entity URIs>. Sometimes code entities need to be expressed as URIs, for
-example as links or when requesting over Rinci HTTP protocol. To refer to local
-entities, use the C<ent> scheme (which can be optional in places). Namespace
-parts is separated by C<.>, independent of what the implementation language uses
-(e.g. Perl and Ruby use C<::> but Python uses C<.>, all should use C<.>
-regardless).
-
- ent:Package.SubPkg.func
- Package.SubPkg.func        # ent: scheme is sometimes optional
- ent:Package.SubPkg         # namespaces are entities themselves
- ent:                       # the top level namespace
- ent:Package.SubPkg.$var    # notice the syntax
-
-To refer to remote entities served using Rinci HTTP protocol, you can just use
-the normal C<http> or C<https> scheme, where the URL scheme might differ
-according to each server's policy:
-
- http://example.org/api/v1/Package/SubPkg/func
- https://example.org/Package.SubPkg.$var
-
 
 =head2 Specification common to all metadata
 
@@ -341,6 +321,22 @@ LINKS sections in documentation. Each link is a hash with the following keys:
 =over 4
 
 =item * uri => STR (required)
+
+URI is used as a common syntax to refer to resources. To refer to code entities,
+you can use pm (for Perl-based entities), py (Python), php (PHP), rb (Ruby) and
+so on. Use the following general syntax to make it language-independent:
+
+ pm:/Package/SubPackage/$var
+ py:/Package/SubPackage/func
+
+That is, use the usual C</> (slash) to separate hierarchical packages, and
+sigils (a.k.a. variable prefix symbol, for languages that use them) at the final
+part of the namespace.
+
+If you refer from the same implementation, the URI scheme should be optional,
+e.g. from C<func1> in C<Foo::Bar> Perl module, you can refer to C<func2> in the
+same module with just C<func2>, to C<$baz> in C<Foo::Baz> module with
+C<../Baz/$var1> or C</Foo/Baz/$var>.
 
 =item * title => STR
 
