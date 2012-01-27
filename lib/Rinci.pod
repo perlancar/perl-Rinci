@@ -1,4 +1,4 @@
-ackage Rinci; # just to make PodWeaver happy
+package Rinci; # just to make PodWeaver happy
 
 1;
 # ABSTRACT: Language-neutral metadata for your code

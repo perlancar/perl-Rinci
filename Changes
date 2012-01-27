@@ -1,5 +1,13 @@
 Revision history for Rinci
 
+1.1.3    2012-01-27
+
+         + Change syntax of code entity URI, from 'Pkg.SubPkg.func' to
+           'pm:/Pkg/SubPkg/func' (or 'py:', 'php:', and so on).
+
+         + Some minor revisions like wording and paragraph reorganization.
+
+
 1.1.2    2012-01-19
 
          + Add 'default_lang' property. Add guidelines on what to put in 'summary'
