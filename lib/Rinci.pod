@@ -333,21 +333,8 @@ LINKS sections in documentation. Each link is a hash with the following keys:
 
 =item * uri => STR (required)
 
-URI is used as a common syntax to refer to resources. To refer to code entities,
-you can use pm (for Perl-based entities), py (Python), php (PHP), rb (Ruby) and
-so on. Use the following general syntax to make it language-independent:
-
- pm:/Package/SubPackage/$var
- py:/Package/SubPackage/func
-
-That is, use the usual C</> (slash) to separate hierarchical packages, and
-sigils (a.k.a. variable prefix symbol, for languages that use them) at the final
-part of the namespace.
-
-If you refer from the same implementation, the URI scheme should be optional,
-e.g. from C<func1> in C<Foo::Bar> Perl module, you can refer to C<func2> in the
-same module with just C<func2>, to C<$baz> in C<Foo::Baz> module with
-C<../Baz/$var1> or C</Foo/Baz/$var>.
+URI is used as a common syntax to refer to resources. If URI scheme is not
+specified, tools can assume that it is a C<riap> URI (see L<Riap>).
 
 =item * title => STR
 
@@ -374,9 +361,9 @@ Example:
          title => "Article describing foo using Bar algorithm",
      },
      {
-         url   => "Baz::foo",
-         title => "Another implementation of foo using the Bar algorithm",
-         tags  => ['related']
+         url   => "../Bar2/",
+         title => "Another implementation of the Bar algorithm",
+         tags  => ['see'],
      },
  ],
 
