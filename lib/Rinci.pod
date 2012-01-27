@@ -20,6 +20,12 @@ scripting languages like Perl, Python, Ruby, PHP, JavaScript, but is not limited
 to those languages.
 
 
+=head1 STATUS
+
+Specification has stabilized, I expect no backward incompatible changes for 1.1
+series. Feature additions like new properties will still go in.
+
+
 =head1 WHAT IS RINCI? (TERMINOLOGIES)
 
 B<Rinci> is a set of specifications of metadata for your code entities. Each
