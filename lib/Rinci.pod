@@ -37,9 +37,9 @@ will describe metadata for namespace/package, and so on.
 Rinci defines properties pertaining to documentation (like C<summary>,
 C<description>, C<examples>, C<links>), function argument and return value
 validation (C<args> and C<result>), dependencies (C<deps>), standardized feature
-description (C<features>), also a generic undo protocol for supporting undoable
-operations. The specification is extensible: you can define more properties, or
-more deps, or more features.
+description (C<features>), also a few conventions/protocols for doing stuffs
+like undo (others like callback/progress report will follow). The specification
+is extensible: you can define more properties, or more deps, or more features.
 
 
 =head1 WHAT ARE THE BENEFITS OF RINCI?
