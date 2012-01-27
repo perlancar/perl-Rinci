@@ -260,7 +260,8 @@ Or change the C<default_lang> property. Examples:
  summary => 'Perform the foo ritual',
  "summary.alt.lang.id_ID" => 'Laksanakan ritual foo',
 
- # change default language to id_ID, so all summaries are in Indonesian
+ # change default language to id_ID, so all summaries are in Indonesian, except
+ # when explicitly set otherwise
  default_lang => 'id_ID',
  summary => 'Laksanakan ritual foo',
  "summary.alt.lang.en_US" => 'Perform the foo ritual',
