@@ -135,7 +135,7 @@ to manipulate (clone, merge, modify, export, what have you) as well as access
 
 B<Other things to consider>. If you stack multiple decorators in Python, for
 example, it usually results in wrapping your Python function multiple times,
-which can add overhead. A single wrapper like Perinci::Sub::Wrapper, on the
+which can add overhead. A single wrapper like L<Perinci::Sub::Wrapper>, on the
 other hand, uses a single level of wrapping to minimize subroutine call
 overhead.
 
