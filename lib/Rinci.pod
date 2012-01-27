@@ -119,9 +119,9 @@ The benefits that Rinci offer include richer metadata, language neutrality,
 extensibility, and manipulability.
 
 B<Richer metadata>. Rinci strives to provide enough metadata for tools to do
-various useful things. For example, description and summary supports
-translations. Argument specification is pretty rich, with a quite powerful and
-flexible schema language.
+various useful things. For example, the C<description> and C<summary> properties
+support translations. Argument specification is pretty rich, with a quite
+powerful and flexible schema language.
 
 B<Language neutrality>. You can share metadata between languages, including
 documentation and rules for argument validation. Perl 6 allows very powerful
@@ -131,7 +131,11 @@ can easily share validation rules and generate validators in Perl and JavaScript
 
 B<Manipulability>. Being a normal data structure, your Rinci metadata is easier
 to manipulate (clone, merge, modify, export, what have you) as well as access
-(from your language and others).
+(from your language and others). Perl's POD documentation is not accessible from
+the language (but Perl 6's Pod and Python docstrings are, and there are
+certainly tools to parse POD). On the other hand, Python docstrings are attached
+in the same file with the function, while with Rinci you can choose to separate
+the metadata into another file more easily.
 
 B<Other things to consider>. If you stack multiple decorators in Python, for
 example, it usually results in wrapping your Python function multiple times,
