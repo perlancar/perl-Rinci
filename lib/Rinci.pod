@@ -22,8 +22,9 @@ to those languages.
 
 =head1 STATUS
 
-Specification has stabilized, I expect no backward incompatible changes for 1.1
-series. Feature additions like new properties will still go in.
+The 1.1 series does not guarantee full backward compatibility between revisions,
+so caveat implementor. However, major incompatibility will bump the version to
+1.2 or 2.0.
 
 
 =head1 WHAT IS RINCI? (TERMINOLOGIES)
