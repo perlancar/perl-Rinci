@@ -17,10 +17,10 @@ so.
 
 =head1 SPECIFICATION
 
-B<Result envelope>. Any function or method can be given metadata, but it is
-encouraged (and assumed) that you return an enveloped result from your
-function/method. Result envelope is modeled after HTTP or L<PSGI> response, it
-is an array in the following format:
+B<Result envelope>. Any function or method can be given metadata, but the
+implementation/tool must make sure that functions return an enveloped result
+from your function/method. Result envelope is modeled after HTTP or L<PSGI>
+response, it is an array in the following format:
 
  [STATUS, MESSAGE, RESULT, EXTRA]
 
@@ -40,15 +40,13 @@ It can also be easily converted to HTTP response message. And it can also
 contain extra data, useful for things like the undo protocol (explained later).
 
 If your function implementation does not return enveloped result, you can use
-wrapper tools to produce it for you.
+wrapper or generator tools to produce it for you.
 
 B<Special arguments>. Special arguments are some known arguments that start with
 dash (C<->) and serve special purposes. You need not specify them in the C<args>
 metadata property. Examples of special arguments include C<-undo_action>,
 C<-undo_data>, C<-dry_run>, and they will be explained in relevant sections
-below. NOTE: Currently passing special arguments is only possible when function
-accepts named arguments intead of positional (see C<arg_pass_style>), but a way
-to pass special arguments to those functions might be defined in the future.
+below.
 
 B<Functions vs methods>. Since in many programming languages (like Perl 5,
 Python, Ruby, PHP) static functions are not that differentiated from methods,
@@ -358,104 +356,6 @@ pressed:
 then B<bash> will try to complete with usernames starting with C<fo>.
 
 
-=head2 Property: arg_pass_style => STR
-
-Specify the argument passing style. This information is useful for a function
-wrapper to convert argument calling style, from named to positional and vice
-versa. Valid values include 'named', 'pos'.
-
-Default is 'named'. This means in Perl:
-
- sub func {
-     my %args = @_;
-     my $arg1 = $args{arg1};
-     my $arg1 = $args{arg2};
-     ...
- }
- func(arg1 => 1, arg2 => 2);
-
-In Python:
-
- def func(**args):
-     arg1 = args.get('arg1') // or args['arg1']
-     arg2 = args.get('arg2') // or args['arg2']
- func(arg1=1, arg2=2)
-
-In Ruby:
-
- def func(args)
-   arg1 = args[:arg1]
-   arg2 = args[:arg2]
-   ...
- end
- func(:arg1 => 1, :arg2 => 2)
-
-In PHP:
-
- function foo($args) {
-     $arg1 = $args['arg1'];
-     $arg2 = $args['arg2'];
- }
- foo(array("arg1"=>1, "arg2"=>2));
-
-In JavaScript:
-
- function func(args) {
-     let arg1 = args.arg1 // or args['arg1']
-     let arg2 = args.arg2 // or args['arg2']
-     ...
- }
- func({arg1: 1, arg2: 2})
-
-Passing style 'ref_named' is the same as 'named', except in Perl:
-
- sub func {
-     my $args = shift;
-     my $arg1 = $args->{arg1};
-     my $arg1 = $args->{arg2};
-     ...
- }
- func1({arg1=>1, arg2=>2});
-
-Passing style 'pos' is for positional. In Perl:
-
- sub func {
-     my ($arg1, $arg2) = @_;
-     ....
- }
- func(1, 2);
-
-In Python:
-
- def func(arg1, arg2):
-     ....
- func(1, 2)
-
-In Ruby:
-
- def func(arg1, arg2)
-   ...
- end
- func(1, 2)
-
-In PHP:
-
- function func($arg1, $arg2) {
-     ...
- }
- func(1, 2);
-
-In JavaScript:
-
- function func(arg1, arg2) {
-     ...
- }
- func(1, 2)
-
-NOTE: Passing style 'ref_named' (like func({arg1=>1, arg2=>2}) in Perl) and
-'ref_pos' (like func([1, 2]) in Perl) can be added in the future.
-
-
 =head2 Property: result => HASH
 
 Specify function return value. It is a hash containing keys:
@@ -476,7 +376,7 @@ Like the C<description> property. Suggested to be formatted to 78 columns.
 
 =back
 
-Note that since by default C<result_envelope> is true, instead of just
+Note that since functions normally return enveloped result, instead of
 returning:
 
  RESULT
@@ -500,44 +400,6 @@ Examples:
          summary => 'blah blah blah ...',
          of      => ['hash*' => {allowed_keys=>[qw/name age address/]} ]
      }]
- }
-
-
-=head2 Property: result_envelope => BOOL
-
-Declare that function generates envelopes for its result. By default it is true.
-Setting this property to false is useful for "legacy" functions which do not yet
-use envelopes, or perhaps for functions which never need to, because it never
-returns results or return only simple/primitive results. In this case, a
-function wrapper can generate result envelope for the such functions.
-
-A "normal" function which return enveloped result:
-
- $SPEC{is_palindrome} = {
-     v => 1.1,
-     summary => 'Check whether a string is a palindrome',
-     args    => {str => {schema=>'str*'}},
-     result  => {schema=>'bool*'},
- };
- sub is_palindrome {
-     my %args = @_;
-     my $str  = $args{str};
-     [200, "OK", $str eq reverse($str) ? 1:0];
- }
-
-A function which returns "naked" result:
-
- $SPEC{is_palindrome} = {
-     v => 1.1,
-     summary         => 'Check whether a string is a palindrome',
-     args            => {str => {schema=>'str*'}},
-     result          => {schema=>'bool*'},
-     result_envelope => 0,
- };
- sub is_palindrome {
-     my %args = @_;
-     my $str  = $args{str};
-     $str eq reverse($str);
  }
 
 
