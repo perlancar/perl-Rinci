@@ -90,7 +90,7 @@ L<Perinci::BashComplete>).
 
 =item * L<Serabi>
 
-A.k.a. L<Perinci::HTTP::Server>. A L<PSGI> application (a set of PSGI
+A.k.a. L<Perinci::Access::HTTP::Server>. A L<PSGI> application (a set of PSGI
 middlewares, really) to serve metadata and function call requests over HTTP,
 according to the L<Riap::HTTP> protocol.
 
