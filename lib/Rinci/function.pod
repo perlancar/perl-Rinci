@@ -17,10 +17,10 @@ so.
 
 =head1 SPECIFICATION
 
-B<Result envelope>. Any function or method can be given metadata, but the
-implementation/tool must make sure that functions return an enveloped result
-from your function/method. Result envelope is modeled after HTTP or L<PSGI>
-response, it is an array in the following format:
+B<Result envelope>. Function should return an enveloped result to express error
+code/message as well as actual result. The envelope can be produced by the
+function itself, or added by a wrapper tool. Result envelope is modeled after
+HTTP or L<PSGI> response, it is an array in the following format:
 
  [STATUS, MESSAGE, RESULT, EXTRA]
 
@@ -35,12 +35,10 @@ HTTP response headers. Some example of an enveloped results:
  [500, "Can't delete foo: permission denied", {errno=>51}]
  [200, "Account created", {id=>9323}, {undo_data=>["delete_account"]}]
 
-An enveloped result can contain error code/message as well as the actual result.
-It can also be easily converted to HTTP response message. And it can also
-contain extra data, useful for things like the undo protocol (explained later).
-
-If your function implementation does not return enveloped result, you can use
-wrapper or generator tools to produce it for you.
+As mentioned, an enveloped result can contain error code/message as well as the
+actual result. It can also be easily converted to HTTP response message. And it
+can also contain extra data, useful for things like the undo protocol (explained
+later).
 
 B<Special arguments>. Special arguments are some known arguments that start with
 dash (C<->) and serve special purposes. You need not specify them in the C<args>
