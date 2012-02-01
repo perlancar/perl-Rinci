@@ -85,7 +85,7 @@ L<Riap> command-line client. Call local/remote functions. Automatically convert
 command-line options/arguments to function arguments. Generate help/usage
 message (for C<--help>). Check dependencies (e.g. you can specify that in order
 to run your functions, you need some executables/other functions to exist, an
-environment variable being set, and so on). Even do bash shell completion (using
+environment variable being set, and so on), perform bash shell completion (using
 L<Perinci::BashComplete>).
 
 =item * L<Serabi>
