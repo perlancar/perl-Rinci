@@ -89,7 +89,7 @@ to run your functions, you need some executables/other functions to exist, an
 environment variable being set, and so on), perform bash shell completion (using
 L<Perinci::BashComplete>).
 
-=item * L<Perinci::Access::HTTP::Server>
+=item * L<Perinci::Access::HTTP::Server> (a.k.a. L<Periuk>)
 
 A L<PSGI> application (a set of PSGI middlewares, really) to serve metadata and
 function call requests over HTTP, according to the L<Riap::HTTP> protocol.
