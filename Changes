@@ -1,5 +1,12 @@
 Revision history for Rinci
 
+1.1.5    2012-02-10
+
+         No spec changes.
+
+         + Add Rinci::Schema.
+
+
 1.1.4    2012-02-01
 
          + Declare that 1.1 series might introduce minor backward compatibility
