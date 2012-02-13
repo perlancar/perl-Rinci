@@ -138,7 +138,7 @@ Users should try again at a later time.
 53x (bad metadata) is used when there is something wrong with the metadata.
 
 Try not to use code greater than 555, as some tools use (CODE-300) for error
-codes that must fit in one unsigned byte (like L<Rias::Sub::CmdLine>).
+codes that must fit in one unsigned byte (like L<Perinci::CmdLine>).
 
 =back
 
@@ -319,13 +319,12 @@ in addition to the normal:
  % multiply-many --nums '[2, 3, 4]'
 
 B<completion>. This argument specification key specifies how to complete
-argument value (e.g. in shell or L<Rinci::Protocol::HTTP>) and is supplied an
-anonymous function as value. The function will be called with arguments:
-word=>... (which is the formed word so far), args=>... (which is the C<args>
-property value). The function should return an array containing a list of
-possible candidates. For an example of implementation for this, see
-L<Sub::Spec::BashComplete> in Perl which provides tab completion for argument
-values. Example:
+argument value (e.g. in shell or L<Riap::HTTP>) and is supplied an anonymous
+function as value. The function will be called with arguments: word=>... (which
+is the formed word so far), args=>... (which is the C<args> property value). The
+function should return an array containing a list of possible candidates. For an
+example of implementation for this, see L<Perinci::BashComplete> in Perl which
+provides tab completion for argument values. Example:
 
  $SPEC{delete_user} = {
      v => 1.1,
