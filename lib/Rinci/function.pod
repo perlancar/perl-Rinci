@@ -130,7 +130,8 @@ more specific).
 501 (not implemented)
 
 503 (service unavailable). You can use this when service is temporarily
-unavailable. Users should try again at a later time.
+unavailable, e.g. when system load is too high, a required service is down, etc.
+Users should try again at a later time.
 
 507 (insufficient storage)
 
