@@ -135,6 +135,8 @@ Users should try again at a later time.
 
 507 (insufficient storage)
 
+521 (maximum retries reach)
+
 53x (bad metadata) is used when there is something wrong with the metadata.
 
 Try not to use code greater than 555, as some tools use (CODE-300) for error
