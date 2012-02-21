@@ -1,5 +1,10 @@
 Revision history for Rinci
 
+1.1.6    2012-02-21
+
+         + function: Add 'alias_for' argument specification.
+
+
 1.1.5    2012-02-10
 
          No spec changes.
