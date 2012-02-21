@@ -224,6 +224,11 @@ from zero.
 Only relevant if B<pos> is specified, specify whether argument should gobble up
 all remaining values in an ordered argument list into an array.
 
+=item * B<alias_for> => STR
+
+Specify that this argument is actually an alias for another argument. This is
+useful when doing argument name completion. Will be explained in the example.
+
 =item * B<completion> => CODE
 
 A code to supply argument value completion. Will be explained in the examples.
@@ -257,12 +262,18 @@ Example function metadata and its implementation in Perl:
              pos => 2,
              tags => ['category:options'],
          },
+         fp => { # for 'floating point'
+             summary => 'Alias for setting round to 0',
+             schema => [bool => {is=>1}],
+             alias_for => 'round',
+         },
      }
  };
  sub multiply2 {
      my %args = @_;
      my $res = $args{a} * $args{b};
-     $res = int($res) if $args{round};
+     my $round = defined($args{fp}) ? !$args{fp} : $args{round};
+     $res = int($res) if $round;
      [200, "OK", $res];
  }
 
@@ -282,7 +293,50 @@ well as positional arguments:
  % multiply2 2 --b 3
  % multiply2 2 3
 
-Another example (demonstrates the B<greedy> argument specification):
+As mentioned earlier, the 'alias_for' is useful in doing argument name
+completion. When none of the arguments are given, completion will list --a, --b,
+--round, --noround, --fp. When --fp is already given, the next completion will
+list only --a and --b as --fp is an alias for --round.
+
+Another example (demonstrates C<alias_for>):
+
+ $SPEC{smtpd} = {
+     v => 1.1,
+     summary => 'Control SMTP daemon',
+     args    => {
+         action => {
+             schema => ['str*' => {in=>[qw/status start stop restart/]}],
+             pos    => 0,
+             req    => 1,
+         },
+         status => {
+             summary   => 'Alias for setting action=status',
+             alias_for =>'action',
+         },
+         start => {
+             summary   => 'Alias for setting action=start',
+             alias_for =>'action',
+         },
+         stop => {
+             summary   => 'Alias for setting action=stop',
+             alias_for =>'action',
+         },
+         restart => {
+             summary   => 'Alias for setting action=restart',
+             alias_for =>'action',
+         },
+         force => {
+             schema => 'bool',
+         },
+     },
+ };
+
+If none of the arguments are given, completion will list --action, --status,
+--start, --stop, --restart, and --force. If either --action, --status, --start,
+--stop, or --restart is already given, the only completion left for the next
+argument will be --force.
+
+Another example (demonstrates B<greedy>):
 
  $SPEC{multiply_many} = {
      v => 1.1,
