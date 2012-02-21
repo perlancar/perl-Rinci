@@ -226,7 +226,7 @@ all remaining values in an ordered argument list into an array.
 
 =item * B<completion> => CODE
 
-A code to supply argument completion. Will be explained in the examples.
+A code to supply argument value completion. Will be explained in the examples.
 
 =back
 
