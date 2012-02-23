@@ -16,10 +16,14 @@ Examples are written in Perl, but are not limited to this language.
 
 =head2 Upgrading function metadata
 
-Terminology change: B<(sub) spec> is now called metadata: reason is there are
-now metadata for functions as well as other code entities like variables,
-packages, etc. B<clause> is now called B<property>: reason is to avoid confusion
-with L<Data::Sah>'s clause.
+In Perl, you can use L<Perinci::Sub::Wrapper> (which in turn is used by
+L<Perinci::Access>) to automatically convert Sub::Spec 1.0 metadata to 1.1, so
+you can skip this document if you want.
+
+Terminology change: B<(sub) spec> is now called metadata: the reason is because
+there are now metadata for functions as well as other code entities like
+variables, packages, etc. B<clause> is now called B<property>: the reason is to
+avoid confusion with L<Data::Sah>'s clause.
 
 The C<v> (spec version) property is required, add
 
@@ -75,8 +79,8 @@ the schema into the C<schema> hash key.
 =head2 Sub::Spec::HTTP
 
 For the most part, you only need to upgrade client and server library. Client
-library is now Perinci::CmdLine and Perinci::Client. Server library is now
-L<Serabi> (C<Perinci::HTTP::Server>).
+library is now L<Perinci::CmdLine> and L<Perinci::Access>. Server library is now
+L<Periuk> (C<Perinci::Access::HTTP::Server>).
 
 Specification is now L<Riap> and L<Riap::HTTP>. Terminology changes. B<SS
 request> now becomes B<Riap request>. Some key names changed (shortened).
