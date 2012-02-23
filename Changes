@@ -1,5 +1,10 @@
 Revision history for Rinci
 
+1.1.7    2012-02-23
+
+         + package: Add property 'pkg_version'.
+
+
 1.1.6    2012-02-21
 
          + function: Add 'alias_for' argument specification.
