@@ -80,7 +80,7 @@ the schema into the C<schema> hash key.
 
 For the most part, you only need to upgrade client and server library. Client
 library is now L<Perinci::CmdLine> and L<Perinci::Access>. Server library is now
-L<Periuk> (C<Perinci::Access::HTTP::Server>).
+C<Perinci::Access::HTTP::Server>.
 
 Specification is now L<Riap> and L<Riap::HTTP>. Terminology changes. B<SS
 request> now becomes B<Riap request>. Some key names changed (shortened).
