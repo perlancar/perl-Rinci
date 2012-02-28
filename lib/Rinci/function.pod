@@ -229,9 +229,9 @@ all remaining values in an ordered argument list into an array.
 Specify aliases for use in command-line options (or other possibly suitable
 situation). Keys are alias names, values are itself hashes (alias
 specification). Valid alias specification keys: C<summary> (a string, optional),
-C<set> (a code, optional, will be given reference to arguments hash and should
-set the argument value; if not set, the default behavior is simply to set the
-argument value).
+C<code> (a code to set argument value, optional, will be given reference to
+arguments hash; if not set, the default behavior is simply to set the argument
+value).
 
 =item * B<completion> => CODE
 
@@ -268,7 +268,7 @@ Example function metadata and its implementation in Perl:
              cmdline_aliases => {
                  r=>{},
                  R=>{summary=>'Equivalent to --round=0',
-                     set=>sub {$_[0]{round}=0}},
+                     code=>sub {$_[0]{round}=0}},
              },
          },
      }
@@ -318,19 +318,19 @@ Another example (demonstrates C<cmdline_aliases>):
              cmdline_aliases => {
                  status => {
                      summary   => 'Alias for setting action=status',
-                     set       => sub { $_[0]{action} = 'status' },
+                     code      => sub { $_[0]{action} = 'status' },
                  },
                  start => {
                      summary   => 'Alias for setting action=start',
-                     set       => sub { $_[0]{action} = 'start' },
+                     code      => sub { $_[0]{action} = 'start' },
                  },
                  stop => {
                      summary   => 'Alias for setting action=stop',
-                     set       => sub { $_[0]{action} = 'stop' },
+                     code      => sub { $_[0]{action} = 'stop' },
                  },
                  restart => {
                      summary   => 'Alias for setting action=restart',
-                     set       => sub { $_[0]{action} = 'restart' },
+                     code      => sub { $_[0]{action} = 'restart' },
                  },
              },
          },
