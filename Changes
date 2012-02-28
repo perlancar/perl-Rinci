@@ -1,5 +1,10 @@
 Revision history for Rinci
 
+1.1.10   2012-02-28
+
+         + function: 'arg_aliases': Add alias spec 'schema'
+
+
 1.1.9    2012-02-28
 
          [INCOMPATIBLE CHANGE]
