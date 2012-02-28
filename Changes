@@ -1,5 +1,13 @@
 Revision history for Rinci
 
+1.1.9    2012-02-28
+
+         [INCOMPATIBLE CHANGE]
+
+         + function: Change (back) 'set' alias spec to 'code', in 'args_aliases'
+         (for backward compatibility with 1.0)
+
+
 1.1.8    2012-02-28
 
          [INCOMPATIBLE CHANGES]
