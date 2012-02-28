@@ -224,10 +224,14 @@ from zero.
 Only relevant if B<pos> is specified, specify whether argument should gobble up
 all remaining values in an ordered argument list into an array.
 
-=item * B<alias_for> => STR
+=item * B<cmdline_aliases> => HASH
 
-Specify that this argument is actually an alias for another argument. This is
-useful when doing argument name completion. Will be explained in the example.
+Specify aliases for use in command-line options (or other possibly suitable
+situation). Keys are alias names, values are itself hashes (alias
+specification). Valid alias specification keys: C<summary> (a string, optional),
+C<set> (a code, optional, will be given reference to arguments hash and should
+set the argument value; if not set, the default behavior is simply to set the
+argument value).
 
 =item * B<completion> => CODE
 
@@ -261,18 +265,17 @@ Example function metadata and its implementation in Perl:
              schema => [bool => {default=>0}],
              pos => 2,
              tags => ['category:options'],
-         },
-         fp => { # for 'floating point'
-             summary => 'Alias for setting round to 0',
-             schema => [bool => {is=>1}],
-             alias_for => 'round',
+             cmdline_aliases => {
+                 r=>{},
+                 R=>{summary=>'Equivalent to --round=0',
+                     set=>sub {$_[0]{round}=0}},
+             },
          },
      }
  };
  sub multiply2 {
      my %args = @_;
      my $res = $args{a} * $args{b};
-     my $round = defined($args{fp}) ? !$args{fp} : $args{round};
      $res = int($res) if $round;
      [200, "OK", $res];
  }
@@ -293,12 +296,16 @@ well as positional arguments:
  % multiply2 2 --b 3
  % multiply2 2 3
 
-As mentioned earlier, the 'alias_for' is useful in doing argument name
-completion. When none of the arguments are given, completion will list --a, --b,
---round, --noround, --fp. When --fp is already given, the next completion will
-list only --a and --b as --fp is an alias for --round.
+As mentioned earlier, C<cmdline_alises> is parsed by command-line option parser:
 
-Another example (demonstrates C<alias_for>):
+ % multiply2 2 3.5 -r ; # equivalent to multiply2 2 3 --round
+ % multiply2 2 3.5 -R ; # equivalent to multiply2 2 3 --noround (--round=0)
+
+Aliases in C<cmdline_aliases> are not recognized as real arguments:
+
+ multiply2(a=>4, b=>3, r=>0);  # unknown argument r
+
+Another example (demonstrates C<cmdline_aliases>):
 
  $SPEC{smtpd} = {
      v => 1.1,
@@ -308,33 +315,30 @@ Another example (demonstrates C<alias_for>):
              schema => ['str*' => {in=>[qw/status start stop restart/]}],
              pos    => 0,
              req    => 1,
-         },
-         status => {
-             summary   => 'Alias for setting action=status',
-             alias_for =>'action',
-         },
-         start => {
-             summary   => 'Alias for setting action=start',
-             alias_for =>'action',
-         },
-         stop => {
-             summary   => 'Alias for setting action=stop',
-             alias_for =>'action',
-         },
-         restart => {
-             summary   => 'Alias for setting action=restart',
-             alias_for =>'action',
+             cmdline_aliases => {
+                 status => {
+                     summary   => 'Alias for setting action=status',
+                     set       => sub { $_[0]{action} = 'status' },
+                 },
+                 start => {
+                     summary   => 'Alias for setting action=start',
+                     set       => sub { $_[0]{action} = 'start' },
+                 },
+                 stop => {
+                     summary   => 'Alias for setting action=stop',
+                     set       => sub { $_[0]{action} = 'stop' },
+                 },
+                 restart => {
+                     summary   => 'Alias for setting action=restart',
+                     set       => sub { $_[0]{action} = 'restart' },
+                 },
+             },
          },
          force => {
              schema => 'bool',
          },
      },
  };
-
-If none of the arguments are given, completion will list --action, --status,
---start, --stop, --restart, and --force. If either --action, --status, --start,
---stop, or --restart is already given, the only completion left for the next
-argument will be --force.
 
 Another example (demonstrates B<greedy>):
 
