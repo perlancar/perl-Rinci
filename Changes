@@ -1,5 +1,23 @@
 Revision history for Rinci
 
+1.1.8    2012-02-28
+
+         [INCOMPATIBLE CHANGES]
+
+         + function: Replace (back) 'alias_for' argument spec with
+         'cmdline_aliases'. I first used 'alias_for' so I can list each alias as
+         a key in 'args' property. The goal is so I can get all argument names
+         (+ aliases) simply by doing a keys() on 'args' hash. And the goal of
+         that is to add a 'complete_arg_name' Riap action which is more
+         lightweight than a full 'meta' just to get argument names. Turns out
+         that I don't need 'alias_for' just to support 'complete_arg_name', and
+         also turns out that completing argument name needs more than just all
+         argument names + aliases. You also need 'pos' information. So a full
+         'meta' is currently used. The reason I now revert to 'cmdline_aliases'
+         style is because I don't want command-line aliases to become
+         full/first-class argument.
+
+
 1.1.7    2012-02-23
 
          + package: Add property 'pkg_version'.
