@@ -2,15 +2,15 @@ Revision history for Rinci
 
 1.1.10   2012-02-28
 
-         + function: 'arg_aliases': Add alias spec 'schema'
+         + function: arg spec 'aliases': Add alias spec 'schema'
 
 
 1.1.9    2012-02-28
 
          [INCOMPATIBLE CHANGE]
 
-         + function: Change (back) 'set' alias spec to 'code', in 'args_aliases'
-         (for backward compatibility with 1.0)
+         + function: Change (back) 'set' alias spec to 'code', in arg spec
+         'aliases' (for backward compatibility with 1.0)
 
 
 1.1.8    2012-02-28
