@@ -92,6 +92,7 @@ our $function = ['Rinci::metadata' => {
                 undo => 'bool',
                 dry_run => 'bool',
                 pure => 'bool',
+                immutable => 'bool',
             },
         }],
 

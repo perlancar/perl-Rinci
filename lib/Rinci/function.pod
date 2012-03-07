@@ -717,6 +717,29 @@ others:
 
 =back
 
+=item * immutable => BOOL
+
+Default is false. If set to true, specifies that function always returns the
+same result when given the same argument values. This enables optimization like
+memoization. An example of an immutable function is C<sub { $_[0]+$_[1] }> where
+its results only depend on the arguments. Example of an mutable function would
+be C<rand()>.
+
+is "pure" and has no
+"side effects" (these are terms from functional programming / computer science).
+Having a side effect means changing something, somewhere (e.g. setting the value
+of a global variable, modifies its arguments, writing some data to disk,
+changing system date/time, etc.) Specifying a function as pure means, among
+others:
+
+=over 4
+
+=item * the function needs not be involved in undo operation;
+
+=item * you can safely include it during dry run;
+
+=back
+
 =back
 
 
