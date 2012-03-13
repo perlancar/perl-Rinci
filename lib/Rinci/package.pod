@@ -22,20 +22,6 @@ just means namespace. Perl also happens to use package to implement class, but
 metadata for classes will be specified in another specification
 (L<Rinci::class>).
 
-=head2 Property: pkg_version => STR
-
-Specify package version number. Not to be confused with C<v> which is the
-metadata specification version (1.1).
-
-Example:
-
- pkg_version => 0.24
-
-In Perl, modules usually put version numbers in package variable called
-C<$VERSION>. Tools like L<Perinci::Access::InProcess> automatically assigns this
-property from that variable, to relieve authors from manually setting this
-property value, if not already set.
-
 
 =head1 FAQ
 
