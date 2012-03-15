@@ -1,5 +1,7 @@
 package Rinci; # just to make PodWeaver happy
 
+# VERSION
+
 1;
 # ABSTRACT: Language-neutral metadata for your code
 

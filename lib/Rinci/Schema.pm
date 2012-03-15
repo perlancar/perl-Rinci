@@ -4,6 +4,8 @@ use 5.010;
 use strict;
 use warnings;
 
+# VERSION
+
 # only validates metadata v1.1
 
 # Rinci::metadata
