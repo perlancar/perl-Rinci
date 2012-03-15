@@ -427,6 +427,8 @@ Currently these specifications are defined:
 
 =item * L<Rinci::variable> - Metadata for variables
 
+=item * L<Rinci::result> - Function/method result metadata
+
 
 =back
 

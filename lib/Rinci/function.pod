@@ -22,13 +22,16 @@ code/message as well as actual result. The envelope can be produced by the
 function itself, or added by a wrapper tool. Result envelope is modeled after
 HTTP or L<PSGI> response, it is an array in the following format:
 
- [STATUS, MESSAGE, RESULT, EXTRA]
+ [STATUS, MESSAGE, RESULT, META]
 
 STATUS is a 3-digit integer, much like HTTP response status code and is
 explained further in L</"Envelope status codes">. MESSAGE is a string containing
-error message. RESULT is the actual result and can be omitted if the function
-does not return anything. EXTRA is a hash containing extra data, analogous to
-HTTP response headers. Some example of an enveloped results:
+error message. RESULT (or PAYLOAD) is the actual content to be returned and can
+be omitted or set to undef if the function does not need to return anything.
+META is called result metadata, a hash containing extra data, analogous to HTTP
+response headers. Result metadata is specified further in L<Rinci::result>.
+
+Some example of an enveloped results:
 
  [200, "OK", 42]
  [404, "Not found"]
@@ -600,7 +603,7 @@ to C<do> and optionally pass C<-undo_hint> for hints on how to save undo data.
 You should consult each function's documentation as undo hint depends on each
 function (e.g. if C<undo_data> is to be saved on a file, C<-undo_hint> can
 contain filename or base directory). Function must save undo data, perform
-action, and return result along with saved undo data in the extra part of the
+action, and return result along with saved undo data in the metadata part of the
 envelope (the fourth element), example:
 
  return [200, "OK", $result, {undo_data=>$undo_data}];

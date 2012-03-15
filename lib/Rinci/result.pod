@@ -1,0 +1,40 @@
+package Rinci::result; # just to make PodWeaver happy
+
+1;
+# ABSTRACT: Function/method result metadata
+
+=head1 SPECIFICATION VERSION
+
+ 1.1
+
+
+=head1 INTRODUCTION
+
+This document describes metadata for function/method result. This specification
+is part of L<Rinci>. Please do a read up on it first, if you have not already
+done so.
+
+
+=head1 SPECIFICATION
+
+There are currently several properties being used:
+
+
+=head2 Property: undo_data => ANY
+
+Explained in C<undo> feature section in L<Rinci::function>.
+
+
+=head2 Properties: cmdline.*
+
+Interpreted by L<Perinci::CmdLine>. See its documentation for more detail.
+
+
+=head1 FAQ
+
+
+=head1 SEE ALSO
+
+B<Rinci>
+
+=cut
