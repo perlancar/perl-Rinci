@@ -301,16 +301,28 @@ Or change the C<default_lang> property. Examples:
  summary => 'Laksanakan ritual foo',
  "summary.alt.lang.en_US" => 'Perform the foo ritual',
 
-=head3 Property: tags => ARRAY OF STR
+
+=head3 Property: tags => ARRAY OF (STR OR HASH)
 
 A list of tags, useful for categorization. Can also be used by tools, e.g.
 L<Perinci::Exporter> in Perl uses the C<tags> property of the function metadata
 as export tags.
 
+Tag can be a simple string or a tag metadata hash.
+
 Example:
 
  # tag a function as beta
  tags => ['beta']
+
+ # the second tag is a detailed metadata
+ tags => ['beta',
+          {
+              name    => 'category:filtering',
+              summary => 'Filtering',
+              "summary.alt.lang.id_ID" => 'Penyaringan',
+          }
+         ]
 
 
 =head3 Property: description => STR
@@ -370,7 +382,7 @@ A short plaintext title for the link.
 A longer marked up text description for the link. Suggested to be formatted to
 76 columns.
 
-=item * tags => ARRAY OF STR
+=item * tags => ARRAY OF (STR OR HASH)
 
 Can be used to categorize or select links. For generating SEE ALSO sections, use
 the tag 'see'.

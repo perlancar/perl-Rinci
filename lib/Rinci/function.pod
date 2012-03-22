@@ -214,10 +214,10 @@ Default is false.
 A longer description of marked up text, much like the C<description> property.
 It is suggested to format the text to 74 columns.
 
-=item * B<tags> => ARRAY OF STR
+=item * B<tags> => ARRAY OF (STR|HASH)
 
-An array of strings, can be used by tools to categorize arguments. Not unlike
-the C<tags> property.
+An array of tags, can be used by tools to categorize arguments. Not unlike the
+C<tags> property.
 
 =item * B<pos> => INT
 
