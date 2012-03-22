@@ -1,5 +1,13 @@
 Revision history for Rinci
 
+1.1.13   2012-03-23
+
+         [ENHANCEMENTS]
+
+         + Each tag in 'tags' property can also be a tag metadata hash (for
+         translatable message, etc).
+
+
 1.1.12   2012-03-13
 
          [ENHANCEMENTS]
