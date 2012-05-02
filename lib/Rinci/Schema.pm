@@ -52,7 +52,7 @@ our $base = ['hash' => {
 }];
 
 our $function = ['Rinci::metadata' => {
-    '[merge:+]keys' => {
+    '[merge+]keys' => {
         is_func => ['bool' => {
             default => 1,
         }],
@@ -115,12 +115,12 @@ our $function = ['Rinci::metadata' => {
 }];
 
 our $package = ['Rinci::metadata' => {
-    '[merge:+]keys' => {
+    '[merge+]keys' => {
     },
 }];
 
 our $variable = ['Rinci::metadata' => {
-    '[merge:+]keys' => {
+    '[merge+]keys' => {
     },
 }];
 
