@@ -1,5 +1,14 @@
 Revision history for Rinci
 
+1.1.14   2012-05-02
+
+         [INCOMPATIBLE CHANGE]
+
+         + Change 'exec' dependency clause to 'prog' (avoid possible confusion
+           because 'exec' can imply that we need to execute the program; there
+           can be other future dep clause for that).
+
+
 1.1.13   2012-03-23
 
          [ENHANCEMENTS]
