@@ -790,14 +790,14 @@ Perl sense (not an empty string or "0"; " " and "0.0" are both true). Example:
 
  env => 'HTTPS'
 
-=item * exec => STR
+=item * prog => STR
 
-Require that an executable exists. If STR doesn't contain path separator
-character '/' it will be searched in PATH. Windows filesystem should also use
-Unix-style path, e.g. "C:/Program Files/Foo/Bar.exe".
+Require that a program exists. If STR doesn't contain path separator character
+'/' it will be searched in PATH. Windows filesystem should also use Unix-style
+path, e.g. "C:/Program Files/Foo/Bar.exe".
 
- exec => 'rsync'   # any rsync found on PATH
- exec => '/bin/su' # won't accept any other su
+ prog => 'rsync'   # any rsync found on PATH
+ prog => '/bin/su' # won't accept any other su
 
 =item * code => CODE
 
@@ -817,9 +817,9 @@ logical-AND fashion. All dependency hashes must be satisfied. For example, to
 declare a dependency to several programs and an environment variable:
 
  all => [
-     {exec => 'rsync'},
-     {exec => 'tar'},
-     {env => 'FORCE'},
+     {prog => 'rsync'},
+     {prog => 'tar'},
+     {env  => 'FORCE'},
  ],
 
 =item * any => [DEPHASH, ...]
