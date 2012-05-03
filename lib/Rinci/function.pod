@@ -149,7 +149,10 @@ Users should try again at a later time.
 
 521 (maximum retries reach)
 
-53x (bad metadata) is used when there is something wrong with the metadata.
+531 (bad metadata) is used when there is something wrong with the metadata.
+
+532 (failure in recording transaction) when there is a failure in updating
+transaction status or in committing/rolling back the transaction.
 
 Try not to use code greater than 555, as some tools use (CODE-300) for error
 codes that must fit in one unsigned byte (like L<Perinci::CmdLine>).
