@@ -42,6 +42,6 @@ Example:
 
 =head1 SEE ALSO
 
-B<Rinci>
+L<Rinci>
 
 =cut

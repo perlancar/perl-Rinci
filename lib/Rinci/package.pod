@@ -30,6 +30,6 @@ metadata for classes will be specified in another specification
 
 =head1 SEE ALSO
 
-B<Rinci>
+L<Rinci>
 
 =cut

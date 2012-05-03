@@ -1058,8 +1058,8 @@ mechanism, e.g. an eval() block and alarm() in Perl).
 
 =head1 SEE ALSO
 
-B<Data::Sah>
+L<Data::Sah>
 
-B<Rinci>
+L<Rinci>
 
 =cut

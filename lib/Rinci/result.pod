@@ -37,6 +37,6 @@ Interpreted by L<Perinci::CmdLine>. See its documentation for more detail.
 
 =head1 SEE ALSO
 
-B<Rinci>
+L<Rinci>
 
 =cut
