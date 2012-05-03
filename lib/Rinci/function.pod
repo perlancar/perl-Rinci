@@ -127,6 +127,8 @@ authorization, use 401 and 403 respectively.
 
 430 (transaction is not supported for this request).
 
+431 (transaction is aborted).
+
 =item * 5xx code
 
 500 is the general code to use when a failure occurs during the execution of a
