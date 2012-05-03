@@ -986,7 +986,7 @@ Example:
 
 As you can see, each argument has a C<summary> and C<description>, but the
 schema for each argument also has a C<summary> and C<description> schema
-clauses. What are the difference and which should be put into which?
+clauses. What is the difference and which should be put into which?
 
 The argument specification's C<summary> (and C<description>) describe the
 argument itself, in this example it says that C<src> means "The source path" and
@@ -1011,7 +1011,7 @@ share schema.
      },
  }
 
-=head2 What are the difference between setting req=>1 in the argument specification and req=>1 in schema?
+=head2 What is the difference between setting req=>1 in the argument specification and req=>1 in schema?
 
 Example:
 
