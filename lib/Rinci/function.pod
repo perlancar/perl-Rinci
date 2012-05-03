@@ -125,9 +125,12 @@ receiving an already existing username.
 resources, like disk space or bandwidth. For lacking authentication and
 authorization, use 401 and 403 respectively.
 
-430 (transaction is not supported for this request).
+431 (transaction is not supported for this request).
 
-431 (transaction is aborted).
+432 (transaction is aborted, requests for this transaction ignored until rolled
+back).
+
+434 (no such transaction).
 
 =item * 5xx code
 
