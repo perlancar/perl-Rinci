@@ -716,6 +716,18 @@ Example in Ruby:
 
  "code" => Proc.new { Process.euid > 0 }  # i am not being run as root
 
+=item * dep: undo_storage => STORAGE_SPEC
+
+Specify that function requires some external undo storage. STORAGE_SPEC is a
+hash. Currently the only known keys are: C<tmp_dir> with the value of 1,
+C<trash_dir> with the value of 1 (trash_dir is basically the same as tmp_dir,
+but provides clue to the undo/transaction manager that the directory is used for
+trash, so it can arrange directory to be in the same partition, etc.)
+
+Example:
+
+ undo_storage => {trash_dir=>1}
+
 =item * dep: all => [DEPHASH, ...]
 
 A "meta" type that allows several dependencies to be joined together in a
@@ -772,11 +784,16 @@ the future.
 
 =head2 The undo protocol
 
-This undo protocol is centered around functions as commands. The responsibility
-of doing undo rests on each function.
+This section describes an undo protocol, which is basically the non-OO version
+of the command pattern. The benefits of this protocol include: applicability to
+normal functions (no need to declare classes); ease of implementation of
+undo/transaction manager and remote operation (due to explicit transfer of undo
+data as normal data structure).
 
-Not all functions needs to support undo. Those that do must advertise this fact
-by setting its C<undo> C<feature> to true.
+This undo protocol is centered around functions. The responsibility of
+implementing the undo functionality rests on each function. Not all functions
+needs to support undo. Those that do must advertise this fact by setting its
+C<undo> C<feature> to true.
 
 B<Performing do>. To indicate that we need undo, we call function by passing
 special argument C<-undo_action> with the value of C<do>. Function should
@@ -803,52 +820,6 @@ B<Performing redo>. To perform redo, caller can call the function again with
 <-undo_action> set to C<undo> and C<-undo_data> set to the redo data given in
 the undo step. Or, alternatively, caller can just perform a normal do (see
 above).
-
-The benefits of this undo system include:
-
-=over 4
-
-=item * Genericity
-
-Any kind of undo operation can be performed, as long as the function supports
-it. We can regard function as the black box.
-
-Undo data can be stored and collected anywhere, in memory or elsewhere, by the
-caller.
-
-=item * Simplicity
-
-Only caller and function are involved. No undo manager is necessary, unless when
-it is.
-
-Standard mechanism (function calling and function arguments) is used, no global
-variables or classes involved.
-
-=item * Optional undo
-
-When we do not want/need undo, we just skip passing C<-undo_action> to function.
-
-=back
-
-The drawbacks of this undo system include:
-
-=over 4
-
-=item * Undo data is not transparent/understood outside function
-
-Each function can choose to encode undo data in whatever way it wants.
-
-If a function is upgraded or changed or goes away, undo data can become useless.
-
-A solution for this is to enact a standard/convention for undo data structure so
-it is more common and stable. An example of this effort is L<Setup>.
-
-=item * Quality/reliability depends on each function
-
-To keep things under control, more complex function/command should be built on
-simpler, well-tested functions/commands.
-
-=back
 
 An example:
 
@@ -915,6 +886,55 @@ or you can just do:
 
  $res = setenv(name=>"DEBUG", value=>1, -undo_action="do");
 
+See also: L<Setup>, an attempt for convention of undo data and writing undoable
+function.
+
+=head3 Saving undo data in external storage
+
+Although the complete undo data can be returned by the function in the
+C<undo_data> result metadata key, sometimes it is more efficient to just return
+a pointer to said undo data, while saving the actual undo data in some external
+storage.
+
+For example, if a function deletes a big file and wants to save undo data, it is
+more efficient to move the file to trash directory and return its path as the
+undo data, instead of reading the whole file content and its metadata to memory
+and return it in C<undo_data> result metadata.
+
+It is sometimes desirable to let an external manager (an undo/transaction
+manager) manage this external storage, for the following functionalities:
+storage limits (e.g. maximum number of allowed undo steps, maximum size of
+trash), permissions, etc.
+
+Functions which require an external storage should specify this in its metadata,
+through the C<undo_storage> dependency clause. For example:
+
+ deps => {
+     ...
+     undo_storage => {trash_dir=>1},
+ }
+
+When calling function, undo/transaction manager should provide appropriate
+references to required undo storage in the special argument C<-undo_storage>.
+Example:
+
+ -undo_storage => {
+     trash_dir=>"/home/.trash/2fe2f4ad-a494-0044-b2e0-94b2b338056e",
+ }
+
+TBD: After using an external storage, to assist undo/transaction manager,
+function should also indicate this fact via the C<undo_storage> (or
+C<undo_storage_usage>?). For example: undo_storage_usage=>{trash_dir=>1}.
+
+=head2 Undo protocol and undo/transaction manager
+
+Application undo and transaction functionality can be built upon the undo
+protocol. Transaction and rollback can be implemented by grouping function calls
+and storing undo data of each call. There should be an undo/transaction manager
+with the responsibility of maintaining the list of transactions and each
+transaction's list of function calls and undo data.
+
+See also: L<Riap::Transaction> which specifies undo/transaction over Riap.
 
 =head1 FAQ
 
