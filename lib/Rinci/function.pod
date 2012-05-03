@@ -567,7 +567,7 @@ extension.
 
 =over 4
 
-=item * reverse => BOOL
+=item * feature: reverse => BOOL
 
 Default is false. If set to true, specifies that function supports reverse
 operation. To reverse, caller can add special argument C<-reverse>. For example:
@@ -588,93 +588,14 @@ operation. To reverse, caller can add special argument C<-reverse>. For example:
 
 NOTE: Abilitity to express conditional reversibility is considered.
 
-=item * undo => BOOL
+=item * feature: undo => BOOL
 
 Default is false. If set to true, specifies that function supports undo
 operation. Undo is similar to C<reverse> but needs some state to be saved and
 restored for do/undo operation, while reverse can work solely from the
-arguments.
+arguments. Please see L<The undo protocol> for details on undo.
 
-B<The undo protocol>. Below is the description of the undo protocol works.
-
-Caller must provide one or more special arguments: C<-undo_action>,
-C<-undo_hint>, C<-undo_data> when dealing with do/undo stuffs.
-
-To perform normal (i.e., not an undo) operation, caller must set C<-undo_action>
-to C<do> and optionally pass C<-undo_hint> for hints on how to save undo data.
-You should consult each function's documentation as undo hint depends on each
-function (e.g. if C<undo_data> is to be saved on a file, C<-undo_hint> can
-contain filename or base directory). Function must save undo data, perform
-action, and return result along with saved undo data in the metadata part of the
-envelope (the fourth element), example:
-
- return [200, "OK", $result, {undo_data=>$undo_data}];
-
-Undo data should contain information (or reference to information) to restore to
-previous state later. This information should be persistent (e.g. in a
-file/database) when necessary. For example, if undo data is saved in a file,
-B<undo_data> can contain the filename. If undo data is saved in a memory
-structure, C,undo_data> can refer to this memory structure, and so on. Undo data
-should be serializable. Caller should store this undo data in the undo stack
-(note: undo stack management is the caller's responsibility).
-
-If C<-undo_action> is false/undef, sub must assume caller wants to perform
-action but without saving undo data.
-
-To perform an undo, caller must set C<-undo_action> to C<undo> and pass back the
-undo data in C<-undo_data>. Function must restore previous state using undo data
-(or return 412 if undo data is invalid/unusable). After a successful undo,
-function must return 200. Function should also return B<undo_data>, to undo the
-undo (effectively, redo):
-
- return [200, "OK", undef, {undo_data=>...}];
-
-Example (in this example, undo data is only stored in memory):
-
- use Cwd qw(abs_path);
- use File::Slurp;
-
- $SPEC{lc_file} = {
-     v => 1.1,
-     summary  => 'Convert the *content* of file into all-lowercase',
-     args     => {path=>{schema=>'str*'}},
-     features => {undo=>1},
- };
- sub lc_file {
-     my %args        = @_;
-     my $path        = $args{path};
-     my $undo_action = $args{-undo_action} // '';
-     my $undo_data   = $args{-undo_data};
-
-     $path = abs_path($path)
-         or return [500, "Can't get file absolute path"];
-
-     if ($undo_action eq 'undo') {
-         write_file $path, $undo_data->{content}; # restore original content
-         utime undef, $undo_data->{mtime}, $path; # as well as original mtime
-         return [200, "OK"];
-     } else {
-         my @st = stat($path)
-             or return [500, "Can't stat file"];
-         my $content = read_file($path);
-         my $undo_data = {mtime=>$st[9], content=>$content};
-         write_file $path, lc($content);
-         return [200, "OK", undef, {undo_data=>$undo_data}];
-     }
- }
-
-To perform action, caller calls C<lc_file()> and store the undo data:
-
- my $res = lc_file(path=>"/foo/bar", -undo_action=>"do");
- die "Failed: $res->[0] - $res->[1]" unless $res->[0] == 200;
- my $undo_data = $res->[3]{undo_data};
-
-To perform undo:
-
- $res = lc_file(path=>"/foo/bar", -undo_action=>"undo", -undo_data=>$undo_data);
- die "Can't undo: $res->[0] - $res->[1]" unless $res->[0] == 200;
-
-=item * dry_run => BOOL
+=item * feature: dry_run => BOOL
 
 Default is false. If set to true, specifies that function supports dry-run
 (simulation) mode. Example:
@@ -705,7 +626,7 @@ The above Perl function delete files, but if passed argument C<-dry_run> => 1
 (simulation mode), will not actually delete files, only display what files match
 the criteria and would have be deleted.
 
-=item * pure => BOOL
+=item * feature: pure => BOOL
 
 Default is false. If set to true, specifies that function is "pure" and has no
 "side effects" (these are terms from functional programming / computer science).
@@ -722,28 +643,13 @@ others:
 
 =back
 
-=item * immutable => BOOL
+=item * feature: immutable => BOOL
 
 Default is false. If set to true, specifies that function always returns the
 same result when given the same argument values. This enables optimization like
 memoization. An example of an immutable function is C<sub { $_[0]+$_[1] }> where
 its results only depend on the arguments. Example of an mutable function would
 be C<rand()>.
-
-is "pure" and has no
-"side effects" (these are terms from functional programming / computer science).
-Having a side effect means changing something, somewhere (e.g. setting the value
-of a global variable, modifies its arguments, writing some data to disk,
-changing system date/time, etc.) Specifying a function as pure means, among
-others:
-
-=over 4
-
-=item * the function needs not be involved in undo operation;
-
-=item * you can safely include it during dry run;
-
-=back
 
 =back
 
@@ -783,14 +689,14 @@ defined by an extension.
 
 =over 4
 
-=item * env => STR
+=item * dep: env => STR
 
 Require that an environment variable exists and is true, where true is in the
 Perl sense (not an empty string or "0"; " " and "0.0" are both true). Example:
 
  env => 'HTTPS'
 
-=item * prog => STR
+=item * dep: prog => STR
 
 Require that a program exists. If STR doesn't contain path separator character
 '/' it will be searched in PATH. Windows filesystem should also use Unix-style
@@ -799,7 +705,7 @@ path, e.g. "C:/Program Files/Foo/Bar.exe".
  prog => 'rsync'   # any rsync found on PATH
  prog => '/bin/su' # won't accept any other su
 
-=item * code => CODE
+=item * dep: code => CODE
 
 Require that anonymous function returns a true value after called, where the
 notion of true depends on the host language. Example in Perl:
@@ -810,7 +716,7 @@ Example in Ruby:
 
  "code" => Proc.new { Process.euid > 0 }  # i am not being run as root
 
-=item * all => [DEPHASH, ...]
+=item * dep: all => [DEPHASH, ...]
 
 A "meta" type that allows several dependencies to be joined together in a
 logical-AND fashion. All dependency hashes must be satisfied. For example, to
@@ -822,7 +728,7 @@ declare a dependency to several programs and an environment variable:
      {env  => 'FORCE'},
  ],
 
-=item * any => [DEPHASH, ...]
+=item * dep: any => [DEPHASH, ...]
 
 Like C<all>, but specify a logical-OR relationship. Any one of the dependencies
 will suffice. For example, to specify requirement to alternative Perl modules:
@@ -832,7 +738,7 @@ will suffice. For example, to specify requirement to alternative Perl modules:
      {perl_module => 'HTTP::Daemon::SSL'},
  ],
 
-=item * none => [DEPHASH, ...]
+=item * dep: none => [DEPHASH, ...]
 
 Specify that none of the dependencies must be satisfied for this type to be
 satisfied. Example, to specify that the function not run under SUDO or by root:
@@ -862,6 +768,152 @@ C<js_url> (loading a remote JavaScript script URL), C<file> (existence of a),
 C<perl_run_func> (running a Perl subroutine and getting a successful enveloped
 result). Some of these might be declared as part of the core dependency types in
 the future.
+
+
+=head2 The undo protocol
+
+This undo protocol is centered around functions as commands. The responsibility
+of doing undo rests on each function.
+
+Not all functions needs to support undo. Those that do must advertise this fact
+by setting its C<undo> C<feature> to true.
+
+B<Performing do>. To indicate that we need undo, we call function by passing
+special argument C<-undo_action> with the value of C<do>. Function should
+perform its operation and save undo data along the way. If C<-undo_action> is
+not passed or false/undef, function should assume that caller do not need undo
+later, so function need not save any undo data. After completing operation
+successfully, function should return status 200, the result, and undo data. Undo
+data is returned in the result metadata (the fourth element of result envelope),
+example:
+
+ [200, "OK", $result, {undo_data=>$undo_data}]
+
+Undo data should be serializable so it is easy to be made persistent if
+necessary (e.g. by some undo/transaction manager).
+
+B<Performing undo>. To perform an undo, caller must call the function again with
+the same previous arguments, except C<-undo_action> should be set to C<undo> and
+C<-undo_data> set to undo data previously given by the function. Function should
+perform the undo operation using the undo data. Upon success, it must return
+status 200, the result, and an undo data (i.e., redo data, since it can be used
+to undo the undo operation).
+
+B<Performing redo>. To perform redo, caller can call the function again with
+<-undo_action> set to C<undo> and C<-undo_data> set to the redo data given in
+the undo step. Or, alternatively, caller can just perform a normal do (see
+above).
+
+The benefits of this undo system include:
+
+=over 4
+
+=item * Genericity
+
+Any kind of undo operation can be performed, as long as the function supports
+it. We can regard function as the black box.
+
+Undo data can be stored and collected anywhere, in memory or elsewhere, by the
+caller.
+
+=item * Simplicity
+
+Only caller and function are involved. No undo manager is necessary, unless when
+it is.
+
+Standard mechanism (function calling and function arguments) is used, no global
+variables or classes involved.
+
+=item * Optional undo
+
+When we do not want/need undo, we just skip passing C<-undo_action> to function.
+
+=back
+
+The drawbacks of this undo system include:
+
+=over 4
+
+=item * Undo data is not transparent/understood outside function
+
+Each function can choose to encode undo data in whatever way it wants.
+
+If a function is upgraded or changed or goes away, undo data can become useless.
+
+A solution for this is to enact a standard/convention for undo data structure so
+it is more common and stable. An example of this effort is L<Setup>.
+
+=item * Quality/reliability depends on each function
+
+To keep things under control, more complex function/command should be built on
+simpler, well-tested functions/commands.
+
+=back
+
+An example:
+
+ $SPEC{setenv} = {
+     v => 1.1,
+     summary  => 'Set environment variable',
+     args     => {
+         name  => {req=>1, schema=>'str*'},
+         value => {req=>1, schema=>'str*'},
+     },
+     features => {undo=>1},
+ };
+ sub setenv {
+     my %args        = @_;
+     my $name        = $args{name};
+     my $value       = $args{value};
+     my $undo_action = $args{-undo_action} // '';
+     my $undo_data   = $args{-undo_data};
+
+     my $old;
+     if ($undo_action) {
+         # save original value and existence state
+         $old = [exists($ENV{$name}), $ENV{$name}];
+     }
+
+     if ($undo_action eq 'undo') {
+         if ($undo_data->[0]) {
+             $ENV{$name} = $undo_data->[1];
+         } else {
+             delete $ENV{$name};
+         }
+     } else {
+         $ENV{$name} = $value;
+     }
+
+     [200, "OK", undef, $undo_action ? {undo_data=>$old} : {}];
+ }
+
+The above example declares an undoable command C<setenv> to set an environment
+variable (C<%ENV>).
+
+To perform command:
+
+ my $res = setenv(name=>"DEBUG", value=>1, -undo_action=>"do");
+ die "Failed: $res->[0] - $res->[1]" unless $res->[0] == 200;
+ my $undo_data = $res->[3]{undo_data};
+
+To perform undo:
+
+ $res = setenv(name=>"DEBUG", value=>1,
+               -undo_action="undo", -undo_data=>$undo_data);
+ die "Can't undo: $res->[0] - $res->[1]" unless $res->[0] == 200;
+
+After this undo, DEBUG environment variable will be set to original value. If it
+did not exist previously, it will be deleted.
+
+To perform redo:
+
+ my $redo_data = $res->[3]{undo_data};
+ $res = setenv(name=>"DEBUG", value=>1,
+               -undo_action="undo", -undo_data=>$redo_data);
+
+or you can just do:
+
+ $res = setenv(name=>"DEBUG", value=>1, -undo_action="do");
 
 
 =head1 FAQ
