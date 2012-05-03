@@ -1,5 +1,12 @@
 Revision history for Rinci
 
+1.1.16   2012-05-03
+
+         Refine undo protocol documentation. Specify interaction with
+         undo/transaction manager. '-undo_hint' is now replaced by
+         '-undo_storage'. Declare 'undo_storage' dependency clause.
+
+
 1.1.15   2012-05-02
 
          No functional changes.
