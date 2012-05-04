@@ -125,18 +125,13 @@ receiving an already existing username.
 resources, like disk space or bandwidth. For lacking authentication and
 authorization, use 401 and 403 respectively.
 
-431 (transaction is not supported for this request).
+431 (cannot use transaction for this request).
 
-432 (transaction is aborted, requests for this transaction are ignored until
-transaction is rolled back).
-
-433 (transaction is already committed, can no longer record more data for this
-transaction).
+432 (transaction status incorrect). For example when trying to undo a
+transaction that is still in progress, or when trying to issue transaction
+requests on an aborted transaction.
 
 434 (no such transaction).
-
-435 (transaction is not committed, only committed transaction can be
-undone/redone).
 
 =item * 5xx code
 
