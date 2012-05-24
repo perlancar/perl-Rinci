@@ -903,9 +903,9 @@ function.
 =head3 Saving undo data in external storage
 
 Although the complete undo data can be returned by the function in the
-C<undo_data> result metadata key, sometimes it is more efficient to just return
-a pointer to said undo data, while saving the actual undo data in some external
-storage.
+C<undo_data> result metadata property, sometimes it is more efficient to just
+return a pointer to said undo data, while saving the actual undo data in some
+external storage.
 
 For example, if a function deletes a big file and wants to save undo data, it is
 more efficient to move the file to trash directory and return its path as the
