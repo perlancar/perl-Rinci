@@ -1,0 +1,194 @@
+package Rinci::function::Undo; # just to make PodWeaver happy
+
+# VERSION
+
+1;
+# ABSTRACT: Protocol for undo operations in functions
+
+=head1 SPECIFICATION VERSION
+
+ 1.1
+
+
+=head1 SPECIFICATION
+
+This document describes the Rinci undo protocol. This protocol must be followed
+by functions that claim that they support undo (have their C<undo> C<feature>
+set to true).
+
+The protocol is basically the non-OO version of the command pattern, a design
+pattern most commonly used to implement undo/redo functionality. In this case,
+each function behaves like a command object. You pass a special argument
+C<-undo_action> with the value of C<do> and C<undo> to execute or undo a
+command, respectively. For C<do> and C<undo>, the same set of arguments are
+passed. The function later returns an undo data containing a list of undo steps
+(or, in the case of transactional function, record the undo steps in the
+transaction manager's undo journal).
+
+=head2 Do and undo without transaction
+
+B<Performing do>. To indicate that we need undo, we call function by passing
+special argument C<-undo_action> with the value of C<do>. Function should
+perform its operation and save undo data along the way. If C<-undo_action> is
+not passed or false/undef, function should assume that caller does not need undo
+later, so function need not save any undo data. After completing operation
+successfully, function should return status 200, the result, and undo data. Undo
+data is returned in the result metadata (the fourth element of result envelope),
+example:
+
+ [200, "OK", $result, {undo_data=>$undo_data}]
+
+Undo data should be serializable so it is easy to be made persistent if
+necessary (e.g. by some undo/transaction manager).
+
+B<Performing undo>. To perform an undo, caller must call the function again with
+the same previous arguments, except C<-undo_action> should be set to C<undo> and
+C<-undo_data> set to undo data previously given by the function. Function should
+perform the undo operation using the undo data. Upon success, it must return
+status 200, the result, and an undo data (i.e., redo data, since it can be used
+to undo the undo operation).
+
+B<Performing redo>. To perform redo, caller can call the function again with
+<-undo_action> set to C<undo> and C<-undo_data> set to the redo data given in
+the undo step. Or, alternatively, caller can just perform a normal do (see
+above).
+
+An example:
+
+ $SPEC{setenv} = {
+     v => 1.1,
+     summary  => 'Set environment variable',
+     args     => {
+         name  => {req=>1, schema=>'str*'},
+         value => {req=>1, schema=>'str*'},
+     },
+     features => {undo=>1},
+ };
+ sub setenv {
+     my %args        = @_;
+     my $name        = $args{name};
+     my $value       = $args{value};
+     my $undo_action = $args{-undo_action} // '';
+     my $undo_data   = $args{-undo_data};
+
+     my $old;
+     if ($undo_action) {
+         # save original value and existence state
+         $old = [exists($ENV{$name}), $ENV{$name}];
+     }
+
+     if ($undo_action eq 'undo') {
+         if ($undo_data->[0]) {
+             $ENV{$name} = $undo_data->[1];
+         } else {
+             delete $ENV{$name};
+         }
+     } else {
+         $ENV{$name} = $value;
+     }
+
+     [200, "OK", undef, $undo_action ? {undo_data=>$old} : {}];
+ }
+
+The above example declares an undoable command C<setenv> to set an environment
+variable (C<%ENV>).
+
+To perform command:
+
+ my $res = setenv(name=>"DEBUG", value=>1, -undo_action=>"do");
+ die "Failed: $res->[0] - $res->[1]" unless $res->[0] == 200;
+ my $undo_data = $res->[3]{undo_data};
+
+To perform undo:
+
+ $res = setenv(name=>"DEBUG", value=>1,
+               -undo_action="undo", -undo_data=>$undo_data);
+ die "Can't undo: $res->[0] - $res->[1]" unless $res->[0] == 200;
+
+After this undo, DEBUG environment variable will be set to original value. If it
+did not exist previously, it will be deleted.
+
+To perform redo:
+
+ my $redo_data = $res->[3]{undo_data};
+ $res = setenv(name=>"DEBUG", value=>1,
+               -undo_action="undo", -undo_data=>$redo_data);
+
+or you can just do:
+
+ $res = setenv(name=>"DEBUG", value=>1, -undo_action="do");
+
+=head2 Do and undo with transaction
+
+If a function is declared to be transactional (C<tx> C<feature> set to true, and
+C<idempotent> C<feature> currently also needs to be set to true), the protocol
+is different.
+
+B<Performing do>. Aside from L<-undo_action> set to C<do>, the function is
+passed C<-tx> special argument (the transaction context object, described in
+L<Rinci::Transaction>). The whole operation and its undo as well must be
+comprised of a series of unit steps. Before performing each step, its undo step
+must be recorded in the undo journal, which will record the information to a
+stable storage:
+
+ for my $step (@steps) {
+     my $undo_step = undo_of($step);
+     $tx->add_undo_step($undo_step);
+     my $res = perform_step($step);
+     if (!$res) { # fail
+         $tx->rollback;
+         return [500, "Rollbacked"];
+     }
+ }
+
+If the system crashes after a certain step, the next time transaction manager is
+started again it will perform a rollback recovery of the transaction using the
+recorded undo steps.
+
+On success the function must return 200 but need not return C<undo_data> in the
+result metadata, since undo data is already recorded by the transaction manager.
+
+B<Performing undo>. To perform undo, caller sets C<-undo_action> to C<undo> and
+also passes C<-tx>. Function gets the list of steps from the transaction context
+object:
+
+ my @steps = $tx->get_undo_steps;
+
+It should then perform each step, preceded by recording each step's undo step.
+On success it should return 200.
+
+=head2 Saving undo data in external storage
+
+Although the complete undo data can be returned by the function in the
+C<undo_data> result metadata property, sometimes it is more efficient to just
+return a pointer to said undo data, while saving the actual undo data in some
+external storage.
+
+For example, if a function deletes a big file and wants to save undo data, it is
+more efficient to move the file to trash directory and return its path as the
+undo data, instead of reading the whole file content and its metadata to memory
+and return it in C<undo_data> result metadata.
+
+Functions which require an external storage should specify this in its metadata,
+through the C<undo_storage> dependency clause. For example:
+
+ deps => {
+     ...
+     undo_storage => {trash_dir=>1},
+ }
+
+When calling function, caller needs to provide appropriate references to
+required undo storage in the special argument C<-undo_storage> (or through
+C<-tx>). Example:
+
+ -undo_storage => {
+     trash_dir=>"/home/.trash/2fe2f4ad-a494-0044-b2e0-94b2b338056e",
+ }
+
+
+=head1 SEE ALSO
+
+L<Setup>.
+
+L<Riap::Transaction>.
+

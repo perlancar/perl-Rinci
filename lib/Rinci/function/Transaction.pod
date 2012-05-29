@@ -1,0 +1,30 @@
+package Rinci::function::Transaction; # just to make PodWeaver happy
+
+# VERSION
+
+1;
+# ABSTRACT: Transactional functions
+
+=head1 SPECIFICATION VERSION
+
+ 1.1
+
+
+=head1 SPECIFICATION
+
+This document describes how transactional functions should work.
+
+Draft.
+
+=head2 Transaction manager role
+
+=head2 Transaction context role
+
+
+=head1 SEE ALSO
+
+L<Riap::Transaction>
+
+L<Rinci::function::Undo>
+
+L<Rinci>

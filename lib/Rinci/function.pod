@@ -43,7 +43,7 @@ Some example of an enveloped results:
 As mentioned, an enveloped result can contain error code/message as well as the
 actual result. It can also be easily converted to HTTP response message. And it
 can also contain extra data, useful for things like the undo protocol (explained
-later).
+in L<Rinci::function::Undo>).
 
 B<Special arguments>. Special arguments are some known arguments that start with
 dash (C<->) and serve special purposes. You need not specify them in the C<args>
@@ -125,13 +125,10 @@ receiving an already existing username.
 resources, like disk space or bandwidth. For lacking authentication and
 authorization, use 401 and 403 respectively.
 
-431 (cannot use transaction for this request).
+480 (transaction error, e.g. transaction status is aborted so further requests
+for this transaction is ignored until transaction is aborted.)
 
-432 (transaction status incorrect). For example when trying to undo a
-transaction that is still in progress, or when trying to issue transaction
-requests on an aborted transaction.
-
-434 (no such transaction).
+484 (no such transaction).
 
 =item * 5xx code
 
@@ -153,7 +150,7 @@ Users should try again at a later time.
 531 (bad metadata) is used when there is something wrong with the metadata.
 
 532 (failure in recording transaction) when there is a failure in updating
-transaction status or in committing/rolling back the transaction.
+transaction status or in preparing/committing/rolling back the transaction.
 
 Try not to use code greater than 555, as some tools use (CODE-300) for error
 codes that must fit in one unsigned byte (like L<Perinci::CmdLine>).
@@ -602,9 +599,23 @@ NOTE: Abilitity to express conditional reversibility is considered.
 =item * feature: undo => BOOL
 
 Default is false. If set to true, specifies that function supports undo
-operation. Undo is similar to C<reverse> but needs some state to be saved and
-restored for do/undo operation, while reverse can work solely from the
-arguments. Please see L<The undo protocol> for details on undo.
+operation using the undo protocol specified in L<Rinci::function::Undo>. Undo is
+similar to C<reverse> but needs some state to be saved and restored for do/undo
+operation, while reverse can work solely from the arguments.
+
+L<Riap::Transaction> requires functions participating in a transaction be
+declared with this feature.
+
+=item * feature: tx => BOOL | HASH
+
+Default is false. If set to true, specifies that function supports transactional
+operation. Currently there is little further specification; transactional
+feature is used alongside with undo protocol, described in
+L<Rinci::function::Undo>.
+
+L<Riap::Transaction> requires functions participating in a transaction be
+declared with this feature, because the specification is for allowing
+transactional operations as well as undo/redo of committed transactions.
 
 =item * feature: dry_run => BOOL
 
@@ -637,6 +648,17 @@ The above Perl function delete files, but if passed argument C<-dry_run> => 1
 (simulation mode), will not actually delete files, only display what files match
 the criteria and would have be deleted.
 
+Specifying a function as supporting dry_run means, among others:
+
+=over 4
+
+=item * If dry_run is requested, function will have no side effects
+
+It will behave like a pure function, and thus have the properties of a pure
+function.
+
+=back
+
 =item * feature: pure => BOOL
 
 Default is false. If set to true, specifies that function is "pure" and has no
@@ -659,8 +681,37 @@ others:
 Default is false. If set to true, specifies that function always returns the
 same result when given the same argument values. This enables optimization like
 memoization. An example of an immutable function is C<sub { $_[0]+$_[1] }> where
-its results only depend on the arguments. Example of an mutable function would
-be C<rand()>.
+its results only depend on the arguments. Example of a mutable function would be
+C<rand()> or C<read()> that reads contents from a file.
+
+=item feature: idempotent => BOOL
+
+Default is false. If set to true, specifies that function is idempotent.
+Idempotency means that repeated invocation of a function (each with the same
+arguments) will have the same effect as a single invocation. In other words,
+extra invocation will not have any effect.
+
+L<Riap::Transaction> requires functions (to be more exact, their undo steps)
+participating in a transaction be idempotent, because in some cases they might
+be called more than once, e.g. if transaction manager crashes in the middle of
+rollback or rollback recovery and the process needs to be repeated.
+
+Some operations, like reading a database row or a file's content, is inherently
+idempotent (or to be exact nullipotent). Another example is setting or updating
+an entity to some specific value, or deleting some entity. Repeated invocation
+of the operation will still sets the entity to the same value, or still deletes
+the entity.
+
+Some other operations are inherently non-idempotent, for example sending an
+email. Repeated invocation will cause multiple emails to be sent, and once sent
+to an external server, it's usually hard to undo.
+
+Yet some other operations are non-idempotent, but can be made idempotent simply
+by checking whether the target object(s) has (have) reached the final desired
+state, (optionally additionally also checking whether they are in the correct
+original state to begin with). For example, a function that renames a file can
+record the original file that was renamed (its MD5 checksum, size, or what not)
+and refuse to rename again if the file to be renamed is not the original file.
 
 =back
 
@@ -793,160 +844,6 @@ result). Some of these might be declared as part of the core dependency types in
 the future.
 
 
-=head2 The undo protocol
-
-This section describes an undo protocol, which is basically the non-OO version
-of the command pattern. The benefits of this protocol include: applicability to
-normal functions (no need to declare classes); ease of implementation of
-undo/transaction manager and remote operation (due to explicit transfer of undo
-data as normal data structure).
-
-This undo protocol is centered around functions. The responsibility of
-implementing the undo functionality rests on each function. Not all functions
-needs to support undo. Those that do must advertise this fact by setting its
-C<undo> C<feature> to true.
-
-B<Performing do>. To indicate that we need undo, we call function by passing
-special argument C<-undo_action> with the value of C<do>. Function should
-perform its operation and save undo data along the way. If C<-undo_action> is
-not passed or false/undef, function should assume that caller do not need undo
-later, so function need not save any undo data. After completing operation
-successfully, function should return status 200, the result, and undo data. Undo
-data is returned in the result metadata (the fourth element of result envelope),
-example:
-
- [200, "OK", $result, {undo_data=>$undo_data}]
-
-Undo data should be serializable so it is easy to be made persistent if
-necessary (e.g. by some undo/transaction manager).
-
-B<Performing undo>. To perform an undo, caller must call the function again with
-the same previous arguments, except C<-undo_action> should be set to C<undo> and
-C<-undo_data> set to undo data previously given by the function. Function should
-perform the undo operation using the undo data. Upon success, it must return
-status 200, the result, and an undo data (i.e., redo data, since it can be used
-to undo the undo operation).
-
-B<Performing redo>. To perform redo, caller can call the function again with
-<-undo_action> set to C<undo> and C<-undo_data> set to the redo data given in
-the undo step. Or, alternatively, caller can just perform a normal do (see
-above).
-
-An example:
-
- $SPEC{setenv} = {
-     v => 1.1,
-     summary  => 'Set environment variable',
-     args     => {
-         name  => {req=>1, schema=>'str*'},
-         value => {req=>1, schema=>'str*'},
-     },
-     features => {undo=>1},
- };
- sub setenv {
-     my %args        = @_;
-     my $name        = $args{name};
-     my $value       = $args{value};
-     my $undo_action = $args{-undo_action} // '';
-     my $undo_data   = $args{-undo_data};
-
-     my $old;
-     if ($undo_action) {
-         # save original value and existence state
-         $old = [exists($ENV{$name}), $ENV{$name}];
-     }
-
-     if ($undo_action eq 'undo') {
-         if ($undo_data->[0]) {
-             $ENV{$name} = $undo_data->[1];
-         } else {
-             delete $ENV{$name};
-         }
-     } else {
-         $ENV{$name} = $value;
-     }
-
-     [200, "OK", undef, $undo_action ? {undo_data=>$old} : {}];
- }
-
-The above example declares an undoable command C<setenv> to set an environment
-variable (C<%ENV>).
-
-To perform command:
-
- my $res = setenv(name=>"DEBUG", value=>1, -undo_action=>"do");
- die "Failed: $res->[0] - $res->[1]" unless $res->[0] == 200;
- my $undo_data = $res->[3]{undo_data};
-
-To perform undo:
-
- $res = setenv(name=>"DEBUG", value=>1,
-               -undo_action="undo", -undo_data=>$undo_data);
- die "Can't undo: $res->[0] - $res->[1]" unless $res->[0] == 200;
-
-After this undo, DEBUG environment variable will be set to original value. If it
-did not exist previously, it will be deleted.
-
-To perform redo:
-
- my $redo_data = $res->[3]{undo_data};
- $res = setenv(name=>"DEBUG", value=>1,
-               -undo_action="undo", -undo_data=>$redo_data);
-
-or you can just do:
-
- $res = setenv(name=>"DEBUG", value=>1, -undo_action="do");
-
-See also: L<Setup>, an attempt for convention of undo data and writing undoable
-function.
-
-=head3 Saving undo data in external storage
-
-Although the complete undo data can be returned by the function in the
-C<undo_data> result metadata property, sometimes it is more efficient to just
-return a pointer to said undo data, while saving the actual undo data in some
-external storage.
-
-For example, if a function deletes a big file and wants to save undo data, it is
-more efficient to move the file to trash directory and return its path as the
-undo data, instead of reading the whole file content and its metadata to memory
-and return it in C<undo_data> result metadata.
-
-It is sometimes desirable to let an external manager (an undo/transaction
-manager) manage this external storage, for the following functionalities:
-storage limits (e.g. maximum number of allowed undo steps, maximum size of
-trash), permissions, etc.
-
-Functions which require an external storage should specify this in its metadata,
-through the C<undo_storage> dependency clause. For example:
-
- deps => {
-     ...
-     undo_storage => {trash_dir=>1},
- }
-
-When calling function, undo/transaction manager should provide appropriate
-references to required undo storage in the special argument C<-undo_storage>.
-Example:
-
- -undo_storage => {
-     trash_dir=>"/home/.trash/2fe2f4ad-a494-0044-b2e0-94b2b338056e",
- }
-
-TBD: After using an external storage, to assist undo/transaction manager,
-function should also indicate this fact via the C<undo_storage> (or
-C<undo_storage_usage>?). For example: undo_storage_usage=>{trash_dir=>1}.
-
-=head2 Undo protocol and undo/transaction manager
-
-Application undo and transaction functionality can be built upon the undo
-protocol. Transaction and rollback can be implemented by grouping function calls
-and storing undo data of each call. There should be an undo/transaction manager
-with the responsibility of maintaining the list of transactions and each
-transaction's list of function calls and undo data.
-
-See also: L<Riap::Transaction> which specifies undo/transaction over Riap.
-
 =head1 FAQ
 
 =head2 What is the difference between C<summary> or C<description> in the Sah schema and arg specification?
@@ -1056,5 +953,9 @@ mechanism, e.g. an eval() block and alarm() in Perl).
 L<Data::Sah>
 
 L<Rinci>
+
+L<Rinci::function::Transaction>
+
+L<Rinci::function::Undo>
 
 =cut
