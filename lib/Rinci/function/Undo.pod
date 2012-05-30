@@ -125,7 +125,7 @@ C<idempotent> C<feature> currently also needs to be set to true), the protocol
 is different.
 
 B<Performing do>. Aside from L<-undo_action> set to C<do>, the function is
-passed C<-tx> special argument (the transaction context object, described in
+passed C<-tx> special argument (the transaction manager object, described in
 L<Rinci::Transaction>). The whole operation and its undo as well must be
 comprised of a series of unit steps. Before performing each step, its undo step
 must be recorded in the undo journal, which will record the information to a
@@ -149,7 +149,7 @@ On success the function must return 200 but need not return C<undo_data> in the
 result metadata, since undo data is already recorded by the transaction manager.
 
 B<Performing undo>. To perform undo, caller sets C<-undo_action> to C<undo> and
-also passes C<-tx>. Function gets the list of steps from the transaction context
+also passes C<-tx>. Function gets the list of steps from the transaction manager
 object:
 
  my @steps = $tx->get_undo_steps;

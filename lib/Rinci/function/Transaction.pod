@@ -12,19 +12,25 @@ package Rinci::function::Transaction; # just to make PodWeaver happy
 
 =head1 SPECIFICATION
 
-This document describes how transactional functions should work.
+This document describes how transactional functions should work. A transactional
+function is function which can be involved in a Riap transaction (see
+L<Riap::Transaction> for more details).
 
-Draft.
+The majority of transactional capability is provided by a transaction manager
+(TM). Everytime function wants to perform something (a step) it should record
+the undo step first in the transaction manager. This way, undo/rollback/rollback
+recovery can be performed when needed.
 
-=head2 Transaction manager role
-
-=head2 Transaction context role
+Function should also always use resource managers (RM) provided by the TM, like
+database, transactional filesystem, etc. But it is currently the responsibility
+of the function to modify resources while keeping transaction ACID properties.
 
 
 =head1 SEE ALSO
 
 L<Riap::Transaction>
 
+L<Rinci>
+
 L<Rinci::function::Undo>
 
-L<Rinci>
