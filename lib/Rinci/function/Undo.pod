@@ -131,11 +131,16 @@ comprised of a series of unit steps. Before performing each step, its undo step
 must be recorded in the undo journal, which will record the information to a
 stable storage:
 
+ my $res;
  for my $step (@steps) {
      my $undo_step = undo_of($step);
-     $tx->add_undo_step($undo_step);
+     $res = $tx->record_step(step=>$step, undo_step=>$undo_step);
+     if ($res->[0] != 200) {
+         $tx->rollback;
+         return [500, "Can't record transaction: $res->[0] - $res->[1]"];
+     }
      my $res = perform_step($step);
-     if (!$res) { # fail
+     if ($res->[0] != 200) {
          $tx->rollback;
          return [500, "Rollbacked"];
      }
@@ -152,10 +157,27 @@ B<Performing undo>. To perform undo, caller sets C<-undo_action> to C<undo> and
 also passes C<-tx>. Function gets the list of steps from the transaction manager
 object:
 
- my @steps = $tx->get_undo_steps;
+ my $res = $tx->get_undo_steps;
+ return $res unless $res->[0] == 200;
+ my @steps = @{$res->[2]};
 
 It should then perform each step, preceded by recording each step's undo step.
 On success it should return 200.
+
+B<Performing redo>. To perform redo, caller sets C<-undo_action> to C<redo> and
+also passes C<-tx>. Function gets the list of steps from the transaction
+manager:
+
+ my $res = $tx->get_redo_steps;
+ return $res unless $res->[0] == 200;
+ my @steps = $res->[2];
+
+=head2 Steps
+
+Action step and undo step should be an a hash with the following known keys:
+_seq (used internally by TM, don't touch), _f (fully qualified name of function,
+you don't have to set it since TM will use something like caller() to detect), n
+(step name), a (step arguments, usually an array).
 
 =head2 Saving undo data in external storage
 
@@ -187,6 +209,8 @@ C<-tx>). Example:
 
 
 =head1 SEE ALSO
+
+L<Perinci::Undo>
 
 L<Setup>.
 

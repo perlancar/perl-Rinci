@@ -3,7 +3,7 @@ package Rinci::function::Transaction; # just to make PodWeaver happy
 # VERSION
 
 1;
-# ABSTRACT: Transactional functions
+# ABSTRACT: Transactional system based on functions
 
 =head1 SPECIFICATION VERSION
 
@@ -12,18 +12,172 @@ package Rinci::function::Transaction; # just to make PodWeaver happy
 
 =head1 SPECIFICATION
 
-This document describes how transactional functions should work. A transactional
-function is function which can be involved in a Riap transaction (see
-L<Riap::Transaction> for more details).
+This document describes a transactional system based on functions, where several
+function calls participate in a single transaction. This transactional system
+has the following properties:
 
-The majority of transactional capability is provided by a transaction manager
-(TM). Everytime function wants to perform something (a step) it should record
-the undo step first in the transaction manager. This way, undo/rollback/rollback
-recovery can be performed when needed.
+=over 4
 
-Function should also always use resource managers (RM) provided by the TM, like
-database, transactional filesystem, etc. But it is currently the responsibility
-of the function to modify resources while keeping transaction ACID properties.
+=item * Client/server architecture
+
+See L<Riap::Transaction>. Client can start more than one active transactions on
+the server. Each transaction-management request and the function calls are
+requested separately (each one is a separate Riap request).
+
+=item * Undo/redo
+
+Committed transactions are still recorded in the database along with its undo
+information. Client can request to undo/redo the transactions. Thus the system
+is also an undo/redo system.
+
+=item * Relies on the functions for reliability/ACID properties
+
+Server or framework provides the transaction manager (TM), but each function
+acts as the resource manager (RM). It is the responsibility of the functions to
+maintain ACID properties while modifying resources. For best results, each
+function should be written carefully and tested extensively, and utilizes a
+real, robust RM (like an RDBMS to store data or a transactional filesystem layer
+to read/modify files). In the absence of a real RM, some ACID properties like
+isolation and consistency might be compromised. For example
+
+=back
+
+Function performs its action by dividing the action into a series of unit action
+steps, then performing the steps sequentially. For example, creating a Unix user
+might be comprised of these steps: adding a record to /etc/passwd, adding a
+record to /etc/shadow, adding a record to /etc/group, adding a record to
+/etc/gshadow, creating home directory, copying skeleton files. Before actually
+performing each step, the function should record the undo step first in the
+transaction manager. This way, undo/rollback/rollback recovery can be performed
+when needed.
+
+
+=head2 Legends
+
+Transaction statuses: I (in-progress), A (aborted), C (committed), R (rolled
+back), E (prepared, currently not described/reserved for two-phase commit), u
+(committed, undoing), d (committed, redoing), U (committed, undone), X
+(inconsistent, ignored). tx = transaction.
+
+
+=head2 Fault tolerance when performing execution (do)
+
+Note: Over L<Riap>, each client request might be performed by different
+instances of TM (since it might be handle by different daemon child process). TM
+currently does not detect whether a tx with status I has crashed; that is why
+each step (and its undo step) needs to be idempotent and checks initial
+condition. TM only recovers tx's with status A by rolling them back.
+
+=over 4
+
+=item 1. Client begins tx, TM creates a tx entry in its database
+
+Initial tx status is I. Crash right after this moment is okay, since there is
+nothing to recover. After TM is started again, during recovery it can continue
+only needs to mark tx status as A. No undo steps have been created. Then TM
+marks tx status as R.
+
+=item 2. Client A function is called, function wants to do an action step
+
+Crash right after this moment is also handled like in previous case.
+
+=item 3. Function wants to do an action step (S1), records undo step (S1') to TM
+
+Crash right after this moment will cause S1' to be performed by TM, even though
+the function has not performed S1. In this case S1' needs to do nothing. That is
+why it's important that function (actually, all its action and undo steps) be
+idempotent and checks for initial condition.
+
+=item 4. Function performs S1
+
+Crash during this moment (when S1 is not completed) is also handled like in
+previous case. S1' needs to revert the (partial) side effects of S1.
+
+Crash right after this moment is also handled like in previous case, but this
+time S1 is already performed, so S1' needs to revert its side effects.
+
+=item 5. Function wants to do another action step (S2), adds S2' to TM
+
+Crash right after this moment will cause TM to mark tx status as A, then perform
+S2' followed by S1' during recovery. After that tx status is set as R.
+
+=item 6. Function performs S2
+
+Crash right after this moment is also handled like in previous case.
+
+=item 7. Function exits
+
+Crash right after this moment is also handled like in previous case.
+
+=item 8. Another function might be called
+
+=item 9. Client requests commit, TM marks tx status as C
+
+Crash during this moment (when tx status C is not yet recorded in TM's database)
+is handled like in previous case. When TM is started again, it sweeps all tx's
+that have I/A statuses and rolls them back.
+
+Crash right after this moment no longer rolls back tx since tx is already
+committed.
+
+=back
+
+
+=head2 Fault tolerance when performing undo
+
+All of these steps will be performed by the same TM, since there is only one
+client Riap request. Thus TM will be able to detect crash in the middle of the
+steps.
+
+=over 4
+
+=item 1. Client requests undo for tx2
+
+TM will check first whether tx2 belongs to the client, whether tx status is C,
+whether client need to undo its other tx's (tx1 and possible other tx's too). If
+everything is OK, TX mark tx entry to u and set last-undo-step to none (no steps
+is done first).
+
+For example tx to undo is tx1, its undo steps are S2' and S1'.
+
+Crash after this moment (or each next moments before the last) will cause the
+next instance of TM to try to redo this tx, by performing its redo steps (S1 and
+then S2). Failure in the middle of redo by the functions will cause the tx
+status to be set to X and ignored (TM can also choose to die).
+
+=item 2. Function is called, instructed to perform undo
+
+=item 3. Function wants to performs S2', records undo step (S2'' == S2) to TM
+
+=item 4. Function performs S2'
+
+=item 5. Function wants to perform S1', records undo step (S1'' == S1) to TM
+
+=item 6. Function performs S1'
+
+=item 7. TM marks tx status to U
+
+=back
+
+
+=head2 Fault tolerance when performing redo
+
+This case is handled similar to when performing redo, except TM will only redo
+tx's with status C. At the beginning of redo TM will set tx status to d. And at
+the end tx status will be set to C again.
+
+
+=head2 Fault tolerance when performing rollback or recovery
+
+During startup, TM will list all tx's with status A, u, d. It will then try to
+roll back each of this tx, by performing its undo (or redo) steps so that tx
+status is (respectively) R, C, U. These are all performed by the same TM
+instance (since there is no client Riap request involved yet). Crash in the
+middle of recovery can be repeated since tx status are still A/u/d. That is why
+steps need to be idempotent because they might be called more than once.
+
+Failure in the steps can cause TM to set transaction status to X (inconsistent,
+ignored).
 
 
 =head1 SEE ALSO
