@@ -180,6 +180,16 @@ Failure in the steps can cause TM to set transaction status to X (inconsistent,
 ignored).
 
 
+=head1 FAQ
+
+=head2 Why is this useful?
+
+The protocol is a pretty generic and simple way to build transactional system,
+even on heterogenous, multiuser environment. If the functions are written
+carefully, the system can be reliable. And even if some of the ACID properties
+are compromised due to lack of real RM, the system is still useful for its
+undo/redo capability.
+
 =head1 SEE ALSO
 
 L<Riap::Transaction>
