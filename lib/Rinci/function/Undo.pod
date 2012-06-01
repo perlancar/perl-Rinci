@@ -131,15 +131,19 @@ comprised of a series of unit steps. Before performing each step, its undo step
 must be recorded in the undo journal, which will record the information to a
 stable storage:
 
+ $res = $tx->record_call(args=>\%args);
+ return $res unless $res->[0] == 200;
+ my $call_id = $res->[2];
+
  my $res;
  for my $step (@steps) {
      my $undo_step = undo_of($step);
-     $res = $tx->record_step(step=>$step, undo_step=>$undo_step);
+     $res = $tx->record_step(undo_step=>$undo_step);
      if ($res->[0] != 200) {
          $tx->rollback;
          return [500, "Can't record transaction: $res->[0] - $res->[1]"];
      }
-     my $res = perform_step($step);
+     $res = perform_step($step);
      if ($res->[0] != 200) {
          $tx->rollback;
          return [500, "Rollbacked"];
