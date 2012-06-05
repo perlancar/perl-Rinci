@@ -610,13 +610,14 @@ declared with this feature.
 
 Specify transactional features. Can be set to a hash containing these keys:
 B<use> (bool, defaults to false, whether function can use transaction if it
-exists), B<require> (bool, defaults to false, whether function always require
+exists), B<req> (bool, defaults to false, whether function always require
 running in a transaction, B<start> (bool, defaults to false, whether function
 starts a new transaction on invocation), B<end> (bool, defaults to false,
 whether function ends [commits/rolls back] transaction).
 
-Currently there is little further specification; transactional feature is used
-alongside with undo protocol, described in L<Rinci::function::Undo>.
+See L<Rinci::function::Transaction> for more details on transactions. Currently
+there is little further specification; transactional feature is used alongside
+with undo protocol, described in L<Rinci::function::Undo>.
 
 L<Riap::Transaction> requires functions participating in a transaction be
 declared with this feature, because the specification is for allowing
