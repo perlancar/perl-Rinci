@@ -77,26 +77,30 @@ nothing to recover. After TM is started again, during recovery it can continue
 only needs to mark tx status as A. No undo steps have been created. Then TM
 marks tx status as R.
 
-=item 2. Client A function is called, function wants to do an action step
+=item 2. Client requests calling function F1, TM creates entry in its database
 
 Crash right after this moment is also handled like in previous case.
 
 =item 3. Function wants to do an action step (S1), records undo step (S1') to TM
 
-Crash right after this moment will cause S1' to be performed by TM, even though
-the function has not performed S1. In this case S1' needs to do nothing. That is
-why it's important that function (actually, all its action and undo steps) be
-idempotent and checks for initial condition.
+Crash right after this moment will cause a rollback (S1') to be performed by TM,
+even though the function has not performed S1. In this case S1' needs to do
+nothing. That is why it is important that function (actually, all its steps and
+undo steps) be idempotent and checks for initial condition.
+
+Failure in performing rollback (S1') will cause the transaction status to become
+U (unknown) and ignored. The transaction will be deleted during cleanup.
 
 =item 4. Function performs S1
 
 Crash during this moment (when S1 is not completed) is also handled like in
 previous case. S1' needs to revert the (partial) side effects of S1.
 
-Crash right after this moment is also handled like in previous case, but this
-time S1 is already performed, so S1' needs to revert its side effects.
+Crash right after this moment (after S1 is completed) is also handled like in
+previous case; this time S1 is already performed, so S1' needs to revert its
+side effects.
 
-=item 5. Function wants to do another action step (S2), adds S2' to TM
+=item 5. Function wants to do another action step (S2), records S2' to TM
 
 Crash right after this moment will cause TM to mark tx status as A, then perform
 S2' followed by S1' during recovery. After that tx status is set as R.
@@ -131,7 +135,7 @@ steps.
 
 =over 4
 
-=item 1. Client requests undo for tx2
+=item 1. Client requests undo for tx2, TM marks the transaction
 
 TM will check first whether tx2 belongs to the client, whether tx status is C,
 whether client need to undo its other tx's (tx1 and possible other tx's too). If
@@ -143,7 +147,7 @@ For example tx to undo is tx1, its undo steps are S2' and S1'.
 Crash after this moment (or each next moments before the last) will cause the
 next instance of TM to try to redo this tx, by performing its redo steps (S1 and
 then S2). Failure in the middle of redo by the functions will cause the tx
-status to be set to X and ignored (TM can also choose to die).
+status to be set to X and ignored.
 
 =item 2. Function is called, instructed to perform undo
 

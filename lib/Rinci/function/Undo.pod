@@ -120,35 +120,44 @@ or you can just do:
 
 =head2 Do and undo with transaction
 
-If a function is declared to be transactional (C<tx> C<feature> set to true, and
-C<idempotent> C<feature> currently also needs to be set to true), the protocol
-is different.
+If a function is declared to be transactional (C<tx> C<feature> set to at least
+{use=>1} or {req=>1}, and C<idempotent> C<feature> currently also needs to be
+set to true), the protocol is different.
 
 B<Performing do>. Aside from L<-undo_action> set to C<do>, the function is
-passed C<-tx> special argument (the transaction manager object, described in
-L<Rinci::Transaction>). The whole operation and its undo as well must be
-comprised of a series of unit steps. Before performing each step, its undo step
-must be recorded in the undo journal, which will record the information to a
-stable storage:
+passed C<-tx_manager> special argument (the transaction manager object,
+described in L<Rinci::Transaction>) and C<-tx_call_id> (produced by calling
+record_call() method on the transaction manager; can be done by the function
+itself if this argument is not passed). The whole operation and its undo as well
+must be comprised of a series of unit steps. Before performing each step, its
+undo step must be recorded in the undo journal, which will record the
+information to a stable storage:
 
- $res = $tx->record_call(args=>\%args);
- return $res unless $res->[0] == 200;
- my $call_id = $res->[2];
+ my $tx      = $args{-tx_manager};
+ my $call_id = $args{-tx_call_id};
+ if (!$call_id) {
+     $res = $tx->record_call(args=>\%args);
+     return $res unless $res->[0] == 200;
+     $call_id = $res->[2];
+ }
 
  my $res;
  for my $step (@steps) {
      my $undo_step = undo_of($step);
-     $res = $tx->record_step(undo_step=>$undo_step);
+     $res = $tx->record_undo_step(call_id=>$call_id, data=>$undo_step);
+     $res = perform_step($step) if $res->[0] == 200;
      if ($res->[0] != 200) {
-         $tx->rollback;
-         return [500, "Can't record transaction: $res->[0] - $res->[1]"];
-     }
-     $res = perform_step($step);
-     if ($res->[0] != 200) {
-         $tx->rollback;
-         return [500, "Rollbacked"];
+         $rollres = $tx->rollback;
+         if ($rollres->[0] == 200) {
+             return [500, "Rollbacked (after failed step $step->[0]: ".
+                     "$res->[0] - $res->[1]"];
+         } else {
+             return [532, "Failed rolling back: $rollres->[0] - $rollres->[1] ".
+                     "(after failed step $step->[0]: $res->[0] - $res->[1])"];
+         }
      }
  }
+ [200, "OK"];
 
 If the system crashes after a certain step, the next time transaction manager is
 started again it will perform a rollback recovery of the transaction using the
@@ -158,23 +167,42 @@ On success the function must return 200 but need not return C<undo_data> in the
 result metadata, since undo data is already recorded by the transaction manager.
 
 B<Performing undo>. To perform undo, caller sets C<-undo_action> to C<undo> and
-also passes C<-tx>. Function gets the list of steps from the transaction manager
-object:
+also passes C<-tx_manager> and C<-tx_call_id>. Function gets the list of steps
+from the transaction manager object:
 
- my $res = $tx->get_undo_steps;
+ my $res = $tx->get_undo_steps(call_id=>$call_id);
  return $res unless $res->[0] == 200;
  my @steps = @{$res->[2]};
 
-It should then perform each step, preceded by recording each step's undo step.
+It should then perform each step, preceded by recording each step's redo step.
 On success it should return 200.
 
-B<Performing redo>. To perform redo, caller sets C<-undo_action> to C<redo> and
-also passes C<-tx>. Function gets the list of steps from the transaction
-manager:
+ for my $step (@steps) {
+     my $undo_step = undo_of($step);
+     $res = $tx->record_redo_step(call_id=>$call_id, data=>$undo_step);
+     $res = perform_step($step) if $res->[0] == 200;
+     if ($res->[0] != 200) {
+         $rollres = $tx->rollback;
+         if ($rollres->[0] == 200) {
+             return [500, "Rollbacked (after failed step $step->[0]: ".
+                     "$res->[0] - $res->[1]"];
+         } else {
+             return [532, "Failed rolling back: $rollres->[0] - $rollres->[1] ".
+                     "(after failed step $step->[0]: $res->[0] - $res->[1])"];
+         }
+     }
+ }
 
- my $res = $tx->get_redo_steps;
+B<Performing redo>. To perform redo, caller sets C<-undo_action> to C<redo> and
+also passes C<-tx_manager> and C<-tx_call_id>. Function gets the list of redo
+steps from the transaction manager:
+
+ my $res = $tx->get_redo_steps(call_id=>$call_id);
  return $res unless $res->[0] == 200;
- my @steps = $res->[2];
+ my @steps = @{$res->[2]};
+
+and then it performs steps like in the do steps.
+
 
 =head2 Steps
 
