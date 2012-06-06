@@ -1,5 +1,13 @@
 Revision history for Rinci
 
+1.1.18   2012-06-06
+
+         Refinements to transaction details.
+
+         Remove dependency clause 'undo_storage'. Add dependency clauses
+         'tmp_dir', 'trash_dir', 'undo_trash_dir'.
+
+
 1.1.17   2012-05-31
 
          Specify transactional system (Rinci::function::Transaction). Split
