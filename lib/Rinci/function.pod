@@ -784,17 +784,25 @@ Example in Ruby:
 
  "code" => Proc.new { Process.euid > 0 }  # i am not being run as root
 
-=item * dep: undo_storage => STORAGE_SPEC
+=item * dep: tmp_dir => BOOL
 
-Specify that function requires some external undo storage. STORAGE_SPEC is a
-hash. Currently the only known keys are: C<tmp_dir> with the value of 1,
-C<trash_dir> with the value of 1 (trash_dir is basically the same as tmp_dir,
-but provides clue to the undo/transaction manager that the directory is used for
-trash, so it can arrange directory to be in the same partition, etc.)
+If set to 1, specify that function requires temporary directory. Caller should
+provide path to this using special argument C<-tmp_dir>.
 
-Example:
+=item * dep: trash_dir => BOOL
 
- undo_storage => {trash_dir=>1}
+If set to 1, specify that function requires trash directory. Trash is not unlike
+a temporary directory. Caller should provide path to trash directory using
+special argument C<-trash_dir>.
+
+=item * dep: undo_trash_dir => BOOL
+
+If set to 1, specify that function (which should be undoable, i.e. have C<undo>
+feature set to true) requires trash directory specifically for undo. Caller
+should provide path to trash directory using special argument C<-undo_trash_dir>
+only when doing do/undo operation.
+
+Undo trash directory can be provided by transaction manager.
 
 =item * dep: all => [DEPHASH, ...]
 

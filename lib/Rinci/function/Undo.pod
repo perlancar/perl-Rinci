@@ -223,21 +223,19 @@ more efficient to move the file to trash directory and return its path as the
 undo data, instead of reading the whole file content and its metadata to memory
 and return it in C<undo_data> result metadata.
 
-Functions which require an external storage should specify this in its metadata,
-through the C<undo_storage> dependency clause. For example:
+Functions which require undo trash directory should specify this in its
+metadata, through the C<undo_trash_dir> dependency clause. For example:
 
  deps => {
      ...
-     undo_storage => {trash_dir=>1},
+     undo_trash_dir => 1,
  }
 
-When calling function, caller needs to provide appropriate references to
-required undo storage in the special argument C<-undo_storage> (or through
-C<-tx>). Example:
+When calling function, caller needs to provide path to undo trash directory via
+special argument C<-undo_trash_dir>. Or if function is transactional, function
+should get undo trash dir using $tx->get_undo_trash_dir. For example:
 
- -undo_storage => {
-     trash_dir=>"/home/.trash/2fe2f4ad-a494-0044-b2e0-94b2b338056e",
- }
+ -undo_trash_dir => "/home/.trash/2fe2f4ad-a494-0044-b2e0-94b2b338056e"
 
 
 =head1 SEE ALSO
