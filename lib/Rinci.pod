@@ -523,7 +523,7 @@ specification, requirements, and so on.
 
 Sah schema language, L<Data::Sah>
 
-L<Rinci::HTTP>
+L<Riap>
 
 =head2 Related ideas/concepts
 
