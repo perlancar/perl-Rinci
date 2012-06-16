@@ -125,6 +125,8 @@ receiving an already existing username.
 resources, like disk space or bandwidth. For lacking authentication and
 authorization, use 401 and 403 respectively.
 
+429 (too many requests).
+
 480 codes are related to transaction. 480 is general transaction error, e.g.
 transaction status is aborted so further requests for this transaction is
 ignored until transaction is aborted.
