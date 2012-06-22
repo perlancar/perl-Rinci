@@ -54,27 +54,27 @@ when needed.
 
 =head2 Legends
 
-Transaction statuses: I (in-progress), A (aborted), C (committed), R (rolled
-back), E (prepared, currently not described/reserved for two-phase commit), u
-(committed, undoing), d (committed, redoing), U (committed, undone), X
-(inconsistent, ignored). tx = transaction.
+Transaction statuses: i (in-progress), a (aborted, pending rolling back), C
+(committed), R (rolled back), e (prepared, currently not described/reserved for
+two-phase commit), u (committed, undoing), d (committed, redoing), U (committed,
+undone), X (inconsistent, ignored). tx = transaction.
 
 
 =head2 Fault tolerance when performing execution (do)
 
 Note: Over L<Riap>, each client request might be performed by different
 instances of TM (since it might be handle by different daemon child process). TM
-currently does not detect whether a tx with status I has crashed; that is why
+currently does not detect whether a tx with status i has crashed; that is why
 each step (and its undo step) needs to be idempotent and checks initial
-condition. TM only recovers tx's with status A by rolling them back.
+condition. TM only recovers tx's with status a by rolling them back.
 
 =over 4
 
 =item 1. Client begins tx, TM creates a tx entry in its database
 
-Initial tx status is I. Crash right after this moment is okay, since there is
+Initial tx status is i. Crash right after this moment is okay, since there is
 nothing to recover. After TM is started again, during recovery it can continue
-only needs to mark tx status as A. No undo steps have been created. Then TM
+only needs to mark tx status as a. No undo steps have been created. Then TM
 marks tx status as R.
 
 =item 2. Client requests calling function F1, TM creates entry in its database
@@ -89,7 +89,7 @@ nothing. That is why it is important that function (actually, all its steps and
 undo steps) be idempotent and checks for initial condition.
 
 Failure in performing rollback (S1') will cause the transaction status to become
-U (unknown) and ignored. The transaction will be deleted during cleanup.
+X (inconsistent) and ignored. The transaction will be deleted during cleanup.
 
 =item 4. Function performs S1
 
@@ -102,7 +102,7 @@ side effects.
 
 =item 5. Function wants to do another action step (S2), records S2' to TM
 
-Crash right after this moment will cause TM to mark tx status as A, then perform
+Crash right after this moment will cause TM to mark tx status as a, then perform
 S2' followed by S1' during recovery. After that tx status is set as R.
 
 =item 6. Function performs S2
@@ -151,7 +151,7 @@ status to be set to X and ignored.
 
 =item 2. Function is called, instructed to perform undo
 
-=item 3. Function wants to performs S2', records undo step (S2'' == S2) to TM
+=item 3. Function wants to performs S2', records redo step (S2'' == S2) to TM
 
 =item 4. Function performs S2'
 
