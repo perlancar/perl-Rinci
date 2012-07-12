@@ -240,9 +240,11 @@ should get undo trash dir using $tx->get_undo_trash_dir. For example:
 
 =head1 SEE ALSO
 
-L<Perinci::Undo>
+L<Riap::Transaction>
 
-L<Setup>.
+L<Setup>
 
-L<Riap::Transaction>.
+Implementations: L<Perinci::Tx::Manager>, L<Perinci::Sub::Gen::Undoable>
+
+
 
