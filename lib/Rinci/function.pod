@@ -275,6 +275,8 @@ There should only be one argument with C<src> set to 'stdin' or
 
 Like C<src>, but only applies when function runs as a command-line program.
 
+TODO: Define C<web_src> property and source for streaming web application.
+
 =back
 
 Example function metadata and its implementation in Perl:
