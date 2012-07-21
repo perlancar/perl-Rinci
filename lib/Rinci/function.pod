@@ -254,6 +254,27 @@ simply to set the argument value).
 
 A code to supply argument value completion. Will be explained in the examples.
 
+=item * B<src> => STR
+
+Specify how to get the value for this argument. 'stdin' means that program
+should get value from standard input. 'stdin_or_files' means that program should
+get value from files, or if none is specified, from stdin. Other values might be
+defined in the future.
+
+If argument's type is C<str> or C<array>, the whole standard input and files
+will be slurped into memory. If argument's type is C<stream> or C<filehandle>,
+program should provide standard input and files as a filehandle (like the
+diamond operator in Perl) so function can read input one record at a time.
+Record is line, but specifying the record separator should perhaps be possible
+in the future.
+
+There should only be one argument with C<src> set to 'stdin' or
+'stdin_or_files'.
+
+=item * B<cmdline_src> => STR
+
+Like C<src>, but only applies when function runs as a command-line program.
+
 =back
 
 Example function metadata and its implementation in Perl:
