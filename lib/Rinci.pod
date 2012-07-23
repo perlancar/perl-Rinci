@@ -223,7 +223,7 @@ Example:
  v => 1.1
 
 
-=head2 Property: entity_version => STR
+=head3 Property: entity_version => STR
 
 Specify entity version (like package or function version). This is version as in
 software implementation version, not to be confused with C<v> which is the
