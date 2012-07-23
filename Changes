@@ -1,5 +1,13 @@
 Revision history for Rinci
 
+1.1.21   2012-07-23 (SHARYANTO)
+
+         [INCOMPATIBLE CHANGES]
+
+         - function: Remove argument specification key 'src', use 'cmdline_src'
+           instead. I think 'src' is too general.
+
+
 1.1.20   2012-07-21 (SHARYANTO)
 
          function: Add argument specification keys 'src' and 'cmdline_src'.
