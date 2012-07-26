@@ -285,7 +285,7 @@ transactions cannot be undone anyway.
 
 =head1 SEE ALSO
 
-L<Riap::Transaction>
+L<Rinci::function::Transaction>
 
 L<Setup>
 
