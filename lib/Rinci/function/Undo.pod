@@ -14,7 +14,8 @@ package Rinci::function::Undo; # just to make PodWeaver happy
 
 This document describes the Rinci undo protocol. This protocol must be followed
 by functions that claim that they support undo (have their C<undo> C<feature>
-set to true).
+set to true). Such functions are from here on called I<undoable function> (or
+just function, unless when ambiguous).
 
 The protocol is basically the non-OO version of the command pattern, a design
 pattern most commonly used to implement undo/redo functionality. In this case,
@@ -24,6 +25,33 @@ command, respectively. For C<do> and C<undo>, the same set of arguments are
 passed. The function later returns an undo data containing a list of undo steps
 (or, in the case of transactional function, record the undo steps in the
 transaction manager's undo journal).
+
+=head2 Requirements
+
+Function MUST check special argument C<-undo_action> before it checks other
+arguments. Function MUST at least support the following undo action: C<do>,
+C<undo>. On unsupported/unknown undo action, function MUST return status 400,
+with message like "Unsupported undo action".
+
+If C<-undo_action> is not set, it means caller does not care about undo.
+Undoable function should execute as any normal function.
+
+=head2 Checking undoability
+
+Like in real life, not all actions are undoable. Examples of
+undoable/irreversible actions include wiping a file/directory (more generally
+speaking, any action to permanently delete/destroy something, without backing up
+the data first), sending an email (more generally speaking, any action that is
+sent to an external entity beyond our control, unless that external entity
+provides a way to undo the action).
+
+To check whether a call would be undoable, caller can call function with normal
+arguments, along with special argument C<-undo_action> set to C<check>. Function
+must return 200 status and boolean result, either 1 (action will be undoable), 0
+(action will not be undoable), or undef (action might/might not be undoable).
+
+Caller must take note that function might not support C<check> C<-undo_action>
+and return 400 status.
 
 =head2 Do and undo without transaction
 
