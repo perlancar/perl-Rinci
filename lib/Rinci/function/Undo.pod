@@ -36,23 +36,6 @@ with message like "Unsupported undo action".
 If C<-undo_action> is not set, it means caller does not care about undo.
 Undoable function should execute as any normal function.
 
-=head2 Checking undoability
-
-Like in real life, not all actions are undoable. Examples of
-undoable/irreversible actions include wiping a file/directory (more generally
-speaking, any action to permanently delete/destroy something, without backing up
-the data first), sending an email (more generally speaking, any action that is
-sent to an external entity beyond our control, unless that external entity
-provides a way to undo the action).
-
-To check whether a call would be undoable, caller can call function with normal
-arguments, along with special argument C<-undo_action> set to C<check>. Function
-must return 200 status and boolean result, either 1 (action will be undoable), 0
-(action will not be undoable), or undef (action might/might not be undoable).
-
-Caller must take note that function might not support C<check> C<-undo_action>
-and return 400 status.
-
 =head2 Do and undo without transaction
 
 B<Performing do>. To indicate that we need undo, we call function by passing
@@ -231,7 +214,6 @@ steps from the transaction manager:
 
 and then it performs steps like in the do steps.
 
-
 =head2 Steps
 
 Action step and undo step should be an a hash with the following known keys:
@@ -265,6 +247,41 @@ should get undo trash dir using $tx->get_undo_trash_dir. For example:
 
  -undo_trash_dir => "/home/.trash/2fe2f4ad-a494-0044-b2e0-94b2b338056e"
 
+=head2 What about non-undoable actions?
+
+Like in real life, not all actions are undoable. Examples of
+undoable/irreversible actions include wiping a file/directory (more generally
+speaking, any action to permanently delete/destroy something, without backing up
+the data first), sending an email (more generally speaking, any action that is
+sent to an external entity beyond our control, unless that external entity
+provides a way to undo the action).
+
+An undoable function MUST NOT mix undoable and non-undoable actions. For
+example:
+
+ safe_delete(file=>'/path/to/file'); # puts file into Trash, undoable action
+ safe_delete(file=>'/path/to/file', permanent=>1); # deletes file, non-undoable
+
+The C<safe_delete> function above mixes undoable action (putting a file into
+Trash directory) and non-undoable action (permanently deleting a file without
+putting it in Trash). Without domain knowledge of the function, a caller cannot
+know whether a call will be undoable or not. This will also prevent the function
+from participating in a transaction, because transaction requires function call
+to always be undoable, for rollback purpose.
+
+The solution is to separate non-undoable action in another function, for
+example:
+
+ trash(file=>'/path/to/file');  # undoable, can execute inside transaction
+ delete(file=>'/path/to/file'); # non-undoable, executes outside transaction
+ empty_trash();                 # non-undoable, executes outside transaction
+
+The non-undoable function is also non-transactional. But it can still be
+idempotent. And it can manipulate the transactions if it needs too. In the
+example, the empty_trash() function instructs the transaction manager to discard
+the trash() transactions, since after the trash is emptied, the trash()
+transactions cannot be undone anyway.
+
 
 =head1 SEE ALSO
 
@@ -273,6 +290,4 @@ L<Riap::Transaction>
 L<Setup>
 
 Implementations: L<Perinci::Tx::Manager>, L<Perinci::Sub::Gen::Undoable>
-
-
 

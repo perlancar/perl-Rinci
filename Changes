@@ -1,13 +1,5 @@
 Revision history for Rinci
 
-1.1.22   2012-07-26 (SHARYANTO) (not yet released)
-
-         - Undo: specify undoable function's requirements (must check
-           -undo_action, etc)
-
-         - Undo: define -undo_action => check
-
-
 1.1.21   2012-07-23 (SHARYANTO)
 
          [INCOMPATIBLE CHANGES]
