@@ -148,7 +148,7 @@ Users should try again at a later time.
 
 507 (insufficient storage)
 
-521 (maximum retries reach)
+521 (maximum retries reached)
 
 531 (bad metadata) is used when there is something wrong with the metadata.
 
