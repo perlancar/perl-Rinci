@@ -194,6 +194,12 @@ carefully, the system can be reliable. And even if some of the ACID properties
 are compromised due to lack of real RM, the system is still useful for its
 undo/redo capability.
 
+=head2 What are the drawbacks?
+
+The reliability of the system rests on the reliability of each involved
+function. One buggy function can break the transaction.
+
+
 =head1 SEE ALSO
 
 L<Riap::Transaction>
