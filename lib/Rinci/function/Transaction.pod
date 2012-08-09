@@ -184,6 +184,63 @@ Failure in the steps can cause TM to set transaction status to X (inconsistent,
 ignored).
 
 
+=head2 The order of steps and function calls in nested calls during undo/rollback
+
+A nested call happens when a function (one of its steps, to be exact) calls
+another function within the same transaction.
+
+Without any nested call, ordering steps and function calls in undo/rollback is
+simpler: we simply reverse the order of calls by time, and the order of steps in
+each function by time. Example:
+
+ time   function     step
+ ----   --------     ----
+  t1       F1        S1.1
+  t2                 S1.2
+  t3                 S1.3
+  t4       F2        S2.1
+  t5                 S2.2
+
+The order of execution (do) is F1(S1.1, S1.2, S1.3) and then F2(S2.1, S2.2). To
+undo/rollback, the order of execution is F2(S2.2, S2.1) followed by F1(S1.3,
+S1.2, S1.1).
+
+With nested call, a function that calls other functions in the middle will need
+to be called twice during undo/rollback, since we try to trace back the order of
+steps by time.
+
+For example:
+
+Another example that illustrates this more clearly. F1 calls F2 in its last
+step, and F2 calls F3 in the middle of the steps. Finally F4 executes after F2
+finishes.
+
+ time      function    nest_level      step
+ ----   -------------  ----------      ----
+  t1       F1            1             S1.1
+  t2                                   S1.2
+  t2                                   S1.3 (this step calls F2)
+  t3         F2            2           S2.1
+  t4         |                         S2.2 (this step calls F3)
+  t5         | F3            3         S3.1
+  t6         |                         S3.2
+  t7         F2                        S2.3
+  t8                                   S2.4
+  t9                                   S2.5
+  t10      F4            1             S4.1
+  t11                                  S4.2
+
+The order of execution during undo/rollback will be:
+
+ F4(S4.2, S4.1)
+ F2(S2.5, S2.4, S2.3)
+ F3(S3.2, S3.1)
+ F2(S2.2, S2.1)
+ F1(S1.2, S1.1)
+
+Notice how F2 is called twice.
+
+
 =head1 FAQ
 
 =head2 Why is this useful?

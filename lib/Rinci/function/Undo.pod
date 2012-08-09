@@ -178,12 +178,8 @@ On success the function must return 200 but need not return C<undo_data> in the
 result metadata, since undo data is already recorded by the transaction manager.
 
 B<Performing undo>. To perform undo, caller sets C<-undo_action> to C<undo> and
-also passes C<-tx_manager> and C<-tx_call_id>. Function gets the list of steps
-from the transaction manager object:
-
- my $res = $tx->get_undo_steps(call_id=>$call_id);
- return $res unless $res->[0] == 200;
- my @steps = @{$res->[2]};
+also passes C<-tx_manager> and C<-tx_call_id>. Function also gets C<-undo_data>
+from the transaction manager object.
 
 It should then perform each step, preceded by recording each step's redo step.
 On success it should return 200.
@@ -205,14 +201,8 @@ On success it should return 200.
  }
 
 B<Performing redo>. To perform redo, caller sets C<-undo_action> to C<redo> and
-also passes C<-tx_manager> and C<-tx_call_id>. Function gets the list of redo
-steps from the transaction manager:
-
- my $res = $tx->get_redo_steps(call_id=>$call_id);
- return $res unless $res->[0] == 200;
- my @steps = @{$res->[2]};
-
-and then it performs steps like in the do steps.
+also passes C<-tx_manager> and C<-tx_call_id>. Function also gets C<-undo_data>
+from the transaction manager. And then it performs steps like in the do steps.
 
 =head2 Steps
 
