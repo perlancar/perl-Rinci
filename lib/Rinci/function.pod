@@ -597,10 +597,10 @@ extension.
 
 =over 4
 
-=item * feature: reverse => BOOL
+=item * feature: reverse => BOOL (default: 0)
 
-Default is false. If set to true, specifies that function supports reverse
-operation. To reverse, caller can add special argument C<-reverse>. For example:
+If set to true, specifies that function supports reverse operation. To reverse,
+caller can add special argument C<-reverse>. For example:
 
  $SPEC{triple} = {
      v => 1.1,
@@ -616,8 +616,6 @@ operation. To reverse, caller can add special argument C<-reverse>. For example:
  triple(num=>12);              # => 36
  triple(num=>12, -reverse=>1); # =>  4
 
-NOTE: Abilitity to express conditional reversibility is considered.
-
 =item * feature: undo => BOOL
 
 Default is false. If set to true, specifies that function supports undo
@@ -625,27 +623,19 @@ operation using the undo protocol specified in L<Rinci::function::Undo>. Undo is
 similar to C<reverse> but needs some state to be saved and restored for do/undo
 operation, while reverse can work solely from the arguments.
 
-L<Riap::Transaction> requires functions participating in a transaction be
-declared with this feature.
-
 =item * feature: tx => HASH
 
-Specify transactional features. Can be set to a hash containing these keys:
+Default is none. Specify transactional support, as specified in
+L<Rinci::function::Transaction>. Can be set to a hash containing these keys:
 B<use> (bool, defaults to false, whether function can use transaction if it
 exists), B<req> (bool, defaults to false, whether function always require
 running in a transaction, B<start> (bool, defaults to false, whether function
 starts a new transaction on invocation), B<end> (bool, defaults to false,
 whether function ends [commits/rolls back] transaction).
 
-See L<Rinci::function::Transaction> for more details on transactions. Currently
-there is little further specification; transactional feature is used alongside
-with undo protocol, described in L<Rinci::function::Undo>.
+Please see Rinci::function::Transaction for more details on transaction.
 
-L<Riap::Transaction> requires functions participating in a transaction be
-declared with this feature, because the specification is for allowing
-transactional operations as well as undo/redo of committed transactions.
-
-=item * feature: dry_run => BOOL
+=item * feature: dry_run => BOOL (default: 0)
 
 Default is false. If set to true, specifies that function supports dry-run
 (simulation) mode. Example:
@@ -687,14 +677,13 @@ function.
 
 =back
 
-=item * feature: pure => BOOL
+=item * feature: pure => BOOL (default: 0)
 
-Default is false. If set to true, specifies that function is "pure" and has no
-"side effects" (these are terms from functional programming / computer science).
-Having a side effect means changing something, somewhere (e.g. setting the value
-of a global variable, modifies its arguments, writing some data to disk,
-changing system date/time, etc.) Specifying a function as pure means, among
-others:
+If set to true, specifies that function is "pure" and has no "side effects"
+(these are terms from functional programming / computer science). Having a side
+effect means changing something, somewhere (e.g. setting the value of a global
+variable, modifies its arguments, writing some data to disk, changing system
+date/time, etc.) Specifying a function as pure means, among others:
 
 =over 4
 
@@ -986,12 +975,8 @@ mechanism, e.g. an eval() block and alarm() in Perl).
 
 =head1 SEE ALSO
 
-L<Data::Sah>
+Related specifications: L<Sah>
 
 L<Rinci>
-
-L<Rinci::function::Transaction>
-
-L<Rinci::function::Undo>
 
 =cut

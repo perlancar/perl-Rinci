@@ -20,9 +20,11 @@ has the following properties:
 
 =item * Client/server architecture
 
-See L<Riap::Transaction>. Client can start more than one active transactions on
-the server. Each transaction-management request and the function calls are
-requested separately (each one is a separate Riap request).
+Transaction can be performed over L<Riap>. Client can start more than one active
+transaction on the server. Each transaction-management request and the function
+calls are requested separately (each one is a separate Riap request).
+
+For more details on this, see L<Riap::Transaction>.
 
 =item * Undo/redo
 
@@ -35,210 +37,336 @@ is also an undo/redo system.
 Server or framework provides the transaction manager (TM), but each function
 acts as the resource manager (RM). It is the responsibility of the functions to
 maintain ACID properties while modifying resources. For best results, each
-function should be written carefully and tested extensively, and utilizes a
-real, robust RM (like an RDBMS to store data or a transactional filesystem layer
-to read/modify files). In the absence of a real RM, some ACID properties like
-isolation and consistency might be compromised. For example
+function should be written carefully and tested extensively, and utilize a real,
+robust RM (like an RDBMS to store data or a transactional filesystem layer to
+read/modify files). In the absence of a real RM, some ACID properties like
+isolation and consistency might be compromised. For example: one transaction TX1
+modifies a file in an ordinary (i.e. non-transactional) filesystem. Another
+transaction TX2 can see TX1's modification in the middle of uncommitted
+transaction (violates isolation principle).
 
 =back
 
-Function performs its action by dividing the action into a series of unit action
-steps, then performing the steps sequentially. For example, creating a Unix user
-might be comprised of these steps: adding a record to /etc/passwd, adding a
-record to /etc/shadow, adding a record to /etc/group, adding a record to
-/etc/gshadow, creating home directory, copying skeleton files. Before actually
-performing each step, the function should record the undo step first in the
-transaction manager. This way, undo/rollback/rollback recovery can be performed
-when needed.
 
+=head2 How transaction works
 
-=head2 Legends
+Transaction works by relying on undo/redo capability of its participating
+functions.
 
-Transaction statuses: i (in-progress), a (aborted, pending rolling back), C
-(committed), R (rolled back), e (prepared, currently not described/reserved for
-two-phase commit), u (committed, undoing), d (committed, redoing), U (committed,
-undone), X (inconsistent, ignored). tx = transaction.
+=head3 Start
 
+User starts a transaction by instantiating TM. TM sets up its data directory and
+performs cleanup and crash recovery. User then calls $tm->begin(tx_id =>
+$tx_id), providing a unique $tx_id as identifier for the transaction. TM will
+create an entry for the transaction in its journal. Initial transaction status
+is C<i> (in-progress).
 
-=head2 Fault tolerance when performing execution (do)
+=head3 Calls
 
-Note: Over L<Riap>, each client request might be performed by different
-instances of TM (since it might be handle by different daemon child process). TM
-currently does not detect whether a tx with status i has crashed; that is why
-each step (and its undo step) needs to be idempotent and checks initial
-condition. TM only recovers tx's with status a by rolling them back.
+User calls one or more functions using $tm->call($name, $args). TM will first
+check whether function named $foo is indeed eligible to be used in a transaction
+(see L</"Function requirements"> for more details on this). If function is
+eligible, TM will first call function using C<< -dry_run=>1 >> to get undo data.
+TM then records the undo data first in its journal, to be able to undo the call
+later (either for rollback in the event of failure, or for undoing the
+transaction). After that, TM will call the function again, using C<<
+-undo_action => 'do' >>. If function fails (returns a non-success status code),
+rollback will happen.
+
+If function is not eligible, rollback is also triggered.
+
+=head3 Commit
+
+If everything goes smoothly, user can call $tm->commit now. TM will mark the
+transaction as C<C> (committed). TM still stores the transaction and its undo
+data in its database for some time, because TM allows udoing (and redoing) a
+transaction.
+
+Transaction status progress:
+
+ i -> C
+
+=head3 Rollback a transaction in in-progress (i) status
+
+If a call fails, or some other error happens, rollback happens. Rollback can
+also be started by user using $tm->rollback.
+
+TM will first mark the transaction status to C<a> (aborting an in-progress
+transaction, rolling back). This will prevent other clients trying to add new
+calls to this transaction, since aborted transaction can longer accept new
+calls, it can only be rolled back.
+
+TM will then perform undo for each function, in reverse order, using the undo
+data previously recorded. If an error happens, rollback fails and transaction
+status is changed into C<X> (inconsistent, ignored). If rollback succeeds,
+transaction status is changed into R (rolled back) and the in next cleanup TM
+can remove the data for this transaction (i.e., forget the transaction).
+
+Transaction status progress:
+
+ i -> a -> R  # successful rollback
+ i -> a -> X  # failed rollback
+
+=head3 Undo
+
+TM allows undoing committed transaction, so the transaction system also serves
+as an undo/redo system.
+
+To perform undo, user invokes $tm->undo(tx_id => $tx_id) where $tx_id is the ID
+of a committed transaction.
+
+TM will first check that transaction status is indeed C<C>. Then, TM will set
+status transaction to C<u> (undoing). This will prevents other clients trying to
+undo the same transaction.
+
+TM then performs a call for each function in reverse order, just like in
+rollback. However, for each function, the same procedure is applied as in
+L</"Calls">: first the function is called using C<< -dry_run => 1 >> as well as
+passing C<< -undo_action => 'undo_data' >> and C<< -undo_data >>. Function
+returns undo data (a.k.a. redo data, since this data will be used to undo the
+undo operation). TM records the redo data first in its journal before calling
+the function again.
+
+If everything went smoothly until the last call, TM will finally set transaction
+status to U (committed and undone transaction).
+
+Transaction status progress:
+
+ C -> u -> U
+
+=head3 Rollback a transaction in undoing status
+
+If undo fails in the middle, rollback will happen. TM will first mark the
+transaction status to C<v> (mnemonic: v comes after u). This will give
+information to crash recovery process (since handling status C<a> is different,
+the final goal is C<R>, while for C<v> the final goal is C<C>). TM then will
+perform the undo calls (in this case, redo) up to that point and finally mark
+the TM back to C (committed) status.
+
+If rollback fails, TM will set transaction status to C<X>.
+
+Transaction status progress:
+
+ u -> v -> C # rollback succeeds
+ u -> v -> X # rollback fails
+
+=head3 Redo
+
+To redo an undone transaction, the same process is applied like in redo. User
+invokes $tm->redo(tx_id => $tx_id). TM will first check that only transaction
+with status C<U> is possible to redo. TM then sets transaction status to C<d>
+(redoing) to prevent other clients to try to redo the same transaction. It then
+performs the redo calls, recording the undo data before each step. Finally,
+transaction status is set to C<C> again.
+
+Transaction status progress:
+
+ U -> d -> C
+
+=head3 Rollback a transaction in redoing status
+
+If redo fails in the middle, rollback will happen. Rolling back a transaction in
+redoing (d) status is similar to rolling back a transaction in undoing (u)
+status. TM will first change status of transaction to e (mnemonic: e comes after
+d). This will give information to crash recovery process that the final goal of
+rollback is C<U> (not C<R> or C<C> like in C<a> or C<v> recovery). TM then
+perform the undo calls up to that point and finally mark the TM back to U
+(committed) status.
+
+If rollback fails, TM will set transaction status to C<X>.
+
+Transaction status progress:
+
+ d -> e -> U # rollback succeeds
+ d -> e -> X # rollback fails
+
+=head3 Cleanup
+
+Cleanup is done at TM startup and at regular intervals. TM should delete
+(forget) all C and U transactions that are too old, or keep the number of those
+transactions under a certain limit, according to its settings. As soon as those
+transactions are deleted, they can no longer be undone/redone, since the undo
+data has been deleted too.
+
+The cleanup process also deletes all X transactions, since they cannot be
+resolved anyway (TODO: perhaps some retry mechanism can be applied, if desired?)
+
+Cleanup process also deletes all R transactions.
+
+Cleanup process should also rolls back any transactions with status C<i> that
+have been going for too long.
+
+=head3 Crash recovery
+
+Crash can happen at any point during a transaction. TM must perform crash
+recovery during its startup to resolve things back to a consistent state,
+usually by doing rollback (but can also by continuing previous undo or redo
+process).
 
 =over 4
 
-=item 1. Client begins tx, TM creates a tx entry in its database
+=item * Crash during calls
 
-Initial tx status is i. Crash right after this moment is okay, since there is
-nothing to recover. After TM is started again, during recovery it can continue
-only needs to mark tx status as a. No undo steps have been created. Then TM
-marks tx status as R.
+Illustration:
 
-=item 2. Client requests calling function F1, TM creates entry in its database
+  1. client invokes $tm->begin
+  2. $tm creates tx entry, status=i
+  3. client invokes $tm->call($f1, $args1)
+  4. $tm checks $f1, calls $f1 with -dry_run=>1, gets $undo_data1
+  5. $tm records $undo_data1 in journal
+  6. $tm calls $f1
+  7. client invokes $tm->call($f2, $args2)
+  8. (like step 4) $tm checks $f2, calls $f2 with -dry_run=>1, gets $undo_data2
+  9. (like step 5) $tm records $undo_data2 in journal
+ 10. (like step 6) $tm calls $f2
+ 11. client calls $tm->commit
+ 12. $tm marks tx status=C
 
-Crash right after this moment is also handled like in previous case.
+If crash happens right after step 1, 2, 3, or 4, TM does not need to recover
+anything for these transactions, since there is nothing to recover. After
+recovery, transaction status is still at C<i>.
 
-=item 3. Function wants to do an action step (S1), records undo step (S1') to TM
+If crash happens right after step 5, TM will perform rollback for this
+transaction. $f1 will be called with C<< -undo_action => 'undo' >> and C<<
+-undo_data => $undo_data1 >>. Function needs to be idempotent (see L</"Function
+requirements">) and realize that step 6 has not been performed, so undoing a
+not-done action will not result in an inconsistent state.
 
-Crash right after this moment will cause a rollback (S1') to be performed by TM,
-even though the function has not performed S1. In this case S1' needs to do
-nothing. That is why it is important that function (actually, all its steps and
-undo steps) be idempotent and checks for initial condition.
+If crash happens right after step 6-11, TM also rolls back the transaction.
 
-Failure in performing rollback (S1') will cause the transaction status to become
-X (inconsistent) and ignored. The transaction will be deleted during cleanup.
-
-=item 4. Function performs S1
-
-Crash during this moment (when S1 is not completed) is also handled like in
-previous case. S1' needs to revert the (partial) side effects of S1.
-
-Crash right after this moment (after S1 is completed) is also handled like in
-previous case; this time S1 is already performed, so S1' needs to revert its
-side effects.
-
-=item 5. Function wants to do another action step (S2), records S2' to TM
-
-Crash right after this moment will cause TM to mark tx status as a, then perform
-S2' followed by S1' during recovery. After that tx status is set as R.
-
-=item 6. Function performs S2
-
-Crash right after this moment is also handled like in previous case.
-
-=item 7. Function exits
-
-Crash right after this moment is also handled like in previous case.
-
-=item 8. Another function might be called
-
-=item 9. Client requests commit, TM marks tx status as C
-
-Crash during this moment (when tx status C is not yet recorded in TM's database)
-is handled like in previous case. When TM is started again, it sweeps all tx's
-that have I/A statuses and rolls them back.
+If crash happens right after step 12, no recovery is neeeded since transaction
+is already committed.
 
 Crash right after this moment no longer rolls back tx since tx is already
 committed.
 
+=item * Crash during rollback of in-progress transaction
+
+Illustration:
+
+ 1. rollback is started, tx status changed from i to a
+ 2. $tm calls $f2 with -undo_action => 'undo' and -undo_data => $undo_data2
+ 3. $tm marks that f2 has been processed
+ 4. $tm calls $f1 with -undo_action => 'undo' and -undo_data => $undo_data1
+ 5. $tm marks that f1 has been processed
+ 6. $tm marks tx status=R
+
+If crash happens after step 1, recovery should just continue the rollback
+process. In other words, during recovery, all transactions with status C<a>
+should be (continued to be) rolled back.
+
+However, rollback can continue at the first unprocessed call. So if crash
+happens after step 2, in recovery rollback continues from step 2. If crash
+happens after step 3, in recovery rollback can continue from step 4, since $f2
+has been marked as processed. If crash happens after step 5, in recovery
+rollback can continue from step 6.
+
+=item * Crash during undoing
+
+Illustration:
+
+  1. client invokes $tm->undo
+  2. $tm changes tx status from C to u
+  3. $tm calls $f2 with -undo_action => 'undo', -undo_data => $undo_data2, and
+     -dry_run => 1, gets $redo_data2
+  4. $tm records $redo_data2 in journal
+  5. $tm calls $f2 with -undo_action => 'undo' and -undo_data => $undo_data2
+  6. $tm marks $f2 as processed
+  7. (like step 3) $tm calls $f1 with -undo_action => 'undo',
+     -undo_data => $undo_data2, and -dry_run => 1, gets $redo_data1
+  8. (like step 4) $tm records $redo_data1 in journal
+  9. (like step 5) $tm calls $f1 with -undo_action => 'undo' and
+     -undo_data => $undo_data1.
+ 10. $tm marks $f1 as processed
+ 11. $tm marks tx status=U
+
+If crash happens after steps 2-10, TM should just continue the undo process.
+
+=item * Crash during rollback of undoing transaction
+
+Illustration:
+
+ 1. rollback is started, tx status changed from u to v
+ 2. $tm calls $f1 with -undo_action => 'undo' and -undo_data => $redo_data1
+ 3. $tm marks that f1 has been processed
+ 4. $tm calls $f2 with -undo_action => 'undo' and -undo_data => $redo_data2
+ 5. $tm marks that f2 has been processed
+ 6. $tm marks tx status=C
+
+If crash happens after steps 2-5, TM should just continue the rollback process.
+
+=item * Crash during redoing
+
+Illustration:
+
+  1. client invokes $tm->redo
+  2. $tm changes tx status from U to d
+  3. $tm calls $f1 with -undo_action => 'undo', -undo_data => $redo_data1, and
+     -dry_run => 1, gets $undo_data1'
+  4. $tm records $undo_data1' in journal
+  5. $tm calls $f1 with -undo_action => 'undo' and -undo_data => $redo_data1
+  6. $tm marks $f1 as processed
+  7. (like step 3) $tm calls $f2 with -undo_action => 'undo',
+     -undo_data => $redo_data2, and -dry_run => 1, gets $undo_data2'
+  8. (like step 4) $tm records $undo_data2' in journal
+  9. (like step 5) $tm calls $f2 with -undo_action => 'undo' and
+     -undo_data => $redo_data2.
+ 10. $tm marks $f2 as processed
+ 11. $tm marks tx status=C
+
+If crash happens after steps 2-10, TM should just continue the redo process.
+
+=item * Crash during rollback of redoing transaction
+
+Illustration:
+
+ 1. rollback is started, tx status changed from d to e
+ 2. $tm calls $f2 with -undo_action => 'undo' and -undo_data => $undo_data2'
+ 3. $tm marks that f2 has been processed
+ 4. $tm calls $f1 with -undo_action => 'undo' and -undo_data => $redo_data1'
+ 5. $tm marks that f1 has been processed
+ 6. $tm marks tx status=U
+
+If crash happens after steps 2-5, TM should just continue the rollback process.
+
 =back
 
 
-=head2 Fault tolerance when performing undo
+=head2 Function requirements
 
-All of these steps will be performed by the same TM, since there is only one
-client Riap request. Thus TM will be able to detect crash in the middle of the
-steps.
+Function participating in a transaction is required to declare C<tx> feature to
+have at least C<< use => 1 >> or C<< req => 1 >>. What this means is:
 
 =over 4
 
-=item 1. Client requests undo for tx2, TM marks the transaction
+=item * undo
 
-TM will check first whether tx2 belongs to the client, whether tx status is C,
-whether client need to undo its other tx's (tx1 and possible other tx's too). If
-everything is OK, TX mark tx entry to u and set last-undo-step to none (no steps
-is done first).
+Function must support undo operation (C<undo> feature set to true). In addition,
+there is a stricter requirement for the undo data. Undo data must be a series of
+calls:
 
-For example tx to undo is tx1, its undo steps are S2' and S1'.
+ [[$f1, $args1], [$f2, $args2], ...]
 
-Crash after this moment (or each next moments before the last) will cause the
-next instance of TM to try to redo this tx, by performing its redo steps (S1 and
-then S2). Failure in the middle of redo by the functions will cause the tx
-status to be set to X and ignored.
+where C<$fN> are fully-qualified function names (like C<Foo::Bar::func>) and
+C<$argsN> are hashrefs containing arguments for the functions.
 
-=item 2. Function is called, instructed to perform undo
+This allows flexibility and modularity. Functionality (and undo functionality)
+can be organized into one or more functions.
 
-=item 3. Function wants to performs S2', records redo step (S2'' == S2) to TM
+=item * dry_run
 
-=item 4. Function performs S2'
-
-=item 5. Function wants to perform S1', records undo step (S1'' == S1) to TM
-
-=item 6. Function performs S1'
-
-=item 7. TM marks tx status to U
+Function must support dry run operation (C<dry_run> feature set to true). In
+addition, even when called under C<< dry_run => 1 >>, function must still return
+undo data. This allows TM to record undo data before performing function, to
+allow for rollback.
 
 =back
 
+=head2 Calling function inside another
 
-=head2 Fault tolerance when performing redo
-
-This case is handled similar to when performing redo, except TM will only redo
-tx's with status C. At the beginning of redo TM will set tx status to d. And at
-the end tx status will be set to C again.
-
-
-=head2 Fault tolerance when performing rollback or recovery
-
-During startup, TM will list all tx's with status A, u, d. It will then try to
-roll back each of this tx, by performing its undo (or redo) steps so that tx
-status is (respectively) R, C, U. These are all performed by the same TM
-instance (since there is no client Riap request involved yet). Crash in the
-middle of recovery can be repeated since tx status are still A/u/d. That is why
-steps need to be idempotent because they might be called more than once.
-
-Failure in the steps can cause TM to set transaction status to X (inconsistent,
-ignored).
-
-
-=head2 The order of steps and function calls in nested calls during undo/rollback
-
-A nested call happens when a function (one of its steps, to be exact) calls
-another function within the same transaction.
-
-Without any nested call, ordering steps and function calls in undo/rollback is
-simpler: we simply reverse the order of calls by time, and the order of steps in
-each function by time. Example:
-
- time   function     step
- ----   --------     ----
-  t1       F1        S1.1
-  t2                 S1.2
-  t3                 S1.3
-  t4       F2        S2.1
-  t5                 S2.2
-
-The order of execution (do) is F1(S1.1, S1.2, S1.3) and then F2(S2.1, S2.2). To
-undo/rollback, the order of execution is F2(S2.2, S2.1) followed by F1(S1.3,
-S1.2, S1.1).
-
-With nested call, a function that calls other functions in the middle will need
-to be called twice during undo/rollback, since we try to trace back the order of
-steps by time.
-
-For example:
-
-Another example that illustrates this more clearly. F1 calls F2 in its last
-step, and F2 calls F3 in the middle of the steps. Finally F4 executes after F2
-finishes.
-
- time      function    nest_level      step
- ----   -------------  ----------      ----
-  t1       F1            1             S1.1
-  t2                                   S1.2
-  t2                                   S1.3 (this step calls F2)
-  t3         F2            2           S2.1
-  t4         |                         S2.2 (this step calls F3)
-  t5         | F3            3         S3.1
-  t6         |                         S3.2
-  t7         F2                        S2.3
-  t8                                   S2.4
-  t9                                   S2.5
-  t10      F4            1             S4.1
-  t11                                  S4.2
-
-The order of execution during undo/rollback will be:
-
- F4(S4.2, S4.1)
- F2(S2.5, S2.4, S2.3)
- F3(S3.2, S3.1)
- F2(S2.2, S2.1)
- F1(S1.2, S1.1)
-
-Notice how F2 is called twice.
+During transaction, $tm will call functions passing itself in special argument
+C<< -tx_manager => $tm >>. Function which wants to call another function inside
+the scope of transaction must do this using C<< $tm->call >>.
 
 
 =head1 FAQ
@@ -259,9 +387,7 @@ function. One buggy function can break the transaction.
 
 =head1 SEE ALSO
 
+Related specifications: L<Rinci::function::Undo>, L<Rinci::function>,
 L<Riap::Transaction>
 
-L<Rinci>
-
-L<Rinci::function::Undo>
-
+Implementations: L<Perinci::Tx::Manager>
