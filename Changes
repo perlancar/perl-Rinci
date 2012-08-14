@@ -1,5 +1,31 @@
 Revision history for Rinci
 
+1.1.23   2012-08-14 (SHARYANTO)
+
+         Major rewrite of transaction specification.
+
+         The main motivation is to remove the concept of 'steps' as this is a
+         false dichotomy. Steps are actually functions themselves, the units of
+         work are still functions. Eventually, a complex system will need to
+         nest functions inside functions, to more than two levels of nesting.
+         Why divide and limit into two levels (function-step)? So:
+
+         - Everything is a bit clearer now
+
+         - $tm interface is saner ($tm->call, easier to call function inside
+           another)
+
+         - No more mention of unused transaction status: e
+
+         - New transaction statuses: v (rollback of undoing process), e
+           (rollback of redoing process).
+
+         - Recovery does not always means rollback (to R). For transactions in u
+           and d status, we continue the undoing/redoing. For transactions in v
+           and e status, we continue the rollback to final status C and U,
+           respectively.
+
+
 1.1.22   2012-08-09 (SHARYANTO)
 
          - tx: Describe the ordering of calls during undo/rollback/redo when
