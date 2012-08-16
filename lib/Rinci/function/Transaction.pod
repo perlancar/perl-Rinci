@@ -63,13 +63,13 @@ is C<i> (in-progress).
 
 =head3 Calls
 
-User calls one or more functions using $tm->call($name, $args). TM will first
-check whether function named $foo is indeed eligible to be used in a transaction
-(see L</"Function requirements"> for more details on this). If function is
-eligible, TM will first call function using C<< -dry_run=>1 >> to get undo data.
-TM then records the undo data first in its journal, to be able to undo the call
-later (either for rollback in the event of failure, or for undoing the
-transaction). After that, TM will call the function again, using C<<
+User calls one or more functions using $tm->call(f=>$name, args=>$args). TM will
+first check whether function named $foo is indeed eligible to be used in a
+transaction (see L</"Function requirements"> for more details on this). If
+function is eligible, TM will first call function using C<< -dry_run=>1 >> to
+get undo data. TM then records the undo data first in its journal, to be able to
+undo the call later (either for rollback in the event of failure, or for undoing
+the transaction). After that, TM will call the function again, using C<<
 -undo_action => 'do' >>. If function fails (returns a non-success status code),
 rollback will happen.
 
@@ -211,11 +211,11 @@ Illustration:
 
   1. client invokes $tm->begin
   2. $tm creates tx entry, status=i
-  3. client invokes $tm->call($f1, $args1)
+  3. client invokes $tm->call(f=>$f1, args=>$args1)
   4. $tm checks $f1, calls $f1 with -dry_run=>1, gets $undo_data1
   5. $tm records $undo_data1 in journal
   6. $tm calls $f1
-  7. client invokes $tm->call($f2, $args2)
+  7. client invokes $tm->call(f=>$f2, args=>$args2)
   8. (like step 4) $tm checks $f2, calls $f2 with -dry_run=>1, gets $undo_data2
   9. (like step 5) $tm records $undo_data2 in journal
  10. (like step 6) $tm calls $f2
