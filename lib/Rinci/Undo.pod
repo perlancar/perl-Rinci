@@ -1,13 +1,40 @@
-package Rinci::function::Undo; # just to make PodWeaver happy
+package Rinci::Undo; # just to make PodWeaver happy
 
 # VERSION
 
 1;
-# ABSTRACT: Protocol for undo operations in functions
+# ABSTRACT: (DEPRECATED) Protocol for undo operations in functions
 
 =head1 SPECIFICATION VERSION
 
  1.1
+
+
+=head1 STATUS
+
+This protocol (riundo for short) is now deprecated in favor of
+L<Rinci::Transaction> (ritx for short) for several reasons:
+
+=over 4
+
+=item * riundo is inherently unreliable
+
+Undo information is returned by function I<after> the function has performed the
+action. If function dies in the middle of action, client does not have the
+information to undo the (partially completed) action. That is why in ritx, the
+TM asks the function first for undo information before asking the function to
+perform its action.
+
+=item * ritx does not limit using the same function for undo
+
+In riundo, we must call the same function (passing the previously obtained undo
+data from the same function) to undo the information. This is sometimes slightly
+cumbersome. The undo action might be provided by other functions, but we still
+have to go through the same function first.
+
+=item * ritx can also implement undo/redo
+
+=back
 
 
 =head1 SPECIFICATION
@@ -130,13 +157,6 @@ or you can just do:
 
  $res = setenv(name=>"DEBUG", value=>1, -undo_action="do");
 
-=head2 Undo and transaction
-
-Transaction, as described in L<Rinci::function::Transaction>, uses undo as the
-basis. It has a stricter requirement for the undo data, and a couple of other
-extra requirements for the function to be able to participate in transaction.
-For more details, refer to the Rinci::function::Transaction documentation.
-
 =head2 Saving undo data in external storage
 
 Although the complete undo data can be returned by the function in the
@@ -154,14 +174,13 @@ metadata, through the C<undo_trash_dir> dependency clause. For example:
 
  deps => {
      ...
-     undo_trash_dir => 1,
+     trash_dir => 1,
  }
 
 When calling function, caller needs to provide path to undo trash directory via
-special argument C<-undo_trash_dir>. Or if function is transactional, function
-should get undo trash dir using $tx->get_undo_trash_dir. For example:
+special argument C<-trash_dir>, for example:
 
- -undo_trash_dir => "/home/.trash/2fe2f4ad-a494-0044-b2e0-94b2b338056e"
+ -trash_dir => "/home/.trash/2fe2f4ad-a494-0044-b2e0-94b2b338056e"
 
 =head2 What about non-undoable actions?
 
@@ -201,7 +220,5 @@ after the trash is emptied, the trash() transactions cannot be undone anyway.
 
 =head1 SEE ALSO
 
-Related specifications: L<Rinci::function::Transaction>
-
-Implementations: L<Perinci::Sub::Gen::Undoable>
+Related specifications: L<Rinci::Transaction>
 

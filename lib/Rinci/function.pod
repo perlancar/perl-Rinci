@@ -12,9 +12,12 @@ package Rinci::function; # just to make PodWeaver happy
 
 =head1 INTRODUCTION
 
-This document describes metadata for functions/methods. This specification is
-part of L<Rinci>. Please do a read up on it first, if you have not already done
-so.
+This document describes metadata for functions/methods. Since the metadata
+properties describe features and the way a function works, this document also
+describes how a function should support those properties.
+
+This specification is part of L<Rinci>. Please do a read up on it first, if you
+have not already done so.
 
 
 =head1 SPECIFICATION
@@ -22,7 +25,7 @@ so.
 B<Result envelope>. Function should return an enveloped result to express error
 code/message as well as actual result. The envelope can be produced by the
 function itself, or added by a wrapper tool. Result envelope is modeled after
-HTTP or L<PSGI> response, it is an array in the following format:
+HTTP or L<PSGI> response; it is an array in the following format:
 
  [STATUS, MESSAGE, RESULT, META]
 
@@ -38,18 +41,18 @@ Some example of an enveloped results:
  [200, "OK", 42]
  [404, "Not found"]
  [500, "Can't delete foo: permission denied", {errno=>51}]
- [200, "Account created", {id=>9323}, {undo_data=>["delete_account"]}]
+ [200, "Account created", {id=>9323},
+  {undo_calls=>[["delete_account", {id=>9323}]]}]
 
 As mentioned, an enveloped result can contain error code/message as well as the
 actual result. It can also be easily converted to HTTP response message. And it
-can also contain extra data, useful for things like the undo protocol (explained
-in L<Rinci::function::Undo>).
+can also contain extra data, useful for things like the transaction protocol
+(explained in L<Rinci::Transaction>).
 
 B<Special arguments>. Special arguments are some known arguments that start with
 dash (C<->) and serve special purposes. You need not specify them in the C<args>
-metadata property. Examples of special arguments include C<-undo_action>,
-C<-undo_data>, C<-dry_run>, and they will be explained in relevant sections
-below.
+metadata property. Examples of special arguments include C<-dry_run>,
+C<-tx_action>, and they will be explained in other related sections/documents.
 
 B<Functions vs methods>. Since in many programming languages (like Perl 5,
 Python, Ruby, PHP) static functions are not that differentiated from methods,
@@ -170,8 +173,8 @@ or is_class_meth is set to true.
 Example:
 
  # specify that function can be called a method *as well as* a static function
- is_meth => 1,
- is_func => 1, # if not specified, will default to false after is_meth set to 1
+ is_meth => 1
+ is_func => 1 # if not specified, will default to false after is_meth set to 1
 
 
 =head2 Property: is_meth => BOOL
@@ -182,7 +185,7 @@ is false.
 Example:
 
  # specify that function is a method
- is_meth => 1,
+ is_meth => 1
 
 
 =head2 Property: is_class_meth => BOOL
@@ -193,7 +196,7 @@ methods include the constructor, but there are others. Default is false.
 Example:
 
  # specify that function is a class method
- is_class_meth => 1,
+ is_class_meth => 1
 
 
 =head2 Property: args => HASH
@@ -616,24 +619,18 @@ caller can add special argument C<-reverse>. For example:
  triple(num=>12);              # => 36
  triple(num=>12, -reverse=>1); # =>  4
 
-=item * feature: undo => BOOL
-
-Default is false. If set to true, specifies that function supports undo
-operation using the undo protocol specified in L<Rinci::function::Undo>. Undo is
-similar to C<reverse> but needs some state to be saved and restored for do/undo
-operation, while reverse can work solely from the arguments.
-
 =item * feature: tx => HASH
 
 Default is none. Specify transactional support, as specified in
-L<Rinci::function::Transaction>. Can be set to a hash containing these keys:
-B<use> (bool, defaults to false, whether function can use transaction if it
-exists), B<req> (bool, defaults to false, whether function always require
-running in a transaction, B<start> (bool, defaults to false, whether function
-starts a new transaction on invocation), B<end> (bool, defaults to false,
-whether function ends [commits/rolls back] transaction).
+L<Rinci::Transaction>. Value is a hash containing these keys: C<v> (int,
+protocol version, default if not specified is 1), B<use> (bool, defaults to
+false, whether function can participate in transaction), B<req> (bool, defaults
+to false, whether function always require running in a transaction, B<start>
+(bool, defaults to false, whether function starts a new transaction on
+invocation), B<end> (bool, defaults to false, whether function ends
+[commits/rolls back] transaction).
 
-Please see Rinci::function::Transaction for more details on transaction.
+Please see Rinci::Transaction for more details on transaction.
 
 =item * feature: dry_run => BOOL (default: 0)
 
@@ -687,9 +684,9 @@ date/time, etc.) Specifying a function as pure means, among others:
 
 =over 4
 
-=item * the function needs not be involved in undo operation;
+=item * it can safely be inculded in transaction without recording in journal;
 
-=item * you can safely include it during dry run;
+=item * it can safely be included during dry run;
 
 =back
 
@@ -708,11 +705,6 @@ Idempotency means that repeated invocation of a function (each with the same
 arguments) will have the same effect as a single invocation. In other words,
 extra invocation will not have any effect.
 
-L<Riap::Transaction> requires functions (to be more exact, their undo steps)
-participating in a transaction be idempotent, because in some cases they might
-be called more than once, e.g. if transaction manager crashes in the middle of
-rollback or rollback recovery and the process needs to be repeated.
-
 Some operations, like reading a database row or a file's content, is inherently
 idempotent (or to be exact nullipotent). Another example is setting or updating
 an entity to some specific value, or deleting some entity. Repeated invocation
@@ -720,15 +712,15 @@ of the operation will still sets the entity to the same value, or still deletes
 the entity.
 
 Some other operations are inherently non-idempotent, for example sending an
-email. Repeated invocation will cause multiple emails to be sent, and once sent
-to an external server, it's usually hard to undo.
+email. Repeated invocation will cause multiple emails to be sent.
 
 Yet some other operations are non-idempotent, but can be made idempotent simply
 by checking whether the target object(s) has (have) reached the final desired
 state, (optionally additionally also checking whether they are in the correct
 original state to begin with). For example, a function that renames a file can
 record the original file that was renamed (its MD5 checksum, size, or what not)
-and refuse to rename again if the file to be renamed is not the original file.
+or perhaps record the action in a history database or flag file, and refuse to
+rename again if the file to be renamed is not the original file.
 
 =back
 
@@ -806,14 +798,8 @@ If set to 1, specify that function requires trash directory. Trash is not unlike
 a temporary directory. Caller should provide path to trash directory using
 special argument C<-trash_dir>.
 
-=item * dep: undo_trash_dir => BOOL
-
-If set to 1, specify that function (which should be undoable, i.e. have C<undo>
-feature set to true) requires trash directory specifically for undo. Caller
-should provide path to trash directory using special argument C<-undo_trash_dir>
-only when doing do/undo operation.
-
-Undo trash directory can be provided by transaction manager.
+Trash directory can be provided, e.g. by transaction manager (see
+L<Rinci::Transaction>).
 
 =item * dep: all => [DEPHASH, ...]
 
