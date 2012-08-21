@@ -1,5 +1,28 @@
 Revision history for Rinci
 
+1.1.24   2012-08-21 (SHARYANTO)
+
+         [INCOMPATIBLE CHANGES]
+
+         - Deprecate undo protocol, now undo should be implemented solely using
+           transaction.
+
+         - Revise transaction specification. Introduce protocol version (v) and
+           bump it to v=2. Require 'tx' feature to specify protocol version.
+           Incompatibilities include: 1) transaction now no longer uses undo
+           protocol but adapts mechanism from Perinci::Sub::Gen::Undoable (which
+           will also be deprecated as the mechanism is now elevated into
+           standards).
+
+         [ENHANCEMENTS]
+
+         - Specify TM's interface in more details (moved from Riap::Transaction,
+           which now becomes shorter).
+
+         - Specify steps for action, rollback, and crash recovery in more
+           details, with example.
+
+
 1.1.23   2012-08-14 (SHARYANTO)
 
          Major rewrite of transaction specification.

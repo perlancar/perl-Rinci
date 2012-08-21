@@ -150,7 +150,7 @@ for too long without being committed or rolled back.
 
 =head2 Starting transaction
 
-User calls C<$tm->begin(tx_id => $tx_id)>, providing a unique transaction ID
+User calls C<< $tm->begin(tx_id => $tx_id) >>, providing a unique transaction ID
 C<$tx_id> as identifier for the transaction. C<$tx_id> is an arbitrary string
 with a length between 1 and 200 characters. User can also supply C<summary>, a
 textual description for the transaction. It should not be longer than 1024
