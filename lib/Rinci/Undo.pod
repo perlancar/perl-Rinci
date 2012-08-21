@@ -28,11 +28,13 @@ perform its action.
 =item * ritx does not limit using the same function for undo
 
 In riundo, we must call the same function (passing the previously obtained undo
-data from the same function) to undo the information. This is sometimes slightly
+data from the that function) to undo the information. This is sometimes slightly
 cumbersome. The undo action might be provided by other functions, but we still
 have to go through the same function first.
 
 =item * ritx can also implement undo/redo
+
+So there is no need for maintaining two specifications.
 
 =back
 
