@@ -12,7 +12,9 @@ Revision history for Rinci
            Incompatibilities include: 1) transaction now no longer uses undo
            protocol but adapts mechanism from Perinci::Sub::Gen::Undoable (which
            will also be deprecated as the mechanism is now elevated into
-           standards).
+           standards); 2) TM object no longer needs to be passed to function,
+           this should be safer; function now detects transaction using
+           '-tx_action' special argument.
 
          [ENHANCEMENTS]
 
