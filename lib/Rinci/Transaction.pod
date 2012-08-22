@@ -64,7 +64,7 @@ the metadata. In addition, function must also be idempotent.
 
  features => {
      ...
-     tx => {v=>2, use=>1}, # can also add req=>1
+     tx => {v=>2},
      idempotent => 1,
  }
 
