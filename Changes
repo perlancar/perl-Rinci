@@ -1,5 +1,17 @@
 Revision history for Rinci
 
+1.1.25   2012-08-22 (SHARYANTO)
+
+         [INCOMPATIBLE CHANGES]
+
+         - Remove properties 'use' and 'req' in 'tx' feature. This is to make
+           things simpler. use=>1 is redundant, if function follows transaction
+           protocol it means you can use it in transaction. req=>1 is also
+           removed, all functions should just require transaction and
+           potentially return 'do_actions'. A simple wrapper can be created to
+           execute those actions without transaction, if wanted.
+
+
 1.1.24   2012-08-21 (SHARYANTO)
 
          [INCOMPATIBLE CHANGES]
