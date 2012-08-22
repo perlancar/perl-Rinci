@@ -762,6 +762,11 @@ undo/redo capability.
 The reliability of the system rests on the reliability of each involved
 function. One buggy function can break the transaction.
 
+=head2 What about non-undoable actions?
+
+Non-undoable actions (like sending an email, permanently deleting files) should
+be executed outside the scope of transaction.
+
 
 =head1 SEE ALSO
 
