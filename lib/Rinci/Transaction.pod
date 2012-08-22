@@ -722,10 +722,17 @@ been going for too long without being committed/rolled back.
 
 =head2 Savepoint
 
-TODO. Basically savepoint is just a label in the C<call> table. Rollback to a
-savepoint is just a normal rollback process, except we stop after finishing the
-undo actions of the corresponding call with the savepoint, and transaction
-status is set back to C<i>.
+Basically savepoint is just a label in the C<call> table.
+
+To mark a savepoint, user calls $tm->savepoint(sp_id=>$sp_id) where $sp_id is an
+arbitrary string from 1-64 characters. It must be unique within the transaction.
+If the same savepoint is used, the old savepoint is replaced by the new one.
+
+Rollback to a savepoint is just a normal rollback process, except we stop after
+finishing the undo actions of the corresponding call with the savepoint, and
+transaction status is set back to C<i>. If savepoint is unknown (or marked
+before any call, which is effectively the same), we rollback everything in the
+transaction.
 
 
 =head2 Discard
