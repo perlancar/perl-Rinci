@@ -724,9 +724,14 @@ been going for too long without being committed/rolled back.
 
 Basically savepoint is just a label in the C<call> table.
 
-To mark a savepoint, user calls $tm->savepoint(sp_id=>$sp_id) where $sp_id is an
-arbitrary string from 1-64 characters. It must be unique within the transaction.
-If the same savepoint is used, the old savepoint is replaced by the new one.
+To mark a savepoint, user calls C<< $tm->savepoint(sp_id=>$sp_id) >> where
+C<$sp_id> is an arbitrary string from 1-64 characters. It must be unique within
+the transaction. If the same savepoint is used, the old savepoint is replaced by
+the new one.
+
+To release (forget) a savepoint, user calls C<<
+$tm->release_savepoint(sp_id=>$sp_id) >>. It just clears the label in the
+C<call> table.
 
 Rollback to a savepoint is just a normal rollback process, except we stop after
 finishing the undo actions of the corresponding call with the savepoint, and
