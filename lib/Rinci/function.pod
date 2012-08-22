@@ -623,7 +623,7 @@ caller can add special argument C<-reverse>. For example:
 
 Default is none. Specify transactional support, as specified in
 L<Rinci::Transaction>. Value is a hash containing these keys: C<v> (int,
-protocol version, default if not specified is 1.
+protocol version, default if not specified is 1).
 
 Please see Rinci::Transaction for more details on transaction.
 
