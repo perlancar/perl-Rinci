@@ -79,7 +79,7 @@ specification.
 
 Currently not used.
 
-=item * 2xx code
+=item * 2xx code - success
 
 200 should be used to mean success.
 
@@ -89,7 +89,7 @@ when only partial file content is returned. But in general, use 200 as some
 callers will simply check for this exact code (instead of checking for range
 200-299).
 
-=item * 3xx code
+=item * 3xx code - further actions needs to be taken by user agent (caller)
 
 301 (moved) can be used to redirect callers to alternate location, although this
 is very rare.
@@ -98,7 +98,16 @@ is very rare.
 indicate that nothing is being modified or no modifying action has been
 performed (see Setup::* modules in CPAN).
 
-=item * 4xx code
+331* (confirmation required). Function requires confirmation, for example if
+action to be taken is dangerous or requires user's attention. Confirmation
+message/prompt from function can be returned in result metadata, in the
+C<confirm_prompt> property. Confirmation from caller is in the form of special
+argument C<-confirm> with boolean value of true (TODO: A more detailed
+confirmation for different actions can be specified later in the form of
+C<-confirm_XXX> special arguments.) For an example of application of this, see
+L<Perinci::Tx::Manager>.
+
+=item * 4xx code - client (caller) side error
 
 400 (bad request, bad arguments) should be returned when the function encounters
 invalid input. A function wrapper can return this code when the function
@@ -137,7 +146,7 @@ requests for this transaction is ignored until transaction is aborted.
 
 484* (no such transaction).
 
-=item * 5xx code
+=item * 5xx code - server (callee) side error
 
 500 is the general code to use when a failure occurs during the execution of a
 function. for example when a C<delete_file()> function fails to delete specified
