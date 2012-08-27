@@ -100,12 +100,12 @@ performed (see Setup::* modules in CPAN).
 
 331* (confirmation required). Function requires confirmation, for example if
 action to be taken is dangerous or requires user's attention. Confirmation
-message/prompt from function can be returned in result metadata, in the
-C<confirm_prompt> property. Confirmation from caller is in the form of special
-argument C<-confirm> with boolean value of true (TODO: A more detailed
-confirmation for different actions can be specified later in the form of
-C<-confirm_XXX> special arguments.) For an example of application of this, see
-L<Perinci::Tx::Manager>.
+message/prompt from function can be returned in the message, or in the
+C<confirm_prompt> property (e.g. to provide translations). Confirmation from
+caller is in the form of special argument C<-confirm> with boolean value of true
+(TODO: A more detailed confirmation for different actions can be specified later
+in the form of C<-confirm_XXX> special arguments.) For an example of application
+of this, see L<Perinci::Tx::Manager>.
 
 =item * 4xx code - client (caller) side error
 
