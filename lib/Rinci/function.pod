@@ -69,7 +69,9 @@ just one. It is more up to the tool and what you want to do with the metadata.
 =head2 Envelope status codes
 
 In general, status codes map directly to HTTP response status codes. Below are
-the suggestion on which codes to use (or avoid).
+the suggestion on which codes to use (or avoid). An asterisk (C<*>) marks which
+codes are not defined in HTTP specification and introduced by this
+specification.
 
 =over 4
 
@@ -130,11 +132,10 @@ authorization, use 401 and 403 respectively.
 
 429 (too many requests).
 
-480 codes are related to transaction. 480 is general transaction error, e.g.
-transaction status is aborted so further requests for this transaction is
-ignored until transaction is aborted.
+480* is general transaction error, e.g. transaction status is aborted so further
+requests for this transaction is ignored until transaction is aborted.
 
-484 (no such transaction).
+484* (no such transaction).
 
 =item * 5xx code
 
@@ -153,9 +154,9 @@ Users should try again at a later time.
 
 521 (maximum retries reached)
 
-531 (bad metadata) is used when there is something wrong with the metadata.
+531* (bad metadata) is used when there is something wrong with the metadata.
 
-532 (failure in recording transaction) when there is a failure in updating
+532* (failure in recording transaction) when there is a failure in updating
 transaction status or in preparing/committing/rolling back the transaction.
 
 Try not to use code greater than 555, as some tools use (CODE-300) for error
@@ -956,7 +957,7 @@ mechanism, e.g. an eval() block and alarm() in Perl).
 
 =head1 SEE ALSO
 
-Related specifications: L<Sah>
+Related specifications: L<Sah>, HTTP/1.1 (RFC 2068)
 
 L<Rinci>
 
