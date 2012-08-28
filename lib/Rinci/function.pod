@@ -334,7 +334,7 @@ By default, without any wrapper, the function is called with a named hash style:
  multiply2(a=>4, b=>3);  # 12
 
 But with the information from the metadata, a wrapper tool like
-Sub::Spec::Wrapper is able to change the calling style to positional:
+Perinci::Sub::Wrapper is able to change the calling style to positional:
 
  multiply2(4, 3.1, 1);  # 12
 
