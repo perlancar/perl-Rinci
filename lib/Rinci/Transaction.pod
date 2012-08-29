@@ -188,7 +188,9 @@ does not support transaction, TM must return status 412.
 3) TM requests state checking and undo information to function, by calling the
 function using the arguments C<$args> and a special argument C<<
 -tx_action=>'check_state' >>. In addition TM also passes C<< -tx_v => N >> (the
-protocol version).
+protocol version) and C<< -tx_action_id => UUID >> (a unique identifier,
+32-character hexdigit, to link between this call and the 'fix_state' call
+later).
 
 There are 3 possible states that the function must decide which we are in:
 
@@ -272,11 +274,11 @@ return:
 5) If we are in fixed state, this step is skipped.
 
 If we are in fixable state, TM calls function the second time, this time with
-C<< -tx_action => 'fix_state' >>. TM also passes C<< -tx_v >> and
-C<-tx_undo_actions> which is the same undo actions passed before by the function
-in step 3. Function must perform action to fix the state into the fixed state.
-In our example, C<setup_unix_user()> should create user and group C<bob>, and
-creates an empty directory C</home/bob>.
+C<< -tx_action => 'fix_state' >>. TM also passes C<-tx_v> and C<-tx_action_id>
+with the same value as the one passed previously during the 'check_state' call.
+Function must perform action to fix the state into the fixed state. In our
+example, C<setup_unix_user()> should create user and group C<bob>, and creates
+an empty directory C</home/bob>.
 
 Function must return status 200 on success. Other status will be interpreted as
 failure, in which case TM will stop the process and starts rollback. C<<
