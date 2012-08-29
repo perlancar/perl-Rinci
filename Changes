@@ -1,5 +1,19 @@
 Revision history for Rinci
 
+1.1.28   2012-08-29 (SHARYANTO)
+
+         [INCOMPATIBLE CHANGE]
+
+         - Transaction: To link between 'check_state' call and 'fix_state' call
+           (e.g. function want to preserve some value between call), previously
+           in 'fix_state' call TM passes '-tx_undo_actions' containing the undo
+           actions from the 'check_state'. Now a simpler way is introduced to
+           replace this: '-tx_action_id' containing a unique UUID (in
+           32-character hexdigit). BTW, '-tx_undo_actions' has not been
+           implemented in Perinci::Tx::Manager, so the next release of
+           Perinci::Tx::Manager will just implement '-tx_action_id'.
+
+
 1.1.27   2012-08-28 (SHARYANTO)
 
          - Introduce status code 331.
