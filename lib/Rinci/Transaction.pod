@@ -188,9 +188,8 @@ does not support transaction, TM must return status 412.
 3) TM requests state checking and undo information to function, by calling the
 function using the arguments C<$args> and a special argument C<<
 -tx_action=>'check_state' >>. In addition TM also passes C<< -tx_v => N >> (the
-protocol version) and C<< -tx_action_id => UUID >> (a unique identifier,
-32-character hexdigit, to link between this call and the 'fix_state' call
-later).
+protocol version) and C<< -tx_action_id => UUID >> (a unique identifier to link
+between this call and the 'fix_state' call later).
 
 There are 3 possible states that the function must decide which we are in:
 
