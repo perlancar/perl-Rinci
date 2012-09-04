@@ -199,13 +199,24 @@ There are 3 possible states that the function must decide which we are in:
 
 This is the final, desired state. When we are already in a fixed state, function
 must return status 304 (nothing to do). TM will then skip calling the function
-the second time to fix state, since there is nothing to fix.
+the second time to fix state, since there is nothing to fix. For example:
+
+ [304, "File $path already exists"]      # e.g., in a create_file() function
+ [304, "User $u already does not exist"] # e.g., in a delete_user() function
 
 =item * fixable
 
 This is where the final, desired state has not been reached, but it is possible
 to reach it. When we are in this state, function must return status 200 with the
-result metadata C<undo_actions>.
+result metadata C<undo_actions>. The message should also describe what needs to
+be fixed.
+
+For example:
+
+ [304, "Directory $path needs to be created", undef,
+  {undo_actions => [rmdir => {path=>$path}]}]  # e.g. in a mkdir() function
+ [200, "User $u should be created with UID $uid", undef,
+  {undo_actions => [delete_user=>{user=>$u}]}] # e.g. in create_user()
 
 =item * unfixable
 
@@ -213,6 +224,11 @@ This is where the final, desired state has not been reached, and it is
 impossible or inappropriate for the function to fix into the fixed state. This
 state is used to avoid undoing what was not fixed by the function. If we are in
 this state, function should return status 412 (precondition failed).
+
+For example:
+
+ [412, "Path $path exists but not a symlink"] # e.g. in setup_symlink()
+ [412, "User $u exists but with different UID $cur_uid (needs $uid)"]
 
 =back
 
