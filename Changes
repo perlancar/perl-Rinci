@@ -1,5 +1,13 @@
 Revision history for Rinci
 
+1.1.29   2012-09-04 (SHARYANTO)
+
+         - Transaction: In 'check_state' phase, specify that result message
+           should contain a description of what needs to be fixed, or how it is
+           already fixed, or how it is unfixable; the message can then be logged
+           by TM to be displayed to user.
+
+
 1.1.28   2012-08-29 (SHARYANTO)
 
          [INCOMPATIBLE CHANGE]
