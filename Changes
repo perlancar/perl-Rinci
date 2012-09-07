@@ -1,5 +1,11 @@
 Revision history for Rinci
 
+1.1.30   2012-09-07 (SHARYANTO)
+
+         No spec changes. Rename back a file (Rinci/Schema.pm) that I thought
+         was not used (me--). [CT]
+
+
 1.1.29   2012-09-04 (SHARYANTO)
 
          - Transaction: In 'check_state' phase, specify that result message
