@@ -35,13 +35,10 @@ B<Rinci> is a set of specifications of metadata for your code entities. Each
 different type of code entity, like function/method, variable, namespace, etc,
 has its own metadata specification.
 
-B<Metadata> is a set of name/value pairs stored in a regular mapping variable
-(a.k.a. hash in Perl/Ruby, or dictionary in Python, or array in PHP, or object
-in JavaScript/JSON; but from here on the term I<hash> will be used). Each
-specification will describe what metadata B<property names> (a.k.a. hash keys)
-are known and what value should each property contain. So the L<Rinci::function>
-specification will describe metadata for functions/methods, L<Rinci::package>
-will describe metadata for namespace/package, and so on.
+B<Metadata> is a defhash (see L<DefHash>). Each specification will specify what
+B<properties> should be supported. So the L<Rinci::function> specification will
+describe metadata for functions/methods, L<Rinci::package> will describe
+metadata for namespace/package, and so on.
 
 Rinci defines properties pertaining to documentation (like C<summary>,
 C<description>, C<examples>, C<links>), function argument and return value
@@ -75,12 +72,10 @@ with Rinci metadata. Automatically provide export tags (using information in the
 C<tags> property). Can automatically wrap functions using Perinci::Sub::Wrapper
 when exporting.
 
-=item * Perinci::Sub::To::* modules
+=item * Perinci::To::* modules
 
-Convert function metadata to user/API documentation in POD or other format.
-Basically all they do is just arranging the various available properties like
-C<summary>, C<description>, C<args>, C<result>, C<examples>, C<links> and so on
-and format them to the final target.
+Convert metadata to various other documents, for example L<Perinci::To::POD> to
+generate documentation.
 
 =item * L<Perinci::CmdLine>
 
@@ -183,25 +178,6 @@ object, library, application.
 
 This section describes specification common to all kinds of Rinci metadata.
 
-B<Metadata>. Metadata is just a normal hash. Each hash key is called a property.
-Any hash key in the metadata that starts with C<_> (underscore) is ignored, this
-can be used to store extra data, implementation-specific properties, or
-experimental (not yet standardized) properties. Otherwise, the property must be
-known and valid. A property is valid if the property name matches the regex
-pattern /\A[A-Za-z][A-Za-z0-9_]*([A-Za-z][A-Za-z0-9_]*)*\z/ (in other words, a
-word or a dotted word like "foo" or "foo.bar") and the name is known (listed in
-the specification), and the property values conform to the specification for
-that property.
-
-Metadata should be written in Unicode (UTF-8).
-
-B<Custom properties>. The specification is extensible: you can add properties of
-your own. Currently the mechanism to formally add a custom property to the
-specification is unspecified, but at least in Perl it is recommended that the
-distribution which does this updates the schema in C<Rinci::METATYPE::Schema>.
-Popular custom properties might make it into core specification in later
-revision or version.
-
 B<Where to put the metadata>. The specification does not specify where to put
 metadata in: it might be put alongside the code, separated in another source
 code, encoded in YAML/JSON, put in database, or whatever. It is up to the
@@ -214,9 +190,9 @@ B<Common properties>. Below are properties common to all metadata:
 
 =head3 Property: v => FLOAT (required)
 
-Declare specification version. This property is required. It should have the
-value of 1.1. If C<v> is not specified, it is assumed to be 1.0 and metadata is
-assumed to be the old, Sub::Spec 1.0.x metadata.
+From DefHash. Declare specification version. This property is required. It
+should have the value of 1.1. If C<v> is not specified, it is assumed to be 1.0
+and metadata is assumed to be the old, Sub::Spec 1.0.x metadata.
 
 Example:
 
@@ -241,8 +217,8 @@ this property value.
 
 =head3 Property: default_lang => STR
 
-Specify default language used in the text properties like C<summary> and
-C<description>. Default is 'en_US'.
+From DefHash. Specify default language used in the text properties like
+C<summary> and C<description>. Default is 'en_US'.
 
 To specify translation texts in other languages, you can use
 C<PROPERTY.alt.lang.CODE>, e.g.:
@@ -253,8 +229,8 @@ C<PROPERTY.alt.lang.CODE>, e.g.:
 
 =head3 Property: name => STR
 
-The name of the entity. Useful when aliasing entity (and reusing the metadata)
-and wanting to find out the canonical/original entity.
+From DefHash. The name of the entity. Useful when aliasing entity (and reusing
+the metadata) and wanting to find out the canonical/original entity.
 
 Examples:
 
@@ -264,8 +240,9 @@ Examples:
 
 =head3 Property: summary => STR
 
-A one-line summary. It should be plain text without any markup. Please limit to
-around 72 characters. It is like the C<summary> clause in L<Data::Sah>.
+From DefHash. A one-line summary. It should be plain text without any markup.
+Please limit to around 72 characters. It is like the C<summary> clause in
+L<Data::Sah>.
 
 Example:
 
@@ -284,9 +261,9 @@ C<schema> property.
 
 For function metadata, it should describe what the function does. Suggestion:
 use active, bare infinitive verb like in the example (not "Performs ..."). Avoid
-preamble like "This function ..." since that is redundant. Also avoid describing
-the arguments and its values like "..., accepts a single integer argument" as
-that should go to the C<args> property.
+preamble like "This function ..." or "Function to ..." since that is redundant.
+Also avoid describing the arguments and its values like "..., accepts a single
+integer argument" as that should go to the C<args> property.
 
 To specify translations in other language, use the L<summary.alt.lang.CODE>.
 Or change the C<default_lang> property. Examples:
@@ -304,9 +281,9 @@ Or change the C<default_lang> property. Examples:
 
 =head3 Property: tags => ARRAY OF (STR OR HASH)
 
-A list of tags, useful for categorization. Can also be used by tools, e.g.
-L<Perinci::Exporter> in Perl uses the C<tags> property of the function metadata
-as export tags.
+From DefHash. A list of tags, useful for categorization. Can also be used by
+tools, e.g. L<Perinci::Exporter> in Perl uses the C<tags> property of the
+function metadata as export tags.
 
 Tag can be a simple string or a tag metadata hash.
 
@@ -327,9 +304,9 @@ Example:
 
 =head3 Property: description => STR
 
-A longer description text. The text should be in marked up in format specified
-by C<text_markup> and is suggested to be formatted to 78 columns. It is like the
-C<description> Data::Sah clause.
+From DefHash. A longer description text. The text should be in marked up in
+format specified by C<text_markup> and is suggested to be formatted to 78
+columns. It is like the C<description> Data::Sah clause.
 
 To avoid redundancy, you should mentioning things that are already expressed as
 properties, for example: return value of function (specify it in C<result>
@@ -364,7 +341,7 @@ L<description.alt.lang.CODE> property.
 =head3 Property: links => ARRAY OF HASHES
 
 List to related entities or resources. Can be used to generate a SEE ALSO and/or
-LINKS sections in documentation. Each link is a hash with the following keys:
+LINKS sections in documentation. Each link is a defhash with the following keys:
 
 =over 4
 
@@ -379,13 +356,13 @@ A short plaintext title for the link.
 
 =item * description => STR
 
-A longer marked up text description for the link. Suggested to be formatted to
-76 columns.
+From DefHash. A longer marked up text description for the link. Suggested to be
+formatted to 76 columns.
 
 =item * tags => ARRAY OF (STR OR HASH)
 
-Can be used to categorize or select links. For generating SEE ALSO sections, use
-the tag 'see'.
+From DefHash. Can be used to categorize or select links. For generating SEE ALSO
+sections, use the tag 'see'.
 
 =back
 
@@ -403,29 +380,6 @@ Example:
          tags  => ['see'],
      },
  ],
-
-
-=head3 Property: text_markup => STR
-
-Specify text markup format for the content of properties which contain marked-up
-text, like C<description>. The default is C<markdown>
-(http://en.wikipedia.org/wiki/Markdown) and other valid values include C<org>
-(http://orgmode.org/) and C<none>.
-
-NOTE: Other popular text markup formats might be added in the future. Text
-format should be readable as-is (so-called "plain text markup format") as some
-tools, like L<Perinci::CmdLine> in Perl will just dump the content
-C<description> as text help message instead of going through the trouble of
-passing the content through some formatters.
-
- # use Org format for all marked up text
- text_markup => 'org'
-
-NOTE: Supporting different markup format for different properties, e.g.
-C<markdown> for C<description> but C<org> for other properties (or perhaps
-different format between arg's description and link's description) might be
-considered in the future if necessary, but for now such practice is not
-recommended.
 
 
 =head2 Entity-specific specifications
@@ -520,6 +474,8 @@ specification, requirements, and so on.
 =head1 SEE ALSO
 
 =head2 Related specifications
+
+L<DefHash>
 
 Sah schema language, L<Sah>
 
