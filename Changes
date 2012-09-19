@@ -1,5 +1,12 @@
 Revision history for Rinci
 
+1.1.31   2012-09-19 (SHARYANTO)
+
+         - Base specification on DefHash.
+
+         - Remove 'text_markup' property. Will depend on DefHash for this.
+
+
 1.1.30   2012-09-07 (SHARYANTO)
 
          No spec changes. Rename back a file (Rinci/Schema.pm) that I thought
