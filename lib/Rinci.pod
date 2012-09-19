@@ -521,7 +521,7 @@ specification, requirements, and so on.
 
 =head2 Related specifications
 
-Sah schema language, L<Data::Sah>
+Sah schema language, L<Sah>
 
 L<Riap>
 
