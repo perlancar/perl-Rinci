@@ -24,12 +24,20 @@ There are currently several properties being used:
 
 =head2 Property: undo_data => ANY
 
-Explained in C<undo> feature section in L<Rinci::function>.
+(DEPRECATED) Explained in C<undo> feature section in L<Rinci::function>.
 
 
 =head2 Properties: cmdline.*
 
 Interpreted by L<Perinci::CmdLine>. See its documentation for more detail.
+
+
+=head2 Property: error_stack => ARRAY
+
+When reporting error that results from a call to another function, the original
+error response can be prepended to this stack, to preserve information. See
+L<Perinci::Sub::Util>'s C<wrapres()> for a convenient function to build error
+stack.
 
 
 =head1 FAQ
