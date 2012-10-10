@@ -213,7 +213,7 @@ be fixed.
 
 For example:
 
- [304, "Directory $path needs to be created", undef,
+ [200, "Directory $path needs to be created", undef,
   {undo_actions => [rmdir => {path=>$path}]}]  # e.g. in a mkdir() function
  [200, "User $u should be created with UID $uid", undef,
   {undo_actions => [delete_user=>{user=>$u}]}] # e.g. in create_user()
