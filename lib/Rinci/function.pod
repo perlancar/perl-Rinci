@@ -716,7 +716,7 @@ memoization. An example of an immutable function is C<sub { $_[0]+$_[1] }> where
 its results only depend on the arguments. Example of a mutable function would be
 C<rand()> or C<read()> that reads contents from a file.
 
-=item feature: idempotent => BOOL
+=item * feature: idempotent => BOOL
 
 Default is false. If set to true, specifies that function is idempotent.
 Idempotency means that repeated invocation of a function (each with the same

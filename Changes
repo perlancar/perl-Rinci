@@ -1,5 +1,12 @@
 Revision history for Rinci
 
+1.1.32   2012-11-01 (SHARYANTO)
+
+         - result: Add property 'error_stack'.
+
+         - function: property 'result': Add key 'statuses'.
+
+
 1.1.31   2012-09-19 (SHARYANTO)
 
          - Base specification on DefHash.
