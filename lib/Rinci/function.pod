@@ -486,10 +486,6 @@ Specify function return value. It is a defhash containing keys:
 
 =over 4
 
-=item * B<schema>
-
-A Sah schema to validate the result
-
 =item * B<summary>
 
 From DefHash. Like the C<summary> property in variable metadata.
@@ -498,6 +494,22 @@ From DefHash. Like the C<summary> property in variable metadata.
 
 From DefHash. Like the C<description> property. Suggested to be formatted to 78
 columns.
+
+=item * B<schema> => SCHEMA
+
+A Sah schema to validate the result (the third element in the envelope result).
+This schema should only be tested if status is 200. See also: C<statuses>.
+
+=item * B<statuses> => HASH
+
+Can be used to specify different result schema for different statuses. For
+example:
+
+ statuses => {
+     206 => {
+         schema => 'str*',
+     },
+ }
 
 =back
 
