@@ -48,6 +48,9 @@ like undo (others like callback/progress report will follow). Basically anything
 that can describe the code entity. The specification is extensible: you can
 define more properties, or more deps, or more features.
 
+Since defhash can contain keys that are ignored (those that start with
+underscore, C<_>), extra information can be put here.
+
 
 =head1 WHAT ARE THE BENEFITS OF RINCI?
 
@@ -241,8 +244,7 @@ Examples:
 =head3 Property: summary => STR
 
 From DefHash. A one-line summary. It should be plain text without any markup.
-Please limit to around 72 characters. It is like the C<summary> clause in
-L<Data::Sah>.
+Please limit to around 72 characters.
 
 Example:
 
@@ -306,7 +308,7 @@ Example:
 
 From DefHash. A longer description text. The text should be in marked up in
 format specified by C<text_markup> and is suggested to be formatted to 78
-columns. It is like the C<description> Data::Sah clause.
+columns.
 
 To avoid redundancy, you should mentioning things that are already expressed as
 properties, for example: return value of function (specify it in C<result>

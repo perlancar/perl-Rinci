@@ -615,8 +615,9 @@ Example:
 
 =head2 Property: features => HASH
 
-The C<features> property allows functions to express their features. Each hash
-key contains feature name, which must only contain letters/numbers/underscores.
+The C<features> property is a deffhash. It allows functions to express their
+features. Each hash key contains feature name, which must only contain
+letters/numbers/underscores.
 
 Below is the list of defined features. New feature names may be defined by
 extension.
