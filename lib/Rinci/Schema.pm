@@ -67,7 +67,21 @@ our $function = ['Rinci::metadata' => {
 
         args => ['hash*' => {
             # XXX: regex for arg
+
             # XXX: schema for each arg
+
+            #   XXX: known keys
+            #          summary|description|tags|default_lang|
+            #          schema|req|pos|greedy|
+            #          completion|
+            #          cmdline_aliases|
+            #          cmdline_src
+
+            #   XXX: there should only one argument with
+            #         src=stdin/stdin_or_files.
+
+            #   XXX: there should not be another argument with req=>1 + pos=>0,
+            #        there must not be one if there is argument with src.
         }],
 
         args_as => ['str*' => {
