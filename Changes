@@ -1,5 +1,11 @@
 Revision history for Rinci
 
+1.1.33   2012-11-07 (SHARYANTO)
+
+         No spec changes. (Temporarily?) split Rinci::Schema to its own dist so
+         I can release them often separately.
+
+
 1.1.32   2012-11-01 (SHARYANTO)
 
          - result: Add property 'error_stack'.
