@@ -29,7 +29,11 @@ so caveat implementor. However, major incompatibility will bump the version to
 1.2 or 2.0.
 
 
-=head1 WHAT IS RINCI? (TERMINOLOGIES)
+=head1 TERMINOLOGIES
+
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
+"SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
+interpreted as described in RFC 2119.
 
 B<Rinci> is a set of specifications of metadata for your code entities. Each
 different type of code entity, like function/method, variable, namespace, etc,
