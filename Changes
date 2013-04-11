@@ -1,5 +1,10 @@
 Revision history for Rinci
 
+1.1.35   2013-04-11 (SHARYANTO)
+
+         Introduce property 'x' (from DefHash 1.0.3).
+
+
 1.1.34   2012-11-07 (SHARYANTO)
 
          - function: Introduce status 44x and 54x (experimental).
