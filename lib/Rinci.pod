@@ -387,6 +387,25 @@ Example:
      },
  ],
 
+=head3 Property: x => ANY
+
+From DefHash. This property is used to store extended (application-specific)
+attributes, much like the C<X-> prefix in HTTP or email headers. This property
+can be used as an alternative to using underscore prefix (e.g. C<_foo>). Some
+processing tools strip properties/attributes that begin with underscores, so to
+pass extended metadata around, it might be more convenient to use the C<x>
+property.
+
+It is recommended that you put an application prefix.
+
+Example:
+
+ "x.myapp.foo" => "some value",
+
+Another example:
+
+ "x.dux.strip_newlines" => 0,
+
 
 =head2 Entity-specific specifications
 
