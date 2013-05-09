@@ -790,6 +790,6 @@ be executed outside the scope of transaction.
 
 Transaction behavior is largely based on PostgreSQL.
 
-Related specifications: <Rinci::function>, L<Riap::Transaction>
+Related specifications: L<Rinci::function>, L<Riap::Transaction>
 
 Implementations: L<Perinci::Tx::Manager>
