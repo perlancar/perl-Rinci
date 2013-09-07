@@ -1,8 +1,14 @@
 Revision history for Rinci
 
+1.1.36   2013-09-07 (SHARYANTO) (not yet released)
+
+         - Rename 'entity_version' to 'entity_v' to be more consistent with
+           DefHash ('defhash_v').
+
+
 1.1.35   2013-04-11 (SHARYANTO)
 
-         Introduce property 'x' (from DefHash 1.0.3).
+         - Introduce property 'x' (from DefHash 1.0.3).
 
 
 1.1.34   2012-11-07 (SHARYANTO)

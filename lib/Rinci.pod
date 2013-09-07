@@ -206,7 +206,7 @@ Example:
  v => 1.1
 
 
-=head3 Property: entity_version => STR
+=head3 Property: entity_v => STR
 
 Specify entity version (like package or function version). This is version as in
 software implementation version, not to be confused with C<v> which is the
@@ -214,7 +214,7 @@ metadata specification version (1.1).
 
 Example:
 
- entity_version => 0.24
+ entity_v => 0.24
 
 In Perl, modules usually put version numbers in package variable called
 C<$VERSION>. If not set, tools like L<Perinci::Access::InProcess> automatically
