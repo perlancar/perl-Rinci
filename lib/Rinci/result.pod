@@ -32,15 +32,44 @@ There are currently several properties being used:
 Interpreted by L<Perinci::CmdLine>. See its documentation for more detail.
 
 
+=head2 Property: logs => ARRAY OF HASH
+
+Store log of events happening to this result, stored chronologically (older
+first). Each log should be a hash which should have at least the following keys:
+C<time> (Unix timestamp), C<type> (string).
+
+Normally, the first element of the log will contain information about who
+produced the result and where/when. It has the C<type> key with the value of
+C<create>. It should be a hash with the following keys:
+
+=over
+
+=item * pkg => STR
+
+Package (namespace) where this result is produced.
+
+=item * file => STR
+
+File name where the result is created. Might be a relative or absolute path.
+
+=item * line => INT
+
+Line number where the result is created.
+
+=item * func => STR
+
+Function name where this result is produced. Name need not be fully qualified
+because there is also C<pkg>.
+
+=back
+
 =head2 Property: prev => ARRAY
 
-Previous result in the "result stack" (analogous to stack trace). The result
-MUST be enveloped.
-
-When reporting error that results from a call to another function, the original
-result can be set here, to preserve information. See L<Perinci::Sub::Util>'s
-C<wrapres()> for a convenience function for this, and L<Perinci::CmdLine>'s way
-of displaying it.
+Store "previous result". Result MUST be enveloped. Usually useful when tracing
+errors, especially in conjunction with C<logs>: when reporting error that
+results from a call to another function, the original result can be set here, to
+preserve information. See L<Perinci::Sub::Util>'s C<err()> for a convenience
+function for this, and L<Perinci::CmdLine>'s way of displaying it.
 
 Example:
 
