@@ -32,12 +32,35 @@ There are currently several properties being used:
 Interpreted by L<Perinci::CmdLine>. See its documentation for more detail.
 
 
-=head2 Property: error_stack => ARRAY
+=head2 Property: prev => ARRAY
+
+Previous result in the "result stack" (analogous to stack trace).
 
 When reporting error that results from a call to another function, the original
-error response can be prepended to this stack, to preserve information. See
-L<Perinci::Sub::Util>'s C<wrapres()> for a convenient function to build error
-stack.
+result can be set here, to preserve information. See L<Perinci::Sub::Util>'s
+C<wrapres()> for a convenience function for this, and L<Perinci::CmdLine>'s way
+of displaying it.
+
+Example:
+
+ sub f1 {
+     ...
+     if (error) { return [500, "Can't f1: blah"] }
+     ...
+ }
+
+ sub f2 {
+     ...
+     my $res = f1(...);
+     if ($res is error) { return [500, "Can't f2", undef, {prev=>$res}] }
+     ...
+ }
+
+ sub f3 {
+     ...
+     my $res = f1(...);
+     if ($res is error) { return [500, "Can't f3", undef, {prev=>$res}] }
+ }
 
 
 =head1 FAQ
