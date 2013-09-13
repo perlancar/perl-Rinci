@@ -34,7 +34,8 @@ Interpreted by L<Perinci::CmdLine>. See its documentation for more detail.
 
 =head2 Property: prev => ARRAY
 
-Previous result in the "result stack" (analogous to stack trace).
+Previous result in the "result stack" (analogous to stack trace). The result
+MUST be enveloped.
 
 When reporting error that results from a call to another function, the original
 result can be set here, to preserve information. See L<Perinci::Sub::Util>'s

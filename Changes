@@ -1,5 +1,10 @@
 Revision history for Rinci
 
+1.1.37   2013-09-13 (SHARYANTO)
+
+         - result: Replace 'error_stack' with 'prev'.
+
+
 1.1.36   2013-09-07 (SHARYANTO)
 
          - Rename 'entity_version' to 'entity_v' to be more consistent with
@@ -18,8 +23,8 @@ Revision history for Rinci
 
 1.1.33   2012-11-07 (SHARYANTO)
 
-         No spec changes. (Temporarily?) split Rinci::Schema to its own dist so
-         I can release them often separately.
+         - No spec changes. (Temporarily?) split Rinci::Schema to its own dist
+           so I can release them often separately.
 
 
 1.1.32   2012-11-01 (SHARYANTO)
@@ -38,8 +43,8 @@ Revision history for Rinci
 
 1.1.30   2012-09-07 (SHARYANTO)
 
-         No spec changes. Rename back a file (Rinci/Schema.pm) that I thought
-         was not used (me--). [CT]
+         - No spec changes. Rename back a file (Rinci/Schema.pm) that I thought
+           was not used (me--). [CT]
 
 
 1.1.29   2012-09-04 (SHARYANTO)
@@ -73,7 +78,7 @@ Revision history for Rinci
 
 1.1.26   2012-08-22 (SHARYANTO)
 
-         Term change: call -> action.
+         - Term change: call -> action.
 
 
 1.1.25   2012-08-22 (SHARYANTO)
@@ -115,13 +120,12 @@ Revision history for Rinci
 
 1.1.23   2012-08-14 (SHARYANTO)
 
-         Major rewrite of transaction specification.
-
-         The main motivation is to remove the concept of 'steps' as this is a
-         false dichotomy. Steps are actually functions themselves, the units of
-         work are still functions. Eventually, a complex system will need to
-         nest functions inside functions, to more than two levels of nesting.
-         Why divide and limit into two levels (function-step)? So:
+         - Major rewrite of transaction specification. The main motivation is to
+           remove the concept of 'steps' as this is a false dichotomy. Steps are
+           actually functions themselves, the units of work are still functions.
+           Eventually, a complex system will need to nest functions inside
+           functions, to more than two levels of nesting. Why divide and limit
+           into two levels (function-step)? So:
 
          - Everything is a bit clearer now
 
@@ -160,53 +164,54 @@ Revision history for Rinci
 
 1.1.20   2012-07-21 (SHARYANTO)
 
-         function: Add argument specification keys 'src' and 'cmdline_src'.
+         - function: Add argument specification keys 'src' and 'cmdline_src'.
 
 
 1.1.19   2012-06-22 (SHARYANTO)
 
-         Adjust transaction status labels. Final statuses are now in uppercase:
-         C, R, U, X; while transient statuses are in lowercase: i, a, u, d, e.
+         - Adjust transaction status labels. Final statuses are now in
+           uppercase: C, R, U, X; while transient statuses are in lowercase: i,
+           a, u, d, e.
 
-         Add response status 429 (too many requests).
+         - Add response status 429 (too many requests).
 
 
 1.1.18   2012-06-06 (SHARYANTO)
 
-         Refinements to transaction details.
+         - Refinements to transaction details.
 
-         Remove dependency clause 'undo_storage'. Add dependency clauses
-         'tmp_dir', 'trash_dir', 'undo_trash_dir'.
+         - Remove dependency clause 'undo_storage'. Add dependency clauses
+           'tmp_dir', 'trash_dir', 'undo_trash_dir'.
 
 
 1.1.17   2012-05-31 (SHARYANTO)
 
-         Specify transactional system (Rinci::function::Transaction). Split
-         specification for undo to Rinci::function::Undo and specify undo/redo
-         protocol under transaction.
+         - Specify transactional system (Rinci::function::Transaction). Split
+           specification for undo to Rinci::function::Undo and specify undo/redo
+           protocol under transaction.
 
 
 1.1.16   2012-05-03 (SHARYANTO)
 
-         Refine undo protocol documentation. Specify interaction with
-         undo/transaction manager. '-undo_hint' is now replaced by
-         '-undo_storage'. Declare 'undo_storage' dependency clause.
+         - Refine undo protocol documentation. Specify interaction with
+           undo/transaction manager. '-undo_hint' is now replaced by
+           '-undo_storage'. Declare 'undo_storage' dependency clause.
 
 
 1.1.15   2012-05-02 (SHARYANTO)
 
-         No functional changes.
+         - No spec changes.
 
          [INCOMPATIBLE CHANGE]
 
-         + Update Sah schema syntax (pre-0.03, [merge:X] -> [mergeX])
+         - Update Sah schema syntax (pre-0.03, [merge:X] -> [mergeX])
 
 
 1.1.14   2012-05-02 (SHARYANTO)
 
          [INCOMPATIBLE CHANGE]
 
-         + Change 'exec' dependency clause to 'prog' (avoid possible confusion
+         - Change 'exec' dependency clause to 'prog' (avoid possible confusion
            because 'exec' can imply that we need to execute the program; there
            can be other future dep clause for that).
 
@@ -215,152 +220,152 @@ Revision history for Rinci
 
          [ENHANCEMENTS]
 
-         + Each tag in 'tags' property can also be a tag metadata hash (for
-         translatable message, etc).
+         - Each tag in 'tags' property can also be a tag metadata hash (for
+           translatable message, etc).
 
 
 1.1.12   2012-03-13 (SHARYANTO)
 
          [ENHANCEMENTS]
 
-         + Add 'Rinci::result'.
+         - Add 'Rinci::result'.
 
 
 1.1.11   2012-03-13 (SHARYANTO)
 
          [INCOMPATIBLE CHANGES]
 
-         + package: Remove property 'pkg_version' (use 'entity_version'
-         instead).
+         - package: Remove property 'pkg_version' (use 'entity_version'
+           instead).
 
          [ENHANCEMENTS]
 
-         + Add property 'entity_version'.
+         - Add property 'entity_version'.
 
 
 1.1.10   2012-02-28 (SHARYANTO)
 
-         + function: arg spec 'aliases': Add alias spec 'schema'
+         - function: arg spec 'aliases': Add alias spec 'schema'
 
 
 1.1.9    2012-02-28 (SHARYANTO)
 
          [INCOMPATIBLE CHANGE]
 
-         + function: Change (back) 'set' alias spec to 'code', in arg spec
-         'aliases' (for backward compatibility with 1.0)
+         - function: Change (back) 'set' alias spec to 'code', in arg spec
+           'aliases' (for backward compatibility with 1.0)
 
 
 1.1.8    2012-02-28 (SHARYANTO)
 
          [INCOMPATIBLE CHANGES]
 
-         + function: Replace (back) 'alias_for' argument spec with
-         'cmdline_aliases'. I first used 'alias_for' so I can list each alias as
-         a key in 'args' property. The goal is so I can get all argument names
-         (+ aliases) simply by doing a keys() on 'args' hash. And the goal of
-         that is to add a 'complete_arg_name' Riap action which is more
-         lightweight than a full 'meta' just to get argument names. Turns out
-         that I don't need 'alias_for' just to support 'complete_arg_name', and
-         also turns out that completing argument name needs more than just all
-         argument names + aliases. You also need 'pos' information. So a full
-         'meta' is currently used. The reason I now revert to 'cmdline_aliases'
-         style is because I don't want command-line aliases to become
-         full/first-class argument.
+         - function: Replace (back) 'alias_for' argument spec with
+           'cmdline_aliases'. I first used 'alias_for' so I can list each alias
+           as a key in 'args' property. The goal is so I can get all argument
+           names (- aliases) simply by doing a keys() on 'args' hash. And the
+           goal of that is to add a 'complete_arg_name' Riap action which is
+           more lightweight than a full 'meta' just to get argument names. Turns
+           out that I don't need 'alias_for' just to support
+           'complete_arg_name', and also turns out that completing argument name
+           needs more than just all argument names - aliases. You also need
+           'pos' information. So a full 'meta' is currently used. The reason I
+           now revert to 'cmdline_aliases' style is because I don't want
+           command-line aliases to become full/first-class argument.
 
 
 1.1.7    2012-02-23 (SHARYANTO)
 
-         + package: Add property 'pkg_version'.
+         - package: Add property 'pkg_version'.
 
 
 1.1.6    2012-02-21 (SHARYANTO)
 
-         + function: Add 'alias_for' argument specification.
+         - function: Add 'alias_for' argument specification.
 
 
 1.1.5    2012-02-10 (SHARYANTO)
 
-         No spec changes.
+         - No spec changes.
 
-         + Add Rinci::Schema.
+         - Add Rinci::Schema.
 
 
 1.1.4    2012-02-01 (SHARYANTO)
 
-         + Declare that 1.1 series might introduce minor backward compatibility
+         - Declare that 1.1 series might introduce minor backward compatibility
            problems between revisions.
 
-         + Rename 'arg_pass_style' and 'result_envelope' to the old
+         - Rename 'arg_pass_style' and 'result_envelope' to the old
            (Sub::Spec-era) 'args_as' and 'result_naked'. New names are not
            better.
 
-         + Code entity URI now moved to Riap specification as the 'riap' URI
+         - Code entity URI now moved to Riap specification as the 'riap' URI
            scheme.
 
-         + Some minor revisions.
+         - Some minor revisions.
 
 
 1.1.3    2012-01-27 (SHARYANTO)
 
-         + Change syntax of code entity URI, from 'Pkg.SubPkg.func' to
+         - Change syntax of code entity URI, from 'Pkg.SubPkg.func' to
            'pm:/Pkg/SubPkg/func' (or 'py:', 'php:', and so on).
 
-         + Some minor revisions like wording and paragraph reorganization.
+         - Some minor revisions like wording and paragraph reorganization.
 
 
 1.1.2    2012-01-19 (SHARYANTO)
 
-         + Add 'default_lang' property. Add guidelines on what to put in 'summary'
+         - Add 'default_lang' property. Add guidelines on what to put in 'summary'
            and 'description'.
 
-         + variable: Add 'schema' property.
+         - variable: Add 'schema' property.
 
 
 1.1.1    2012-01-18 (SHARYANTO)
 
-         No spec changes. Update module names (Rinci::HTTP -> Riap, Rias ->
-         Perinci). Add documents Rinci::Upgrading and Rinci::Tutorial (stub).
+         - No spec changes. Update module names (Rinci::HTTP -> Riap, Rias ->
+           Perinci). Add documents Rinci::Upgrading and Rinci::Tutorial (stub).
 
 
 1.1.0    2012-01-15 (SHARYANTO)
 
-         First release. Spun off from Sub::Spec.
+         - First release. Spun off from Sub::Spec.
 
-         Incompatible differences with Sub::Spec 1.0.x:
+         [INCOMPATIBLE CHANGES FROM Sub::Spec 1.0.x]
 
-         + Terminology: 'spec clause' becomes 'property'. This is to avoid
+         - Terminology: 'spec clause' becomes 'property'. This is to avoid
            confusion with 'clause' as used in Sah schema language.
 
-         + Default text markup format changed from Org to Markdown, but a new
+         - Default text markup format changed from Org to Markdown, but a new
            properties 'text_markup' is added to allow specifying 'org' or
            'markdown' (or 'none').
 
-         + 'v' clause is now required to declare Rinci spec version (with value
+         - 'v' clause is now required to declare Rinci spec version (with value
            1.1, if unspecified then assumed spec is old Sub::Spec 1.0).
 
-         + function: Incompatible changes to 'args' and 'result' properties;
+         - function: Incompatible changes to 'args' and 'result' properties;
            'args' is now a hash of arg names and arg *specs* (instead of arg
            schemas). 'result' is now a hash of data, instead of schema. The
            purpose is to keep Sah schema clean from custom, non-schema-related
            schema clauses, like arg_* (thus requiring custom Sah extensions,
            etc). Mixing them into schemas was not the right way.
 
-         + function: property 'type' removed, replaced with 'is_func',
+         - function: property 'type' removed, replaced with 'is_func',
            'is_meth', 'is_static_meth'. This is because a single
            subroutine/function can act as all.
 
-         + function: Other properties which are also removed/replaced: 'timeout'
+         - function: Other properties which are also removed/replaced: 'timeout'
            (non-core), 'retry' (non-core), 'scope' (can be replaced by using
            tags), 'result_naked' (replaced by 'result_envelope'), 'args_as'
            (replaced by 'arg_pass_style').
 
-         + function: property 'deps': terminology change ('dep clause' -> 'dep
+         - function: property 'deps': terminology change ('dep clause' -> 'dep
            type'), rename dep types: 'sub' -> 'func', 'mod' -> 'perl_module'.
 
-         Additions:
+         [NEW FEATURES FROM Sub::Spec 1.0.x]
 
-         + Keys beginning with "_" are allowed and ignored. This can be used to
+         - Keys beginning with "_" are allowed and ignored. This can be used to
            store extra information.
 
-         + New properties: 'tags', 'links', 'examples'.
+         - New properties: 'tags', 'links', 'examples'.
