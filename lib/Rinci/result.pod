@@ -44,7 +44,7 @@ C<create>. It should be a hash with the following keys:
 
 =over
 
-=item * pkg => STR
+=item * package => STR
 
 Package (namespace) where this result is produced.
 
