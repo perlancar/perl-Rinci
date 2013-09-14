@@ -1,14 +1,19 @@
 Revision history for Rinci
 
+1.1.38   2013-09-15 (SHARYANTO)
+
+         - result: Add property 'logs'.
+
+
 1.1.37   2013-09-13 (SHARYANTO)
 
-         - result: Replace 'error_stack' with 'prev'.
+         - result: Replace property 'error_stack' with 'prev'.
 
 
 1.1.36   2013-09-07 (SHARYANTO)
 
-         - Rename 'entity_version' to 'entity_v' to be more consistent with
-           DefHash ('defhash_v').
+         - Rename property 'entity_version' to 'entity_v' to be more consistent
+           with DefHash ('defhash_v').
 
 
 1.1.35   2013-04-11 (SHARYANTO)
