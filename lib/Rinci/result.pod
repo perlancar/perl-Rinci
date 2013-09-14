@@ -58,8 +58,12 @@ Line number where the result is created.
 
 =item * func => STR
 
-Function name where this result is produced. Name need not be fully qualified
-because there is also C<pkg>.
+Function name where this result is produced.
+
+=item * stack_trace => ARRAY
+
+Optional, a stack trace. In Perl this can be produced by using << [caller(1),
+caller(2), ...] >>.
 
 =back
 
