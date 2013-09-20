@@ -272,8 +272,8 @@ situation where arguments are parsed from command-line-like options). Keys are
 alias names, values are itself hashes (alias specification). Valid alias
 specification keys: C<summary> (a string, optional), C<schema> (optional,
 defaults to argument's schema), C<code> (a code to set argument value, optional,
-will be given reference to arguments hash; if not set, the default behavior is
-simply to set the argument value).
+will be given C<< (\%args, $val) >>); if not set, the default behavior is simply
+to set the argument value).
 
 =item * B<completion> => CODE
 
