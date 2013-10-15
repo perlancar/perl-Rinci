@@ -563,12 +563,14 @@ to true, and the wrapper can generate the envelope for the functions.
 
 =head2 Property: examples => ARRAY
 
-This property allowed you to put examples in a detailed and structured way, as
-an alternative to putting everything in C<description>.
+This property allows you to put examples in a detailed and structured way, as an
+alternative to putting everything in C<description>.
 
 Each example is a defhash, it specifies what arguments are used, what the
 results are, and some description. It can be used when generating API/usage
-documentation, as well as for testing data. Known properties:
+documentation, as well as for testing data. It can also be used for testing
+(function will be run with specified arguments and the result will be matched
+against expected result). Known properties:
 
 =over 4
 
@@ -587,7 +589,7 @@ Status from envelope. If unspecified, assumed to be 200.
 
 =item * result => DATA
 
-Result data.
+Expected result.
 
 =item * summary => STR
 
@@ -596,10 +598,14 @@ phrase or sentence, what the example tries to demonstrate. You can skip the
 summary if the example is pretty basic or things are already clear from the
 C<args> alone.
 
-=item * description => STR.
+=item * description => STR
 
 From DefHash. Longer marked up text about the example (e.g. discussion or things
 to note), suggested to be formatted to 72 columns.
+
+=item * tags => ARRAY
+
+From DefHash.
 
 =back
 
