@@ -1,5 +1,14 @@
 Revision history for Rinci
 
+1.1.39   2013-10-15 (SHARYANTO)
+
+         - function: examples: Introduce 'src' and 'src_plang' so that more
+           general examples can be specified.
+
+         - function: cmdline_aliases: 'code' now gets (\%args, $val) instead of
+           just (\%args).
+
+
 1.1.38   2013-09-15 (SHARYANTO)
 
          - result: Add property 'logs'.
