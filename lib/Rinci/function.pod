@@ -576,14 +576,36 @@ against expected result). Known properties:
 
 =item * args => HASH
 
-Arguments used to produce result.
+Arguments used to produce result. Can be converted to C<argv> by tool, e.g. when
+displaying command-line eamples
 
 =item * argv => ARRAY
 
-An alternative to C<args>, for example when function is run from the command
-line.
+An alternative to C<args>, for example when function is run from the
+command-line. Can be converted to C<args> most of the time when wanting to
+display examples in Perl instead of command-line.
 
-=item * status => INT
+=item * src => STR
+
+An alternative to C<args> or C<argv>, to provide raw source code. See also:
+C<src_plang>. This can be used to show more general examples. For example, you
+can show how a function is used in an expression or code block, or how a
+command-line program is used in a shell script.
+
+Exactly one of C<args>, C<argv>, or C<src> must be specified.
+
+=item * src_plang => STR
+
+The programming language the examples source code C<src> is written in. Valid
+values include: C<perl>, C<bash>.
+
+Command-line interface tools will typically only show examples written in
+C<bash> or other shells, while Perl module tools will typically only show
+C<perl> examples.
+
+Required if C<src> is specified.
+
+=item * status => INT (default: 200)
 
 Status from envelope. If unspecified, assumed to be 200.
 
@@ -619,14 +641,33 @@ Example:
          # summary no needed here, already clear.
      },
      {
+         args => {},
+         result => 400,
+         summary => 'Num argument is required',
+     },
+
+     {
          argv => [-5],
          result => 1,
          summary => 'Also works for negative integers',
      },
+ ],
+
+Another example demonstrating C<src> for a function called C<list_countries>:
+
+ examples => [
      {
-         args => {},
-         result => 400,
-         summary => 'Num argument is required',
+         src => 'for c in `list-countries`; do wget http://flags.org/country/$c; done',
+         src_plang => 'bash',
+     },
+     {
+         src => <<'EOT',
+ my $res = list_countries(detail => 1, sort=>['-popsize']);
+ die "Can't list countries: $res->[0] - $res->[1]" unless $res->[0] == 200;
+ my $i = 0;
+ for my $c (@{ $res->[2] }) { $i++; say "$i. $_->{name}'s population: $_->{popsize}";
+ EOT
+         src_plang => 'perl',
      },
  ],
 
