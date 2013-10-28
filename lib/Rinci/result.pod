@@ -27,6 +27,16 @@ There are currently several properties being used:
 (DEPRECATED) Explained in C<undo> feature section in L<Rinci::function>.
 
 
+=head2 Properties: func.* => ANY
+
+These properties allow function to return extra stuffs. Usually done to avoid
+breaking format of existing result (to maintain API compatibility). The
+attributes after C<func.> is up to the respective function. An example is the
+C<get_args_from_argv()> function in the L<Perinci::Sub::GetArgs::Argv> Perl
+module. The function returns C<$args> but from v0.26 it also wants to give hints
+about the existence of missing arguments. It can do this via
+C<func.has_missing_arg> result metadata.
+
 =head2 Properties: cmdline.*
 
 Interpreted by L<Perinci::CmdLine>. See its documentation for more detail.
