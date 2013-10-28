@@ -34,8 +34,8 @@ breaking format of existing result (to maintain API compatibility). The
 attributes after C<func.> is up to the respective function. An example is the
 C<get_args_from_argv()> function in the L<Perinci::Sub::GetArgs::Argv> Perl
 module. The function returns C<$args> but from v0.26 it also wants to give hints
-about the existence of missing arguments. It can do this via
-C<func.has_missing_arg> result metadata.
+about whether or not there are missing arguments. It can do this via
+C<func.missing_arg> result metadata.
 
 =head2 Properties: cmdline.*
 
