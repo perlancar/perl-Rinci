@@ -449,7 +449,7 @@ function as value. The function will be called with arguments: word=>... (which
 is the formed word so far, ci=>0|1 (whether completion should be done
 case-insensitively). The function should return an array containing a list of
 possible candidates. For an example of implementation for this, see
-L<Perinci::BashComplete> in Perl which provides tab completion for argument
+L<Perinci::Sub::Complete> in Perl which provides tab completion for argument
 values. Example:
 
  $SPEC{delete_user} = {

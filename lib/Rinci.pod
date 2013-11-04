@@ -91,7 +91,7 @@ command-line options/arguments to function arguments. Generate help/usage
 message (for C<--help>). Check dependencies (e.g. you can specify that in order
 to run your functions, you need some executables/other functions to exist, an
 environment variable being set, and so on), perform bash shell completion (using
-L<Perinci::BashComplete>).
+L<Perinci::Sub::Complete>).
 
 =item * L<Perinci::Access::HTTP::Server>
 
