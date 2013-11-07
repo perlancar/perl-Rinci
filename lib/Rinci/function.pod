@@ -635,6 +635,15 @@ to note), suggested to be formatted to 72 columns.
 
 From DefHash.
 
+=item * test => BOOL (default: 1)
+
+Whether to actually test example or not. Examples are by default run as tests by
+a test module (e.g. Perl module L<Test::Rinci>. Setting this to 0 disables this
+example from being included in a test.
+
+TODO: more detailed testing instruction (e.g. only test in release candidate,
+or under certain environment flag, etc).
+
 =back
 
 Example:
