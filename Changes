@@ -1,5 +1,15 @@
 Revision history for Rinci
 
+1.1.41   2013-11-08 (SHARYANTO)
+
+         - function: Introduce value 'file' for argument spec property
+           'cmdline_src', to allow function to get file content in its
+           argument.
+
+         - function: Introduce property 'test' on example spec, to allow test
+           module to skip testing a certain examples.
+
+
 1.1.40   2013-10-28 (SHARYANTO)
 
          - result: Add properties 'func.*'.
