@@ -235,6 +235,15 @@ Argument specification is a hash containing these keys:
 
 L<Data::Sah> schema for argument value.
 
+=item * B<default> => ANY
+
+Give default value for argument. This takes precedence over schema, which can
+also specify default value. This is useful if you want to share a common schema
+over several arguments but want to have different default for each argument. For
+example, you have a C<ticket_status> schema. In C<create_ticket> function you
+want the default C<status> argument to be C<new>, while in C<reply_ticket> you
+want the default C<status> to be C<answered>.
+
 =item * B<summary> => STR
 
 From DefHash. A one-line plaintext summary, much like the C<summary> property in
@@ -278,6 +287,11 @@ to set the argument value).
 =item * B<completion> => CODE
 
 A code to supply argument value completion. Will be explained in the examples.
+
+=item * B<element_completion> => CODE
+
+A code to supply argument element value completion. Only applicable if argument
+type is C<array>. Will be explained in the examples.
 
 =item * B<cmdline_src> => STR
 
@@ -484,6 +498,40 @@ pressed:
 
 then B<bash> will try to complete with usernames starting with C<fo>.
 
+B<element_completion>. This is like B<completion>, but for array elements.
+Argument type must be C<array>. Example:
+
+ $SPEC{delete_users} = {
+     v => 1.1,
+     args => {
+         usernames => {
+             schema     => ['array*' => of => 'str*'],
+             req        => 1,
+             pos        => 0,
+             greedy     => 1,
+             element_completion => sub {
+                 my %args = @_;
+                 my $word = $args{word} // "";
+
+                 # find users beginning with $word
+                 local $CWD = "/home";
+                 my $res = [grep {-d && $_ ~~ /^\Q$word/} <*>];
+
+                 # exclude users already mentioned by user
+                 my $ary = $args{args}{usernames};
+                 $res = [grep {!($_ ~~ @$ary)}] @$res;
+
+                 return $res;
+             },
+         },
+     },
+ };
+
+When C<delete_users> is executed over the command line:
+
+ $ delete-users c<tab> ; # will complete with all users beginning with c
+ $ delete-users charlie c<tab> ; # will complete with users but exclude charlie
+ $ delete-users charlie chucky <tab> ; # and so on
 
 =head2 Property: args_as => STR
 
