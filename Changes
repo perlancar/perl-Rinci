@@ -1,5 +1,11 @@
 Revision history for Rinci
 
+1.1.42   2013-11-14 (SHARYANTO)
+
+         - function: Add argument spec's 'delete' and 'element_completion'
+           properties.
+
+
 1.1.41   2013-11-08 (SHARYANTO)
 
          - function: Introduce value 'file' for argument spec property
