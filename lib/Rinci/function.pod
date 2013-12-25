@@ -330,6 +330,29 @@ command-line. With the hooks, the function can load modules correctly (e.g.
 loading C<mod1> won't search in C<dir2> as that directory has not been added by
 -I).
 
+=item * B<cmdline_on_getarg> => CODE
+
+Like C<cmdline_on_getopt> but will be called when argument is specified as a
+command-line argument. For example:
+
+ args => {
+     foo => {
+         schema            => ['array*' => of => 'str*'],
+         pos               => 0,
+         greedy            => 1,
+         cmdline_on_getopt => sub { ... },
+         cmdline_on_getarg => sub { ... },
+     },
+     bar => { ... },
+ },
+
+and the command-line argument:
+
+ --foo o1 --bar o2 --foo o3 a1 a2
+
+The C<cmdline_on_getopt> hook will be called twice for C<o1> and C<o3>, while
+the C<cmdline_on_getarg> hook will be called twice with C<a1> and C<a2>.
+
 =item * B<completion> => CODE
 
 A code to supply argument value completion. Will be explained in the examples.
