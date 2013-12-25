@@ -284,6 +284,52 @@ defaults to argument's schema), C<code> (a code to set argument value, optional,
 will be given C<< (\%args, $val) >>); if not set, the default behavior is simply
 to set the argument value).
 
+=item * B<cmdline_on_getopt> => CODE
+
+A hook that will be called when argument is specified as a command-line option.
+In Perl, hook will be called with a hash argument containing this key: C<arg>
+(str, argument name), C<value> (str, option value), C<args> (hash, the argument
+hash defined so far).
+
+This can be useful if you want to process a command-line option directly on a
+per-option basis instead of getting the final resulting argument value. For
+example (in Perl):
+
+ args => {
+     library => {
+         schema            => ['array*' => of => 'str*'],
+         cmdline_aliases   => { I => {} },
+         cmdline_on_getopt => sub {
+             my %args = @_;
+             require lib;
+             lib->import($args{value});
+         },
+     },
+     module => {
+         schema            => ['array*' => of => 'str*'],
+         cmdline_aliases   => { M => {} },
+         cmdline_on_getopt => sub {
+             my %args = @_;
+             require Module::Load;
+             Module::Load::load($args{value});
+         },
+     },
+ }
+
+With command-line argument like this:
+
+ -I dir1 -M mod1 -I dir2 -M mod2
+
+Without any C<cmdline_on_getopt> hooks, the function will receive this argument
+hash:
+
+ { library => ['dir1', 'dir2'], module => ['mod1', 'mod2'] }
+
+but there is no way to know the order of options being specified in the
+command-line. With the hooks, the function can load modules correctly (e.g.
+loading C<mod1> won't search in C<dir2> as that directory has not been added by
+-I).
+
 =item * B<completion> => CODE
 
 A code to supply argument value completion. Will be explained in the examples.
