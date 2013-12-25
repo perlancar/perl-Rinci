@@ -4,7 +4,10 @@ Revision history for Rinci
 
          [REMOVED FEATURES]
 
-         - function: Remove argument spec's 'cmdline_on_getarg' (for now?).
+         - function: Remove argument spec's 'cmdline_on_getarg' (for now?)
+           because the current implementation does not allow calling the hook on
+           a per-encountered basis (the argv is remainder from Getopt::Long
+           after all the options have been processed).
 
 
 1.1.43   2013-12-25 (SHARYANTO) - Ho ho ho!
