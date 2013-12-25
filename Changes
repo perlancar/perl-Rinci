@@ -1,5 +1,11 @@
 Revision history for Rinci
 
+1.1.43   2013-12-25 (SHARYANTO) - Ho ho ho!
+
+         - function: Add argument spec's 'cmdline_on_getopt' and
+           'cmdline_on_getarg'.
+
+
 1.1.42   2013-11-14 (SHARYANTO)
 
          - function: Add argument spec's 'delete' and 'element_completion'
