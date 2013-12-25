@@ -1,5 +1,12 @@
 Revision history for Rinci
 
+1.1.44   2013-12-25 (SHARYANTO) (not yet released)
+
+         [REMOVED FEATURES]
+
+         - function: Remove argument spec's 'cmdline_on_getarg' (for now?).
+
+
 1.1.43   2013-12-25 (SHARYANTO) - Ho ho ho!
 
          - function: Add argument spec's 'cmdline_on_getopt' and
