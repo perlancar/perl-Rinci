@@ -1,6 +1,8 @@
 Revision history for Rinci
 
-1.1.44   2013-12-25 (SHARYANTO) (not yet released)
+1.1.44   2014-04-27 (SHARYANTO)
+
+         - Add Sah::Schema::Rinci (replaces Rinci::Schema).
 
          [REMOVED FEATURES]
 
