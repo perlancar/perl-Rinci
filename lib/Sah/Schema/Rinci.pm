@@ -5,6 +5,7 @@ use strict;
 use warnings;
 
 # VERSION
+# DATE
 
 our %SCHEMAS;
 
