@@ -68,6 +68,7 @@ $SCHEMAS{rinci_function} = [hash => {
                 summary => {},
                 description => {},
                 tags => {},
+                x => {},
 
                 schema => {},
                 default => {},
@@ -94,6 +95,8 @@ $SCHEMAS{rinci_function} = [hash => {
                 # from defhash
                 summary => {},
                 description => {},
+                tags => {},
+                x => {},
 
                 schema => {},
                 statuses => {
@@ -114,6 +117,7 @@ $SCHEMAS{rinci_function} = [hash => {
                 summary => {},
                 description => {},
                 tags => {},
+                x => {},
 
                 args => {},
                 argv => {},
