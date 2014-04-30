@@ -74,7 +74,14 @@ $SCHEMAS{rinci_function} = [hash => {
                 req => {},
                 pos => {},
                 greedy => {},
-                cmdline_aliases => {},
+                cmdline_aliases => {
+                    _value_prop => {
+                        summary => {},
+                        description => {},
+                        schema => {},
+                        code => {},
+                    },
+                },
                 cmdline_on_getopt => {},
                 completion => {},
                 element_completion => {},
