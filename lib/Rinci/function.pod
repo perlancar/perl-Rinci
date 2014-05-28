@@ -963,6 +963,21 @@ path, e.g. "C:/Program Files/Foo/Bar.exe".
  prog => 'rsync'   # any rsync found on PATH
  prog => '/bin/su' # won't accept any other su
 
+=item * dep: pkg => STR
+
+Specify dependency on a L<Riap> package. STR must be a valid Riap package URI
+string. Checker can check that requesting C<meta> on this URI succeeds. Example:
+
+ pkg => '/Foo/'
+
+=item * dep: func => STR
+
+Specify dependency on a L<Riap> function. STR must be a valid Riap function URI
+string. Checker can check that requesting C<meta> on this URI succeeds. Example:
+
+ pkg => '/Foo/somefunc'
+ pkg => 'http://gudangapi.com/ga/list_ubuntu_releases'
+
 =item * dep: code => CODE
 
 Require that anonymous function returns a true value after called, where the
