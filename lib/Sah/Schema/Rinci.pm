@@ -120,6 +120,8 @@ $SCHEMAS{rinci_function} = [hash => {
                 none => {},
                 env => {},
                 prog => {},
+                pkg => {},
+                func => {},
                 code => {},
                 tmp_dir => {},
                 trash_dir => {},
