@@ -966,14 +966,16 @@ path, e.g. "C:/Program Files/Foo/Bar.exe".
 =item * dep: pkg => STR
 
 Specify dependency on a L<Riap> package. STR must be a valid Riap package URI
-string. Checker can check that requesting C<meta> on this URI succeeds. Example:
+string. Checker can check that requesting C<info> on this URI succeeds and the
+type is indeed C<package>. Example:
 
  pkg => '/Foo/'
 
 =item * dep: func => STR
 
 Specify dependency on a L<Riap> function. STR must be a valid Riap function URI
-string. Checker can check that requesting C<meta> on this URI succeeds. Example:
+string. Checker can check that requesting C<info> on this URI succeeds and the
+type is indeed C<package>. Example:
 
  pkg => '/Foo/somefunc'
  pkg => 'http://gudangapi.com/ga/list_ubuntu_releases'
