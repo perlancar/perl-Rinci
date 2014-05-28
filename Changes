@@ -1,5 +1,10 @@
 Revision history for Rinci
 
+1.1.48   2014-05-28 (SHARYANTO)
+
+         - function: Specify two new function dependency: pkg & func.
+
+
 1.1.47   2014-05-01 (SHARYANTO)
 
          - No spec changes.
