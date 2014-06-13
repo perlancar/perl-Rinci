@@ -1,5 +1,14 @@
 Revision history for Rinci
 
+1.1.50   2014-06-13 (SHARYANTO)
+
+         [INCOMPATIBLE CHANGES]
+
+         - Revert previous change (args/as -> args_as; args/as conflicts with
+           actual arguments!). Revert result/is_naked -> result_naked too, not
+           worth the trouble. steven--.
+
+
 1.1.49   2014-06-13 (SHARYANTO)
 
          [INCOMPATIBLE CHANGES]
