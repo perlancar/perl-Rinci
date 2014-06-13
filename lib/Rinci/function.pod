@@ -229,20 +229,7 @@ specification. Argument name must only contain letters, numbers, and underscores
 
 Argument specification is a hash containing these keys:
 
-=over
-
-=item * B<as> => str
-
-Specify in what form the function expects the arguments. The value is actually
-implementation-specific since it describes the function implementation. For
-example in L<Perinci> for Perl, these values are recognized: C<array>, C<hash>,
-C<arrayref>, C<hashref>. This property is useful for wrapper to be able to
-convert one form to another.
-
-The default value is also left to the implementation.
-
-For interimplementation communication (e.g. via L<Riap::HTTP> or L<Riap::TCP>),
-named arguments are always used so this property is irrelevant.
+=over 4
 
 =item * B<schema> => SCHEMA
 
@@ -592,25 +579,30 @@ When C<delete_users> is executed over the command line:
  $ delete-users charlie c<tab> ; # will complete with users but exclude charlie
  $ delete-users charlie chucky <tab> ; # and so on
 
+=head2 Property: args_as => STR
+
+Specify in what form the function expects the arguments. The value is actually
+implementation-specific since it describes the function implementation. For
+example in L<Perinci> for Perl, these values are recognized: C<array>, C<hash>,
+C<arrayref>, C<hashref>. This property is useful for wrapper to be able to
+convert one form to another.
+
+The default value is also left to the implementation.
+
+For interimplementation communication (e.g. via L<Riap::HTTP> or L<Riap::TCP>),
+named arguments are always used so this property is irrelevant.
+
 =head2 Property: result => HASH
 
 Specify function return value. It is a defhash containing keys:
 
-=over
+=over 4
 
-=item * B<is_naked> => bool
-
-If set to true, specify that function does not envelope its result. The default
-is false, to encourage functions to create envelope. However, wrapper should be
-able to create or strip envelope if needed. For example, if you have
-"traditional" functions which does not do envelope, you can set this property to
-true, and the wrapper can generate the envelope for the functions.
-
-=item * B<summary> => str
+=item * B<summary>
 
 From DefHash. Like the C<summary> property in variable metadata.
 
-=item * B<description> => str
+=item * B<description>
 
 From DefHash. Like the C<description> property. Suggested to be formatted to 78
 columns.
@@ -658,6 +650,15 @@ Examples:
          of      => ['hash*' => {allowed_keys=>[qw/name age address/]} ]
      }]
  }
+
+
+=head2 Property: result_naked => BOOL
+
+If set to true, specify that function does not envelope its results. The default
+is false, to encourage functions to create envelopes. However, wrapper should be
+able to create or strip envelope if needed. For example, if you have
+"traditional" functions which does not do envelopes, you can set this property
+to true, and the wrapper can generate the envelope for the functions.
 
 
 =head2 Property: examples => ARRAY
