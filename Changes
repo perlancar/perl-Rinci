@@ -1,5 +1,23 @@
 Revision history for Rinci
 
+1.1.49   2014-06-13 (SHARYANTO)
+
+         [INCOMPATIBLE CHANGES]
+
+         - Rename args_as to args/as, result_naked to result/is_naked to make
+           top-level properties cleaner. Implementation should still support the
+           old properties for a while.
+
+        [BUG FIXES]
+
+        - Checking dep func/pkg should be done using Riap info action and not
+          meta.
+
+        [UPDATES]
+
+        - Update Sah schema.
+
+
 1.1.48   2014-05-28 (SHARYANTO)
 
          - function: Specify two new function dependency: pkg & func.
