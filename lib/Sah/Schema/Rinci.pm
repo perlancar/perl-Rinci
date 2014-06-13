@@ -53,6 +53,7 @@ $SCHEMAS{rinci_function} = [hash => {
             _value_prop => {
                 %dh_props,
 
+                as => {},
                 schema => {},
                 default => {},
                 req => {},
@@ -72,11 +73,12 @@ $SCHEMAS{rinci_function} = [hash => {
                 cmdline_src => {},
             },
         },
-        args_as => {},
+        args_as => {}, # OLD 1.1.48-, replaced with args/as, will be removed in the future
         result => {
             _prop => {
                 %dh_props,
 
+                is_naked => {},
                 schema => {},
                 statuses => {
                     _value_prop => {
@@ -89,7 +91,7 @@ $SCHEMAS{rinci_function} = [hash => {
                 },
             },
         },
-        result_naked => {},
+        result_naked => {}, # OLD 1.1.48-, replaced with result/is_naked, will be removed in the future
         examples => {
             _elem_prop => {
                 %dh_props,
