@@ -26,6 +26,7 @@ $SCHEMAS{rinci} = [hash => {
         %dh_props,
 
         entity_v => {},
+        entity_date => {},
         links => {
             _elem_prop => {
                 %dh_props,
@@ -44,6 +45,7 @@ $SCHEMAS{rinci_function} = [hash => {
 
         # from common rinci metadata
         entity_v => {},
+        entity_date => {},
         links => {},
 
         is_func => {},
