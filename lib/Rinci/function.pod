@@ -513,9 +513,13 @@ argument value (e.g. in shell or L<Riap::HTTP>) and is supplied an anonymous
 function as value. The function will be called with arguments: word=>... (which
 is the formed word so far, ci=>0|1 (whether completion should be done
 case-insensitively). The function should return an array containing a list of
-possible candidates. For an example of implementation for this, see
-L<Perinci::Sub::Complete> in Perl which provides tab completion for argument
-values. Example:
+possible candidates, or a hash containing these keys: C<completion> (array, list
+of possible candidates) and extra keys for formatting hints e.g. C<is_path>
+(bool, whether the list of completion is path-like, meaning it can be
+traversed/dug to multiple levels) C<path_sep> (string, path separator
+character), C<type> (string, either C<filename>, C<env>, or other types). For an
+example of implementation for this, see L<Perinci::Sub::Complete> in Perl which
+provides tab completion for argument values. Example:
 
  $SPEC{delete_user} = {
      v => 1.1,
