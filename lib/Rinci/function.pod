@@ -339,15 +339,23 @@ A code to supply argument value completion. Will be explained in the examples.
 A code to supply argument element value completion. Only applicable if argument
 type is C<array>. Will be explained in the examples.
 
+=item * B<is_password> => STR
+
+Experimental. Describe that argument holds password. Programs can react to this
+in several ways, for example they can turn off echoing to terminal when asking
+value from standard input. Or they can redact values to C<****> when logging.
+
 =item * B<cmdline_src> => STR
 
 Specify how to get the value for this argument, when function is run as a
 command-line program. Valid values include: C<file> (command-line argument value
 will be treated as filename and function argument will be set to content of the
-file), C<stdin> (means that program should get function argument from standard
-input), or C<stdin_or_files> (means that program should get value from content
-of files, or if none is specified, from standard input). Other sources might be
-defined in the future.
+file), C<stdin> (means that program should get function argument from the whole
+standard input until EOF), or C<stdin_or_files> (means that program should get
+value from content of files, or if none is specified, from standard input), or
+C<stdin_line> (means that program should get value from a line of standard
+input; newline ending will be removed from the argument value). Other sources
+might be defined in the future.
 
 If function argument's type is C<str> or C<array>, the whole standard input and
 files will be slurped into memory. If function argument's type is C<stream> or
@@ -359,9 +367,19 @@ possible in the future.
 There should only be one argument with C<src> set to C<stdin> or
 C<stdin_or_files>.
 
+Arguments with C<cmdline_src> of C<stdin_line> will be processed before
+C<stdin>.
+
 TODO: Define C<web_src> property and source for streaming web application.
 
 TODO: A way to define record separator.
+
+=item * B<cmdline_prompt> => str
+
+String to display when asking for argument value from stdin (if C<cmdline_src>
+property value is C<stdin_line>.
+
+TODO: cmdline_prompt_template?
 
 =back
 

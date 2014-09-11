@@ -60,6 +60,7 @@ $SCHEMAS{rinci_function} = [hash => {
                 req => {},
                 pos => {},
                 greedy => {},
+                is_password => {},
                 cmdline_aliases => {
                     _value_prop => {
                         summary => {},
@@ -69,6 +70,7 @@ $SCHEMAS{rinci_function} = [hash => {
                     },
                 },
                 cmdline_on_getopt => {},
+                cmdline_prompt => {},
                 completion => {},
                 element_completion => {},
                 cmdline_src => {},
