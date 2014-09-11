@@ -1,5 +1,11 @@
 Revision history for Rinci
 
+1.1.53  2014-09-11 (PERLANCAR)
+
+	- Introduce function argument spec properties: cmdline_prompt,
+	  is_password.
+
+
 1.1.52   2014-06-29 (SHARYANTO)
 
          - Allow completion routine to return hash (completion reply + metadata)
