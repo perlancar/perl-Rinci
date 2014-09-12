@@ -27,6 +27,12 @@ There are currently several properties being used:
 (DEPRECATED) Explained in C<undo> feature section in L<Rinci::function>.
 
 
+=head2 Property: perm_err => bool
+
+Indicate that error is permanent (instead of temporary/transient). This is to
+provide a feature like that found in SMTP/POP protocol, where 4xx codes indicate
+transient errors and 5xx permanent ones.
+
 =head2 Properties: func.* => ANY
 
 These properties allow function to return extra stuffs. Usually done to avoid

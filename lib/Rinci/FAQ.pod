@@ -40,4 +40,18 @@ use it consistently.
 
 As a bonus, arrays are faster and more space-efficient than hashes.
 
+=item * How do you indicate transient/temporary vs permanent errors?
+
+Some protocols, like SMTP or POP, defines 4xx codes as temporary errors and 5xx
+as permanent ones. This gives clue to clients whether to retry or not. HTTP,
+which Rinci is modelled after, does not provide such distinction to its status
+codes. However, Rinci defines a C<perm_err> result metadata that can be used for
+such purpose, e.g.:
+
+ [500, "Can't submit mail, we are being blocked by RBL", undef,
+  {perm_err=>0}]
+
+ [500, "Can't submit mail, destination address does not exist", undef,
+  {perm_err=>1}]
+
 =back

@@ -43,7 +43,8 @@ Some example of an enveloped results:
  [200, "OK", 42]
  [404, "Not found"]
  [200, "Account created", {id=>9323}, {}]
- [500, "Can't delete foo: permission denied", undef, {"cmdline.exit_code"=>300}]
+ [500, "Can't delete foo: permission denied", undef,
+  {"cmdline.exit_code"=>300, perm_err=>1}]
 
 As mentioned, an enveloped result can contain error code/message as well as the
 actual result. It can also be easily converted to HTTP response message. And it
