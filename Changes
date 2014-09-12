@@ -1,5 +1,12 @@
 Revision history for Rinci
 
+1.1.54  2014-09-12 (PERLANCAR)
+
+	- Add result metadata property: perm_err.
+
+        - Add FAQ and other POD tweaks.
+
+
 1.1.53  2014-09-11 (PERLANCAR)
 
 	- Introduce function argument spec properties: cmdline_prompt,
