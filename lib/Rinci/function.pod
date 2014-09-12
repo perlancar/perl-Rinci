@@ -27,22 +27,23 @@ code/message as well as actual result. The envelope can be produced by the
 function itself, or added by a wrapper tool. Result envelope is modeled after
 HTTP or L<PSGI> response; it is an array in the following format:
 
- [STATUS, MESSAGE, RESULT, META]
+ [STATUS*, MESSAGE, RESULT, META]
 
-STATUS is a 3-digit integer, much like HTTP response status code and is
-explained further in L</"Envelope status codes">. MESSAGE is a string containing
-error message. RESULT (or PAYLOAD) is the actual content to be returned and can
-be omitted or set to undef if the function does not need to return anything.
-META is called result metadata, a defhash containing extra data, analogous to
-HTTP response headers. Result metadata is specified further in L<Rinci::result>.
+STATUS is a 3-digit integer and is the only required element, much like HTTP
+response status code and is explained further in L</"Envelope status codes">.
+MESSAGE is a string containing error message. RESULT (or PAYLOAD) is the actual
+content to be returned and can be omitted or set to undef if the function does
+not need to return anything. META is called result metadata, a defhash
+containing extra data, analogous to HTTP response headers. Result metadata is
+specified further in L<Rinci::result>.
 
 Some example of an enveloped results:
 
+ [200]
  [200, "OK", 42]
  [404, "Not found"]
- [500, "Can't delete foo: permission denied", {errno=>51}]
- [200, "Account created", {id=>9323},
-  {undo_calls=>[["delete_account", {id=>9323}]]}]
+ [200, "Account created", {id=>9323}, {}]
+ [500, "Can't delete foo: permission denied", undef, {"cmdline.exit_code"=>300}]
 
 As mentioned, an enveloped result can contain error code/message as well as the
 actual result. It can also be easily converted to HTTP response message. And it
