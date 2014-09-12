@@ -1,0 +1,43 @@
+package Rinci::FAQ; # just to make PodWeaver happy
+
+# DATE
+# VERSION
+
+1;
+# ABSTRACT: Metadata for your functions/methods
+
+=head1 FAQ
+
+=head1 General
+
+=head2 Rinci::function
+
+=over
+
+=item * Why do you make enveloped result an arary instead of hash?
+
+For example, a hash-based enveloped result can be something like:
+
+ {status=>200, message=>"OK", result=>42, meta1=>..., meta2=>...}
+
+This has the benefit of a single container, but I picked array because of the
+brevity for simple cases (which are the majority), e.g.:
+
+ [200]        # versus {status=>200}
+ [200, "OK"]  # versus {status=>200, message=>"OK"}
+
+When handling enveloped result, the array version is also shorter:
+
+ if ($res->[0] == 200) { ... }
+ # versus: if ($res->{status} == 200) { ... }
+
+ print "Error $res->[0] - $res->[1]";
+ # versus: print "Error $res->{status} - $res->{message}";
+
+The hash version is more obvious for first-time reader, but after just some
+amount of time, C<< $res->[0] >>, C<< $res->[1] >> will become obvious if you
+use it consistently.
+
+As a bonus, arrays are faster and more space-efficient than hashes.
+
+=back
