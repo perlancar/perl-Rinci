@@ -1,5 +1,10 @@
 Revision history for Rinci
 
+1.1.55  2014-10-09 (PERLANCAR)
+
+	- Introduce argument submetadata (experimental).
+
+
 1.1.54  2014-09-12 (PERLANCAR)
 
 	- Add result metadata property: perm_err.
