@@ -22,6 +22,7 @@ my %dh_props = (
 
 $SCHEMAS{rinci} = [hash => {
     # tmp
+    _ver => 1.1, # this has the effect of version checking
     _prop => {
         %dh_props,
 
@@ -40,6 +41,7 @@ $SCHEMAS{rinci} = [hash => {
 
 $SCHEMAS{rinci_function} = [hash => {
     # tmp
+    _ver => 1.1,
     _prop => {
         %dh_props,
 
@@ -74,6 +76,7 @@ $SCHEMAS{rinci_function} = [hash => {
                 completion => {},
                 element_completion => {},
                 cmdline_src => {},
+                meta => 'fix',
             },
         },
         args_as => {},
@@ -133,6 +136,8 @@ $SCHEMAS{rinci_function} = [hash => {
         },
     },
 }];
+$SCHEMAS{rinci_function}[1]{_prop}{args}{_value_prop}{meta} =
+    $SCHEMAS{rinci_function}[1];
 
 # rinci_package
 # rinci_variable

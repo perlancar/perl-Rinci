@@ -384,6 +384,12 @@ property value is C<stdin_line>.
 
 TODO: cmdline_prompt_template?
 
+=item * B<meta> => hash (EXPERIMENTAL)
+
+This allows specifying argument submetadata, used e.g. in form processing
+(converting to/from HTML forms which can contain subforms). Value is Rinci
+function metadata.
+
 =back
 
 Example function metadata and its implementation in Perl:
