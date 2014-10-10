@@ -386,9 +386,14 @@ TODO: cmdline_prompt_template?
 
 =item * B<meta> => hash (EXPERIMENTAL)
 
-This allows specifying argument submetadata, used e.g. in form processing
-(converting to/from HTML forms which can contain subforms). Value is Rinci
-function metadata.
+This allows specifying argument submetadata, used e.g. when dealing with forms
+(a form field/widget can be a subform). Value is Rinci function metadata.
+
+=item * B<element_meta> => hash (EXPERIMENTAL)
+
+This allows specifying argument element submetadata, used e.g. when dealing with
+forms (a form field/widget can contain an array of records/subforms). Value is
+Rinci function metadata.
 
 =back
 

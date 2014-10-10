@@ -77,6 +77,7 @@ $SCHEMAS{rinci_function} = [hash => {
                 element_completion => {},
                 cmdline_src => {},
                 meta => 'fix',
+                element_meta => 'fix',
             },
         },
         args_as => {},
@@ -137,6 +138,8 @@ $SCHEMAS{rinci_function} = [hash => {
     },
 }];
 $SCHEMAS{rinci_function}[1]{_prop}{args}{_value_prop}{meta} =
+    $SCHEMAS{rinci_function}[1];
+$SCHEMAS{rinci_function}[1]{_prop}{args}{_value_prop}{element_meta} =
     $SCHEMAS{rinci_function}[1];
 
 # rinci_package
