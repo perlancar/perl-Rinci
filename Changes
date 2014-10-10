@@ -1,5 +1,11 @@
 Revision history for Rinci
 
+1.1.56  2014-10-10 (PERLANCAR)
+
+	- Introduce argument element submetadata (element_meta property in
+	  argument specification, experimental).
+
+
 1.1.55  2014-10-09 (PERLANCAR)
 
 	- Introduce argument submetadata (experimental).
