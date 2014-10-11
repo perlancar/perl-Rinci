@@ -283,9 +283,10 @@ Specify aliases for use in command-line options (or other possibly suitable
 situation where arguments are parsed from command-line-like options). Keys are
 alias names, values are itself hashes (alias specification). Valid alias
 specification keys: C<summary> (a string, optional), C<schema> (optional,
-defaults to argument's schema), C<code> (a code to set argument value, optional,
-will be given C<< (\%args, $val) >>); if not set, the default behavior is simply
-to set the argument value).
+defaults to argument's schema), C<is_flag> (bool, optional, if set to 1 then it
+is a shortcut for specifying C<schema> to C<< ["bool", {"is":1}] >>), C<code> (a
+code to set argument value, optional, will be given C<< (\%args, $val) >>); if
+not set, the default behavior is simply to set the argument value).
 
 =item * B<cmdline_on_getopt> => CODE
 

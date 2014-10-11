@@ -69,6 +69,7 @@ $SCHEMAS{rinci_function} = [hash => {
                         description => {},
                         schema => {},
                         code => {},
+                        is_flag => {},
                     },
                 },
                 cmdline_on_getopt => {},
