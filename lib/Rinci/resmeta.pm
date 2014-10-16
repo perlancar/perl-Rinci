@@ -1,5 +1,6 @@
-package Rinci::result; # just to make PodWeaver happy
+package Rinci::resmeta; # just to make PodWeaver happy
 
+# DATE
 # VERSION
 
 1;

@@ -35,7 +35,7 @@ MESSAGE is a string containing error message. RESULT (or PAYLOAD) is the actual
 content to be returned and can be omitted or set to undef if the function does
 not need to return anything. META is called result metadata, a defhash
 containing extra data, analogous to HTTP response headers. Result metadata is
-specified further in L<Rinci::result>.
+specified further in L<Rinci::resmeta>.
 
 Some example of an enveloped results:
 
