@@ -1,5 +1,12 @@
 Revision history for Rinci
 
+1.1.58  2014-10-16 (PERLANCAR)
+
+	- No functional changes.
+
+	- Rename Rinci::result -> Rinci::resmeta.
+
+
 1.1.57  2014-10-11 (PERLANCAR)
 
 	- Introduce is_flag bool property on command-line alias.
