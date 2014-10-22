@@ -277,6 +277,21 @@ from zero.
 Only relevant if B<pos> is specified, specify whether argument should gobble up
 all remaining values in an ordered argument list into an array.
 
+=item * B<encoding> => str
+
+Specify encoding for argument value and that function will try to decode the
+argument with this encoding (when argument value is a string). Currently the
+only recommended value is C<base64>. This can be used for example when you want
+to send binary data when the serialization format does not support binary data,
+e.g. JSON. For example:
+
+ args => {
+     separator => {schema=>"str", encoding=>"base64"},
+ }
+
+This means, when you want to send "\0\0\0" in the C<separator> argument, you
+send in "AAAA". The function will decode it and get the actual value.
+
 =item * B<cmdline_aliases> => HASH
 
 Specify aliases for use in command-line options (or other possibly suitable

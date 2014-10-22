@@ -114,6 +114,20 @@ Example:
  }
 
 
+=head2 Property: encoding => str
+
+Specify encoding for result. Currently the only recommended value is C<base64>.
+This applies to actual result (third element in enveloped result) as well as all
+values of C<func.*> properties. Result as well as all C<func.*> properties must
+be strings. This can be used for example when enveloped result is represented in
+a serialization format that is not binary-safe, e.g. JSON:
+
+ [200, "OK", "AAAA", {"encoding":"base64", "func.extra":"dWphbmc="}]
+
+In the above example, actual result is 3 zero bytes ("\0\0\0") encoded in
+base64, while C<func.extra> contains the string "ujang".
+
+
 =head1 FAQ
 
 
