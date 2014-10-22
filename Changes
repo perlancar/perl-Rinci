@@ -1,5 +1,12 @@
 Revision history for Rinci
 
+1.1.60  2014-10-22 (PERLANCAR)
+
+        - No spec changes.
+
+        - Forgot to update Sah schemas.
+
+
 1.1.59  2014-10-22 (PERLANCAR)
 
         - Introduce 'encoding' property in result metadata and argument
