@@ -17,6 +17,9 @@ Revision history for Rinci
 
 1.1.59  2014-10-22 (PERLANCAR)
 
+        - Update to DefHash 1.0.6 (introduced 'caption' property, which actually
+          doesn't affect us much).
+
         - Introduce 'encoding' property in result metadata and argument
           specification. Currently the only known encoding is 'base64'. This is
           for functions that want to accept/return binary data, when transport
@@ -51,18 +54,20 @@ Revision history for Rinci
 
 1.1.57  2014-10-11 (PERLANCAR)
 
-	- Introduce is_flag bool property on command-line alias.
+	- Introduce is_flag bool property on command-line alias. This is just a
+          convenience so you don't have to write: schema => [bool => {is=>1}].
 
 
 1.1.56  2014-10-10 (PERLANCAR)
 
 	- Introduce argument element submetadata (element_meta property in
-	  argument specification, experimental).
+	  argument specification, experimental). This is to support forms.
 
 
 1.1.55  2014-10-09 (PERLANCAR)
 
-	- Introduce argument submetadata (experimental).
+	- Introduce argument submetadata (experimental). This is to support
+          forms where one submits form (including subforms) to a function.
 
 
 1.1.54  2014-09-12 (PERLANCAR)
@@ -75,14 +80,18 @@ Revision history for Rinci
 1.1.53  2014-09-11 (PERLANCAR)
 
 	- Introduce function argument spec properties: cmdline_prompt,
-	  is_password.
+	  is_password. This is to enable CLI programs to prompt password
+	  interactively.
 
 
 1.1.52   2014-06-29 (SHARYANTO)
 
          - Allow completion routine to return hash (completion reply + metadata)
            instead of just array (completion reply), as already implemented in
-           Perinci::Sub::Complete and Complete::Util.
+           Perinci::Sub::Complete and Complete::Util. This allows giving hints
+           on how to escape completion entries (which might be different
+           depending on the type of completion, e.g. files vs environment
+           variables where we don't want to escape '$', and so on).
 
 
 1.1.51   2014-06-25 (SHARYANTO)
@@ -98,7 +107,8 @@ Revision history for Rinci
 
          - Revert previous change (args/as -> args_as; args/as conflicts with
            actual arguments!). Revert result/is_naked -> result_naked too, not
-           worth the trouble. steven--.
+           worth the trouble of breaking every function out there. What was
+           steven-- thinking?
 
 
 1.1.49   2014-06-13 (SHARYANTO)
