@@ -13,6 +13,7 @@ my %dh_props = (
     v => {},
     defhash_v => {},
     name => {},
+    caption => {},
     summary => {},
     description => {},
     tags => {},
@@ -63,6 +64,7 @@ $SCHEMAS{rinci_function} = [hash => {
                 pos => {},
                 greedy => {},
                 is_password => {},
+                encoding => {},
                 cmdline_aliases => {
                     _value_prop => {
                         summary => {},
@@ -120,6 +122,7 @@ $SCHEMAS{rinci_function} = [hash => {
                 pure => {},
                 immutable => {},
                 idempotent => {},
+                check_arg => {},
             },
         },
         deps => {
@@ -146,6 +149,7 @@ $SCHEMAS{rinci_function}[1]{_prop}{args}{_value_prop}{element_meta} =
 # rinci_package
 # rinci_variable
 # rinci_result
+# list of known special arguments: -dry_run, -action, -tx_action
 
 1;
 # ABSTRACT: Sah schemas for Rinci metadata
