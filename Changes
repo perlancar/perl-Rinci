@@ -1,5 +1,13 @@
 Revision history for Rinci
 
+1.1.61  2014-10-22 (PERLANCAR)
+
+        - Introduce 'encoding' property in result specification, to give hints
+          to tools that function wants to encode its result by default. Said
+          tool can encode the result and set the 'encoding' property in the
+          result metadata.
+
+
 1.1.60  2014-10-22 (PERLANCAR)
 
         - No spec changes.
