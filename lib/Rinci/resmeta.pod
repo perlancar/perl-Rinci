@@ -127,6 +127,26 @@ a serialization format that is not binary-safe, e.g. JSON:
 In the above example, actual result is 3 zero bytes ("\0\0\0") encoded in
 base64, while C<func.extra> contains the string "ujang".
 
+=head2 Property: arg_errors => hash
+
+When a function wants to give information on what arguments fail validation, it
+can put the information here. This is usually only present when response status
+is 400 (bad arguments). Keys are argument names (or paths: separate submetadata
+argument with slash C</>) while values are string error messages. Example:
+
+ # full error response
+ [400, "Some arguments fail validation", undef, {
+      arg_errors => {
+          name=>"Missing",
+          "location/street"=>"Missing",
+          age=>"Must be numbers only",
+      },
+ }]
+
+=head2 Property: arg_warnings => hash
+
+Like C<arg_errors> but warnings only. Can be present even when response status
+is non-error (200).
 
 =head1 FAQ
 
