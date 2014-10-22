@@ -54,7 +54,8 @@ can also contain extra data, useful for things like the transaction protocol
 B<Special arguments>. Special arguments are some known arguments that start with
 dash (C<->) and serve special purposes. You need not specify them in the C<args>
 metadata property. Examples of special arguments include C<-dry_run>,
-C<-tx_action>, and they will be explained in other related sections/documents.
+C<-tx_action>, C<-action>, and they will be explained in other related
+sections/documents.
 
 B<Functions vs methods>. Since in many programming languages (like Perl 5,
 Python, Ruby, PHP) static functions are not that differentiated from methods,
@@ -960,6 +961,16 @@ original state to begin with). For example, a function that renames a file can
 record the original file that was renamed (its MD5 checksum, size, or what not)
 or perhaps record the action in a history database or flag file, and refuse to
 rename again if the file to be renamed is not the original file.
+
+=item * feature: check_arg => bool
+
+Default is false. If set to true, specifies that function supports the action of
+checking only a single argument. Usually useful when doing form processing,
+where we want to check only a single form field (function argument). To check a
+single argument, one passes C<-action> special argument with the value of
+C<check_arg> and also passes the argument she wants to check. Function should
+check that argument and immediately return 200 status upon success, or 400 upon
+validation failure.
 
 =back
 
