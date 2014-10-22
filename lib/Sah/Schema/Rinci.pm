@@ -89,6 +89,7 @@ $SCHEMAS{rinci_function} = [hash => {
                 %dh_props,
 
                 schema => {},
+                encoding => {},
                 statuses => {
                     _value_prop => {
                         # from defhash

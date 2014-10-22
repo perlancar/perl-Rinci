@@ -665,6 +665,11 @@ columns.
 A Sah schema to validate the result (the third element in the envelope result).
 This schema should only be tested if status is 200. See also: C<statuses>.
 
+=item * B<encoding> => str
+
+Gives hint to tools that result should be encoded by default. See C<encoding>
+property in L<Rinci::resmeta>.
+
 =item * B<statuses> => HASH
 
 Can be used to specify different result schema for different statuses. For
