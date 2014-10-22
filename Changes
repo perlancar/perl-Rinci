@@ -1,5 +1,32 @@
 Revision history for Rinci
 
+1.1.59  2014-10-22 (PERLANCAR)
+
+        - Introduce 'encoding' property in result metadata and argument
+          specification. Currently the only known encoding is 'base64'. This is
+          for functions that want to accept/return binary data, when transport
+          protocol (e.g. 'json' format in Riap) does not support binary data
+          (one can also use binary-safe formats in Riap e.g. Storable or Sereal,
+          but this is not widely supported across languages like JSON). Tools
+          can be written to support automatic decoding of function arguments and
+          automatic encoding of function result. In Perl, see CPAN module
+          Perinci::Sub::Wrapper.
+
+        - Introduce 'arg_errors' and 'arg_warnings' properties in result
+          metadata. This is for functions that do form processing, because often
+          we want to send the error message for all non-validating arguments
+          (form fields) instead of just the first one found. In Perl, see CPAN
+          module Borang.
+
+        - Introduce '-action' special argument and the 'check_arg' feature. The
+          '-action' can toggle special invocation modes to the function. This is
+          like '-tx_action' except is not necessarily related to transactions.
+          Currently the only known action is 'check_arg', to check a single
+          argument. This is for functions that do form processing, e.g. when
+          user is editing a form field on the browser and we do AJAX calls to
+          do validation as user types.
+
+
 1.1.58  2014-10-16 (PERLANCAR)
 
 	- No functional changes.
