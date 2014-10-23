@@ -1,5 +1,16 @@
 Revision history for Rinci
 
+1.1.62  2014-10-23 (PERLANCAR)
+
+        [REMOVED FEATURES]
+
+        - Cancel support for 'encoding' (in result metadata as well in argument
+          specification and result specification). This is an issue with JSON
+          which cannot handle binary data and should be handled in the Riap
+          level, not Rinci. Note: to mark a function argument or result as
+          containing binary data, use the schema type 'buf'.
+
+
 1.1.61  2014-10-22 (PERLANCAR)
 
         - Introduce 'encoding' property in result specification, to give hints
