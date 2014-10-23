@@ -64,7 +64,6 @@ $SCHEMAS{rinci_function} = [hash => {
                 pos => {},
                 greedy => {},
                 is_password => {},
-                encoding => {},
                 cmdline_aliases => {
                     _value_prop => {
                         summary => {},
@@ -89,7 +88,6 @@ $SCHEMAS{rinci_function} = [hash => {
                 %dh_props,
 
                 schema => {},
-                encoding => {},
                 statuses => {
                     _value_prop => {
                         # from defhash
