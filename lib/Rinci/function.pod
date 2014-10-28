@@ -100,6 +100,13 @@ should return 206 when only partial file content is returned. But in general,
 use 200 as some callers will simply check for this exact code (instead of
 checking for range 200-299).
 
+207 (multistatus) can be used to signal partial success, for example a function
+which processed 5 items wanted to report that it successfully processed 2 items
+but failed to process the rest 3 items. For each item's statuses, you can use
+result metadata property C<results>. Note: 207 is used by WebDAV. Note: When all
+functions instead of only some/partial items fail, you might want to return 4xx
+or 5xx instead of 207.
+
 =item * 3xx code - further actions needs to be taken by user agent (caller)
 
 301 (moved) can be used to redirect callers to alternate location, although this
