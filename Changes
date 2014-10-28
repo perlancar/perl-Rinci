@@ -1,5 +1,18 @@
 Revision history for Rinci
 
+1.1.63  2014-10-28 (PERLANCAR)
+
+        [ENHANCEMENTS]
+
+        - Introduce statuses 201, 204.
+
+        [INCOMPATIBLE CHANGES]
+
+        - Introduce status 207. Replace result metadata properties 'arg_errors'
+          & 'arg_warnings' with the more generic 'results' to report
+          per-item/detailed statuses.
+
+
 1.1.62  2014-10-23 (PERLANCAR)
 
         [REMOVED FEATURES]
