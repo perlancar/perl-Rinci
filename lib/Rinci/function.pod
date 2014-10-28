@@ -87,6 +87,13 @@ is always C<< >= 200 >>, so you should perhaps never used status less than 200.
 
 200 should be used to mean success.
 
+201 (created) can be used to signal success when creating something.
+
+204 (no content) can also be used when there is no content to show. In HTTP,
+browsers won't clear current page if response is 206 (instead of showing a blank
+page if response is 200). Currently in Rinci there is no difference between 200
+and 204.
+
 206 (partial content) can be used to signal partial content, for example: a
 C<read_file()> function which accepts C<byte_start> and C<byte_end> arguments
 should return 206 when only partial file content is returned. But in general,
