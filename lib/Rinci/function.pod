@@ -54,8 +54,9 @@ can also contain extra data, useful for things like the transaction protocol
 B<Special arguments>. Special arguments are some known arguments that start with
 dash (C<->) and serve special purposes. You need not specify them in the C<args>
 metadata property. Examples of special arguments include C<-dry_run>,
-C<-tx_action>, C<-action>, and they will be explained in other related
-sections/documents.
+C<-tx_action>, C<-action>, C<-confirm/*>, C<-arg_part_start/*>,
+C<-arg_part_len/*>, C<-res_part_start>, C<-res_part_len>. They will be explained
+in other related sections/documents.
 
 B<Functions vs methods>. Since in many programming languages (like Perl 5,
 Python, Ruby, PHP) static functions are not that differentiated from methods,
@@ -98,7 +99,7 @@ and 204.
 C<read_file()> function which accepts C<byte_start> and C<byte_end> arguments
 should return 206 when only partial file content is returned. But in general,
 use 200 as some callers will simply check for this exact code (instead of
-checking for range 200-299).
+checking for range 200-299). See also C<partial_result> feature.
 
 207 (multistatus) can be used to signal partial success, for example a function
 which processed 5 items wanted to report that it successfully processed 2 items
@@ -291,6 +292,13 @@ from zero.
 
 Only relevant if B<pos> is specified, specify whether argument should gobble up
 all remaining values in an ordered argument list into an array.
+
+=item * B<partial> => BOOL
+
+Whether or not argument value can be sent partially. Only argument types that
+have a length notion can be set as partial (e.g. C<str> where the unit is
+character, C<buf> where the unit is byte, and C<array> where the unit is
+element). See the C<partial_arg> feature for more details.
 
 =item * B<cmdline_aliases> => HASH
 
@@ -970,6 +978,53 @@ single argument, one passes C<-action> special argument with the value of
 C<check_arg> and also passes the argument she wants to check. Function should
 check that argument and immediately return 200 status upon success, or 400 upon
 validation failure.
+
+=item * feature: partial_arg => bool
+
+If set to true, specifies that function supports receiving only a part of an
+argument (think HTTP 1.1 Ranges as analogy). The argument(s) that can be sent
+partially must also be marked in the argument specification (by setting the
+C<partial> property to true). Useful when argument is potentially very large
+(e.g. in a function that receives a large file upload), where partial sending
+will avoid loading the whole argument into memory at once.
+
+To send partial argument, you can use the special arguments C<-arg_part_start/*>
+and C<-arg_part_len/*>. They both specify the starting position and length, whether
+in character/byte/element depending on the argument schema type. Example (using
+Perl):
+
+ # function metadata
+ {
+     v => 1.1,
+     summary => "Upload a file",
+     args => {
+         name => {schema=>"str*", req=>1},
+         data => {schema=>"buf*", req=>1, partial=>1},
+     },
+     features => {partial_arg=>1},
+ }
+
+ # function usage example: send the first 10MB of data
+ upload_file(name=>"myvideo.mp4", data=>$data1,
+             "-arg_part_start/data"=>0, "-arg_part_len/data"=>10*1024*1024);
+
+ # function usage example: send the next 10MB
+ upload_file(name=>"myvideo.mp4", data=>$data2,
+             "-arg_part_start/data"=>10*1024*1024,
+             "-arg_part_len/data"=>10*1024*1024);
+
+ # function usage example: send the last 7MB (length defaults to data length)
+ upload_file(name=>"myvideo.mp4", data=>$data3,
+             "-arg_part_start/data"=>10*1024*1024);
+
+=head1 feature: partial_result => bool
+
+If set to true, specifies that function can return partial result.
+
+To request a partial result, you can use special arguments C<-res_part_start>
+and C<-res_part_len> similar to when sending partial argument data.
+
+Function will send the range it actually sends via result metadata properties C<
 
 =back
 
