@@ -1,5 +1,12 @@
 Revision history for Rinci
 
+1.1.65  2014-10-29 (PERLANCAR)
+
+	- No spec changes.
+
+	- [Bugfix] Forgot to update Sah schema.
+
+
 1.1.64  2014-10-29 (PERLANCAR)
 
         [ENHANCEMENTS]
