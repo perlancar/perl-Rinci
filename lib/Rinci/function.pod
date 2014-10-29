@@ -55,9 +55,9 @@ can also contain extra data, useful for things like the transaction protocol
 B<Special arguments>. Special arguments are some known arguments that start with
 dash (C<->) and serve special purposes. You need not specify them in the C<args>
 metadata property. Examples of special arguments include C<-dry_run>,
-C<-tx_action>, C<-action>, C<-confirm/*>, C<-arg_part_start/*>,
-C<-arg_part_len/*>, C<-res_part_start>, C<-res_part_len>. They will be explained
-in other related sections/documents.
+C<-tx_action>, C<-action>, C<-confirm/*>, C<-arg_part_start>, C<-arg_part_len>,
+C<-res_part_start>, C<-res_part_len>. They will be explained in other related
+sections/documents.
 
 B<Functions vs methods>. Since in many programming languages (like Perl 5,
 Python, Ruby, PHP) static functions are not that differentiated from methods,
@@ -299,7 +299,11 @@ all remaining values in an ordered argument list into an array.
 Whether or not argument value can be sent partially. Only argument types that
 have a length notion can be set as partial (e.g. C<str> where the unit is
 character, C<buf> where the unit is byte, and C<array> where the unit is
-element). See the C<partial_arg> feature for more details.
+element).
+
+There should at most be one argument with this property set to true.
+
+See the C<partial_arg> feature for more details.
 
 =item * B<cmdline_aliases> => HASH
 
@@ -989,10 +993,10 @@ C<partial> property to true). Useful when argument is potentially very large
 (e.g. in a function that receives a large file upload), where partial sending
 will avoid loading the whole argument into memory at once.
 
-To send partial argument, you can use the special arguments C<-arg_part_start/*>
-and C<-arg_part_len/*>. They both specify the starting position and length, whether
-in character/byte/element depending on the argument schema type. Example (using
-Perl):
+To send partial argument, you can use the special arguments C<-arg_part_start>
+and C<-arg_part_len>. They both specify the starting position and length,
+whether in character/byte/element depending on the argument schema type. Example
+(using Perl):
 
  # function metadata
  {
@@ -1007,16 +1011,16 @@ Perl):
 
  # function usage example: send the first 10MB of data
  upload_file(name=>"myvideo.mp4", data=>$data1,
-             "-arg_part_start/data"=>0, "-arg_part_len/data"=>10*1024*1024);
+             -arg_part_start=>0, -arg_part_len=>10*1024*1024);
 
  # function usage example: send the next 10MB
  upload_file(name=>"myvideo.mp4", data=>$data2,
-             "-arg_part_start/data"=>10*1024*1024,
-             "-arg_part_len/data"=>10*1024*1024);
+             -arg_part_start=>10*1024*1024,
+             -arg_part_len=>10*1024*1024);
 
  # function usage example: send the last 7MB (length defaults to data length)
  upload_file(name=>"myvideo.mp4", data=>$data3,
-             "-arg_part_start/data"=>10*1024*1024);
+             -arg_part_start=>10*1024*1024);
 
 =item * feature: partial_res => bool
 

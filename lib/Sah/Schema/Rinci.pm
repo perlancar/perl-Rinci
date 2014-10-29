@@ -151,7 +151,7 @@ $SCHEMAS{rinci_function}[1]{_prop}{args}{_value_prop}{element_meta} =
 # rinci_result
 
 # list of known special arguments: -dry_run, -action, -tx_action,
-# -res_part_start, -res_part_len, -arg_part_start/*, -arg_part_len/*
+# -res_part_start, -res_part_len, -arg_part_start, -arg_part_len
 
 1;
 # ABSTRACT: Sah schemas for Rinci metadata
