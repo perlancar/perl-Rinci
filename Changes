@@ -1,5 +1,12 @@
 Revision history for Rinci
 
+1.1.66  2014-10-29 (PERLANCAR)
+
+        - Currently limit that there should at most be one argument with
+          partial=1. The special arguments become just '-arg_part_start' and
+          '-arg_part_len'.
+
+
 1.1.65  2014-10-29 (PERLANCAR)
 
 	- No spec changes.
