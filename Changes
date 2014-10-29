@@ -14,7 +14,7 @@ Revision history for Rinci
         - Introduce sending partial arguments and returning partial result,
           similar in spirit to Ranges in HTTP/1.1. New argument specification
           properties: 'partial'. New features: 'partial_arg', 'partial_res'. New
-          special arguments: '-arg_part_start/*', '-arg_part_len/*',
+          special arguments: '-arg_part_start', '-arg_part_len',
           '-res_part_start', '-res_part_len'. New result metadata properties:
           'res_part_start', 'res_part_len'.
 
