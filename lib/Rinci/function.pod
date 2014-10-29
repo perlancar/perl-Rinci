@@ -1028,6 +1028,35 @@ and C<-res_part_len> similar to when sending partial argument data.
 Function will hint the range of data it actually sends via result metadata
 properties C<res_part_start> and C<res_part_len>.
 
+An example for a function that reads files (in Perl):
+
+ # function metadata
+ {
+     v => 1.1,
+     summary => 'Read file contents',
+     args => {
+         name => {
+             summary => 'File name',
+             schema  => 'str*',
+             req     => 1,
+         },
+     },
+     features => {partial_res=>1},
+ }
+
+ # example function usage: request to read first 10M of file content,
+ # -result_part_start defaults to 0.
+ my $res = read_file(name=>'myvideo.mp4', -res_part_len=>10*1024*1024);
+ # => [206, "Partial content", "data...", {-res_part_start=>0, -res_part_len=>10485760}]
+
+ # example function usage: request the next 10MB
+ my $res = read_file(name=>'myvideo.mp4', -res_part_start=>10485760, -res_part_len=>10*1024*1024);
+ # => [206, "Partial content", "data...", {-res_part_start=>10485760, -res_part_len=>10485760}]
+
+ # example function usage: request the next 10MB, actual returned by server is only ~7MB
+ my $res = read_file(name=>'myvideo.mp4', -res_part_start=>20971520, -res_part_len=>10*1024*1024);
+ # => [206, "Partial content", "data...", {-res_part_start=>20971520, -res_part_len=>7350518}]
+
 =back
 
 
