@@ -1,5 +1,13 @@
 Revision history for Rinci
 
+1.1.64  2014-10-29 (PERLANCAR)
+
+        [ENHANCEMENTS]
+
+        - Introduce sending partial arguments and returning partial result,
+          similar in spirit to Ranges in HTTP/1.1.
+
+
 1.1.63  2014-10-28 (PERLANCAR)
 
         [ENHANCEMENTS]

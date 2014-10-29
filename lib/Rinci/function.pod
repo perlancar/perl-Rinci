@@ -1018,7 +1018,7 @@ Perl):
  upload_file(name=>"myvideo.mp4", data=>$data3,
              "-arg_part_start/data"=>10*1024*1024);
 
-=head1 feature: partial_res => bool
+=item * feature: partial_res => bool
 
 If set to true, specifies that function can return partial result.
 
