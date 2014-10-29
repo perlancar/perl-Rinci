@@ -1,5 +1,6 @@
 package Rinci::function; # just to make PodWeaver happy
 
+# DATE
 # VERSION
 
 1;
@@ -99,7 +100,7 @@ and 204.
 C<read_file()> function which accepts C<byte_start> and C<byte_end> arguments
 should return 206 when only partial file content is returned. But in general,
 use 200 as some callers will simply check for this exact code (instead of
-checking for range 200-299). See also C<partial_result> feature.
+checking for range 200-299). See also C<partial_res> feature.
 
 207 (multistatus) can be used to signal partial success, for example a function
 which processed 5 items wanted to report that it successfully processed 2 items
@@ -1017,14 +1018,15 @@ Perl):
  upload_file(name=>"myvideo.mp4", data=>$data3,
              "-arg_part_start/data"=>10*1024*1024);
 
-=head1 feature: partial_result => bool
+=head1 feature: partial_res => bool
 
 If set to true, specifies that function can return partial result.
 
 To request a partial result, you can use special arguments C<-res_part_start>
 and C<-res_part_len> similar to when sending partial argument data.
 
-Function will send the range it actually sends via result metadata properties C<
+Function will hint the range of data it actually sends via result metadata
+properties C<res_part_start> and C<res_part_len>.
 
 =back
 

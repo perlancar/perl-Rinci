@@ -146,6 +146,14 @@ validation:
       ],
  }]
 
+=head1 Property: res_part_start => int
+
+=head1 Property: res_part_len => int
+
+The C<res_part_start> and C<res_part_len> properties specifies the range of data
+when function sends partial result. See the C<partial_res> property in
+L<Rinci::function> for more details.
+
 =head1 FAQ
 
 
