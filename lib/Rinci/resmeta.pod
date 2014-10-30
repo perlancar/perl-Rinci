@@ -162,8 +162,8 @@ status will be 206.
 =head1 Property: stream => bool
 
 If set to true, signify that result is an output stream. Usually in
-implementations it will be a filehandle or an object with C<getline> or C<get>
-methods.
+implementations the result will be a filehandle or an object with C<getline> or
+C<getitem> methods, where caller can then fetch data from it.
 
 
 =head1 FAQ

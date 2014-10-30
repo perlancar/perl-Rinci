@@ -56,8 +56,8 @@ B<Special arguments>. Special arguments are some known arguments that start with
 dash (C<->) and serve special purposes. You need not specify them in the C<args>
 metadata property. Examples of special arguments include C<-dry_run>,
 C<-tx_action>, C<-action>, C<-confirm/*>, C<-arg_part_start>, C<-arg_part_len>,
-C<-res_part_start>, C<-res_part_len>. They will be explained in other related
-sections/documents.
+C<-res_part_start>, C<-res_part_len>, C<-arg_stream>. They will be explained in
+other related sections/documents.
 
 B<Functions vs methods>. Since in many programming languages (like Perl 5,
 Python, Ruby, PHP) static functions are not that differentiated from methods,
@@ -334,6 +334,15 @@ sent), C<-arg_part_len> (length of part that is being sent). Example (in Perl):
              -arg_part_start => 20_000_000,
              -arg_part_len   =>  4_500_000);
 
+=item * B<stream> => bool
+
+By setting this property to true, function can specify that it accepts streaming
+data for this argument. It is useful when argument value is large or of
+undetermined/infinite length. Currently there must be at most one argument that
+has this property set to true. To send value as a stream, caller must set
+special argument C<-arg_stream> to true and pass a filehandle or an object that
+responds to getline/getitem method. Function can then read data from this
+handle.
 
 =item * B<cmdline_aliases> => HASH
 
@@ -419,10 +428,9 @@ C<stdin_line> (means that program should get value from a line of standard
 input; newline ending will be removed from the argument value). Other sources
 might be defined in the future.
 
-If function argument's type is C<str> or C<array>, the whole standard input and
-files will be slurped into memory and fed as argument value. If argument
-property C<stream> is enabled, framework will pass the argument as a filehandle
-so function can read input stream.
+When source is stdin/files, the whole standard input and files will be slurped
+into memory and fed as argument value. It is possible to stream the value
+instead: see the C<stream> argument specification property.
 
 There should only be one argument with C<src> set to C<stdin> or
 C<stdin_or_files>.
@@ -430,9 +438,9 @@ C<stdin_or_files>.
 Arguments with C<cmdline_src> of C<stdin_line> will be processed before
 C<stdin>.
 
-TODO: Define C<web_src> property and source for streaming web application.
+TODO: Define C<web_src> property?
 
-TODO: A way to define record separator.
+TODO: A way to define record separator?
 
 =item * B<cmdline_prompt> => str
 
