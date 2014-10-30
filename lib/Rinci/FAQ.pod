@@ -8,8 +8,6 @@ package Rinci::FAQ; # just to make PodWeaver happy
 
 =head1 FAQ
 
-=head1 General
-
 =head2 Rinci::function
 
 =over
@@ -53,5 +51,52 @@ such purpose, e.g.:
 
  [500, "Can't submit mail, destination address does not exist", undef,
   {perm_err=>1}]
+
+=item * How to handle binary data?
+
+To accept binary data, you can set one or more arguments as having the schema
+type C<buf> (instead of C<str>):
+
+ args => {
+     data => { schema => 'buf*', req=>1 },
+ }
+
+To return binary data, you can set result's schema type to C<buf>, e.g.:
+
+ result => { schema => 'buf*' }
+
+For handling binary data when writing Perl-based command-line applications, see
+L<Perinci::CmdLine::Manual::Examples>.
+
+=item * How to accept partial data?
+
+First, set an argument property C<partial> to true to signify that this argument
+accept partial value. You can then call with special arguments C<-arg_len>,
+C<-arg_part_start>, C<-arg_part_len>. See L<Rinci::function> for more details.
+L<Riap::HTTP> can also do this via HTTP Content-Range.
+
+=item * How to accept streaming input?
+
+Many program environments (like in Unix) have the concept of standard input.
+Rinci provides a thin abstraction over this. You can set the argument property
+C<stream> to true. This way, in most implementation like in Perl, your function
+will receive the argument value as filehandle which it can then read from. See
+C<partial> property in C<args> function metadata property in L<Rinci::function>
+for an example.
+
+Your function can also read from standard input directly, but this means you
+cannot use conveniences like the C<cmdline_src>, where the command-line
+framework can supply an argument value for you from various sources including
+standard input and/or files.
+
+=item * How to produce streaming output?
+
+Many program environments (like in Unix) have the concept of standard output. To
+produce output stream, you can set result metadata property C<stream> to true.
+
+Your function can also read from standard input directly, but this means you
+cannot use conveniences like the C<cmdline_src>, where the command-line
+framework can supply an argument value for you from various sources including
+standard input and/or files.
 
 =back

@@ -1,5 +1,37 @@
 Revision history for Rinci
 
+1.1.67  2014-10-30 (PERLANCAR) - unreleased
+
+        [INCOMPATIBLE CHANGES]
+
+        - Tweaks/changes to sending of partial argument value: feature
+          'partial_arg' is removed as it is redundant (argument property
+          'partial' already hints this capability). When sending partial value,
+          aside from '-arg_part_start' and '-arg_part_len', client now must also
+          send '-arg_len' which is the total size. This is to follow more
+          closely with HTTP Content-Range semantic.
+
+        - Tweaks/changes to returning partial result: feature 'partial_res' is
+          removed, function can now instead hint using the 'partial' property in
+          its 'result' property. Result metadata properties 'res_part_start' and
+          'res_part_len' are now renamed to 'part_start' and 'part_len'. 'len'
+          is now also added to return information on total size (to follow HTTP
+          Content-Range semantic more closely).
+
+        [ENHANCEMENTS]
+
+        - Introduce argument property 'stream' to signify accepting input
+          stream. Input stream (like stdin) is a basic feature in most
+          programming environment so it should be supported. Implementation of
+          command-line framework will provide a filehandle for the argument,
+          where the function can read data from.
+
+        - Introduce result metadata property 'stream' to signify output is a
+          stream. Output stream (like stdout) is a basic feature in most
+          programming environment so it should be supported. This feature is
+          actually already in Unixish for some time.
+
+
 1.1.66  2014-10-29 (PERLANCAR)
 
         - Currently limit that there should at most be one argument with

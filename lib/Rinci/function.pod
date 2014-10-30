@@ -96,11 +96,8 @@ browsers won't clear current page if response is 206 (instead of showing a blank
 page if response is 200). Currently in Rinci there is no difference between 200
 and 204.
 
-206 (partial content) can be used to signal partial content, for example: a
-C<read_file()> function which accepts C<byte_start> and C<byte_end> arguments
-should return 206 when only partial file content is returned. But in general,
-use 200 as some callers will simply check for this exact code (instead of
-checking for range 200-299). See also C<partial_res> feature.
+206 (partial content) can be used to signal partial content. See C<partial>
+property in the C<result> function property.
 
 207 (multistatus) can be used to signal partial success, for example a function
 which processed 5 items wanted to report that it successfully processed 2 items
@@ -158,6 +155,10 @@ receiving an already existing username.
 412 (precondition failed). Similar to 409, but can be used to indicate lack of
 resources, like disk space or bandwidth. For lacking authentication and
 authorization, use 401 and 403 respectively.
+
+413 (request range not satisfiable). When client requests partial result outside
+the range of available. See the C<partial> property in C<result> property for
+examples.
 
 429 (too many requests).
 
@@ -303,7 +304,36 @@ element).
 
 There should at most be one argument with this property set to true.
 
-See the C<partial_arg> feature for more details.
+To send partial argument, you can use the special arguments C<-arg_len> (total
+argument length), C<-arg_part_start> (start position of the part that is being
+sent), C<-arg_part_len> (length of part that is being sent). Example (in Perl):
+
+ # function metadata
+ {
+     v => 1.1,
+     summary => "Upload a file",
+     args => {
+         name => {schema=>"str*", req=>1},
+         data => {schema=>"buf*", req=>1, partial=>1},
+     },
+ }
+
+ # function usage example: send the first 10MiB of data
+ upload_file(name=>"myvideo.mp4", data=>substr($data, 0, 10_000_000),
+             -arg_len        => 24_500_000,
+             -arg_part_start =>          0,
+             -arg_part_len   => 10_000_000);
+ # send the next 10MiB
+ upload_file(name=>"myvideo.mp4", data=>substr($data, 10_000_000, 10_000_000),
+             -arg_len        => 24_500_000,
+             -arg_part_start => 10_000_000,
+             -arg_part_len   => 10_000_000);
+ # send the last 4.5 MiB
+ upload_file(name=>"myvideo.mp4", data=>substr($data, 20_000_000),
+             -arg_len        => 24_500_000,
+             -arg_part_start => 20_000_000,
+             -arg_part_len   =>  4_500_000);
+
 
 =item * B<cmdline_aliases> => HASH
 
@@ -390,11 +420,9 @@ input; newline ending will be removed from the argument value). Other sources
 might be defined in the future.
 
 If function argument's type is C<str> or C<array>, the whole standard input and
-files will be slurped into memory. If function argument's type is C<stream> or
-C<filehandle>, program should provide standard input and files as a filehandle
-(like the diamond operator in Perl) so function can read input one record at a
-time. Record is line, but specifying the record separator should perhaps be
-possible in the future.
+files will be slurped into memory and fed as argument value. If argument
+property C<stream> is enabled, framework will pass the argument as a filehandle
+so function can read input stream.
 
 There should only be one argument with C<src> set to C<stdin> or
 C<stdin_or_files>.
@@ -687,6 +715,46 @@ example:
          schema => 'str*',
      },
  }
+
+=item * partial => bool
+
+If set to true, specify that it is possible to request partial result. An
+example is in a function that reads contents from (potentially large) files:
+
+ # function metadata
+ {
+     v => 1.1,
+     summary => 'Read file contents',
+     args => {
+         name => {
+             summary => 'File name',
+             schema  => 'str*',
+             req     => 1,
+         },
+     },
+     result => {schema=>'buf*', partial=>1},
+ }
+
+ # example function usage: request to read first 10MiB of file content,
+ # -result_part_start defaults to 0.
+ my $res = read_file(name=>'myvideo.mp4', -res_part_len=>10000000);
+ # => [206, "Partial content", "data...", {len=>24500000, part_start=>0, part_len=>10000000}]
+
+ # request the next 10MiB
+ my $res = read_file(name=>'myvideo.mp4', -res_part_start=>10000000, -res_part_len=>10000000);
+ # => [206, "Partial content", "data...", {len=>24500000, part_start=>10000000, part_len=>10000000}]
+
+ # request the next 10MiB, since this actual file size is only 24500000,
+ # function should return 416 status
+ my $res = read_file(name=>'myvideo.mp4', -res_part_start=>20000000, -res_part_len=>10000000);
+ # => [416, "Request range not satisfiable, file size is only 24500000"]
+
+ # request the next 4.5MiB, this time succeeds
+ my $res = read_file(name=>'myvideo.mp4', -res_part_start=>20000000, -res_part_len=>4500000);
+ # => [206, "Partial content", "data...", {len=>24500000, part_start=>20000000, part_len=>4500000}]
+
+Partial result request to a function which does not support partial result might
+have the effect of the whole content being returned (status 200) or status 416.
 
 =back
 
@@ -983,83 +1051,6 @@ single argument, one passes C<-action> special argument with the value of
 C<check_arg> and also passes the argument she wants to check. Function should
 check that argument and immediately return 200 status upon success, or 400 upon
 validation failure.
-
-=item * feature: partial_arg => bool
-
-If set to true, specifies that function supports receiving only a part of an
-argument (think HTTP 1.1 Ranges as analogy). The argument(s) that can be sent
-partially must also be marked in the argument specification (by setting the
-C<partial> property to true). Useful when argument is potentially very large
-(e.g. in a function that receives a large file upload), where partial sending
-will avoid loading the whole argument into memory at once.
-
-To send partial argument, you can use the special arguments C<-arg_part_start>
-and C<-arg_part_len>. They both specify the starting position and length,
-whether in character/byte/element depending on the argument schema type. Example
-(using Perl):
-
- # function metadata
- {
-     v => 1.1,
-     summary => "Upload a file",
-     args => {
-         name => {schema=>"str*", req=>1},
-         data => {schema=>"buf*", req=>1, partial=>1},
-     },
-     features => {partial_arg=>1},
- }
-
- # function usage example: send the first 10MB of data
- upload_file(name=>"myvideo.mp4", data=>$data1,
-             -arg_part_start=>0, -arg_part_len=>10*1024*1024);
-
- # function usage example: send the next 10MB
- upload_file(name=>"myvideo.mp4", data=>$data2,
-             -arg_part_start=>10*1024*1024,
-             -arg_part_len=>10*1024*1024);
-
- # function usage example: send the last 7MB (length defaults to data length)
- upload_file(name=>"myvideo.mp4", data=>$data3,
-             -arg_part_start=>10*1024*1024);
-
-=item * feature: partial_res => bool
-
-If set to true, specifies that function can return partial result.
-
-To request a partial result, you can use special arguments C<-res_part_start>
-and C<-res_part_len> similar to when sending partial argument data.
-
-Function will hint the range of data it actually sends via result metadata
-properties C<res_part_start> and C<res_part_len>.
-
-An example for a function that reads files (in Perl):
-
- # function metadata
- {
-     v => 1.1,
-     summary => 'Read file contents',
-     args => {
-         name => {
-             summary => 'File name',
-             schema  => 'str*',
-             req     => 1,
-         },
-     },
-     features => {partial_res=>1},
- }
-
- # example function usage: request to read first 10M of file content,
- # -result_part_start defaults to 0.
- my $res = read_file(name=>'myvideo.mp4', -res_part_len=>10*1024*1024);
- # => [206, "Partial content", "data...", {-res_part_start=>0, -res_part_len=>10485760}]
-
- # example function usage: request the next 10MB
- my $res = read_file(name=>'myvideo.mp4', -res_part_start=>10485760, -res_part_len=>10*1024*1024);
- # => [206, "Partial content", "data...", {-res_part_start=>10485760, -res_part_len=>10485760}]
-
- # example function usage: request the next 10MB, actual returned by server is only ~7MB
- my $res = read_file(name=>'myvideo.mp4', -res_part_start=>20971520, -res_part_len=>10*1024*1024);
- # => [206, "Partial content", "data...", {-res_part_start=>20971520, -res_part_len=>7350518}]
 
 =back
 

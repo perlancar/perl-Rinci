@@ -146,13 +146,25 @@ validation:
       ],
  }]
 
-=head1 Property: res_part_start => int
+=head1 Property: part_start => int
 
-=head1 Property: res_part_len => int
+=head1 Property: len => int
 
-The C<res_part_start> and C<res_part_len> properties specifies the range of data
-when function sends partial result. See the C<partial_res> property in
-L<Rinci::function> for more details.
+=head1 Property: part_len => int
+
+The C<len>, C<part_start> and C<part_len> properties specifies the range of data
+when function sends partial result. Suppose your function is returning a partial
+content of a large file where total file size is 24500000 bytes and the returned
+content is from bytes 10000000 to 15000000, then C<len> is 24500000, C<part_len>
+is 5000000, and C<part_start> is 10000000. When returning partial content,
+status will be 206.
+
+=head1 Property: stream => bool
+
+If set to true, signify that result is an output stream. Usually in
+implementations it will be a filehandle or an object with C<getline> or C<get>
+methods.
+
 
 =head1 FAQ
 
