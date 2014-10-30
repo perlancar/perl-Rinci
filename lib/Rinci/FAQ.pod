@@ -93,10 +93,7 @@ standard input and/or files.
 
 Many program environments (like in Unix) have the concept of standard output. To
 produce output stream, you can set result metadata property C<stream> to true.
-
-Your function can also read from standard input directly, but this means you
-cannot use conveniences like the C<cmdline_src>, where the command-line
-framework can supply an argument value for you from various sources including
-standard input and/or files.
+And then in the result you can put a filehandle or an object that responds to
+getline/getitem methods.
 
 =back
