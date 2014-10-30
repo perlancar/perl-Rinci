@@ -95,10 +95,11 @@ $SCHEMAS{rinci_function} = [hash => {
                         # from defhash
                         summary => {},
                         description => {},
-
                         schema => {},
                     },
                 },
+                partial => {},
+                stream => {},
             },
         },
         result_naked => {},
