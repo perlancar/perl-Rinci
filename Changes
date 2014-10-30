@@ -1,5 +1,10 @@
 Revision history for Rinci
 
+1.1.68  2014-10-30 (PERLANCAR)
+
+	- Forgot to mention 'stream' argument spec property.
+
+
 1.1.67  2014-10-30 (PERLANCAR)
 
         [INCOMPATIBLE CHANGES]
