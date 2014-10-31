@@ -96,4 +96,45 @@ produce output stream, you can set result metadata property C<stream> to true.
 And then in the result you can put a filehandle or an object that responds to
 getline/getitem methods.
 
+=item * What is the difference between accepting partial data and streaming input?
+
+If a function accepts partial data, to send a large data without taking up too
+much memory, a caller needs to break the data into several parts and call the
+function several times, each with a different part.
+
+If a function accepts a stream input, to send a large data a caller can send a
+filehandle/iterator object from which the function can read the data
+iteratively.
+
+Stream input is easier and simpler for the function writer to write. A caller
+also only needs to call the function once instead of multiple times. However,
+there is no resume capability.
+
+On the other hand, partial input data is easier to implement with Riap::HTTP, as
+it maps rather closely to HTTP Content-Range.
+
+If you are uploading a large data over a network to a function, partial input
+data is preferred because of its ease to work with HTTP and its resume ability.
+
+However, if input is really a stream (i.e. unknown/infinite length), then
+streaming input is the option to use.
+
+=item * What is the difference between returning partial result and streaming output?
+
+If a function can return partial result, to retrieve a large result from a
+function a caller can calls several times and each time request to retrieve
+parts of result.
+
+If a function returns output stream, a caller can then retrieve data from the
+stream iteratively.
+
+Output stream is easier to handle by the caller. The caller also only needs to
+call once instead of multiple times. However, there is no resume capability.
+
+On the other hand, partial result is easier to implement with Riap::HTTP, as it
+maps rather closely to HTTP Content-Range.
+
+If you are retrieving a large data over a network from a function, partial
+result is preferred because of its ease to work with HTTP
+
 =back
