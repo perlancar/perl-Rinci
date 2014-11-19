@@ -58,6 +58,9 @@ $SCHEMAS{rinci_function} = [hash => {
             _value_prop => {
                 %dh_props,
 
+                # common rinci metadata
+                links => {},
+
                 schema => {},
                 default => {},
                 req => {},
