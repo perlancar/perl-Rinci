@@ -2,8 +2,10 @@ Revision history for Rinci
 
 1.1.71  2015-01-17 (PERLANCAR)
 
-	- Specify that streaming input and output now uses coderef instead
-	  of filehandle/etc.
+	- Specify that streaming input and output now uses coderef instead of
+	  filehandle/etc. This is simpler and has the side-effects of easier to
+	  do wrapping for (see Perinci::Sub::Wrapper) where one can just wrap
+	  the coderef to do per-record validation of streaming input/output.
 
 
 1.1.70  2014-11-19 (PERLANCAR)
