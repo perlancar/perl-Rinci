@@ -56,8 +56,8 @@ B<Special arguments>. Special arguments are some known arguments that start with
 dash (C<->) and serve special purposes. You need not specify them in the C<args>
 metadata property. Examples of special arguments include C<-dry_run>,
 C<-tx_action>, C<-action>, C<-confirm/*>, C<-arg_part_start>, C<-arg_part_len>,
-C<-res_part_start>, C<-res_part_len>, C<-arg_stream>. They will be explained in
-other related sections/documents.
+C<-res_part_start>, C<-res_part_len>. They will be explained in other related
+sections/documents.
 
 B<Functions vs methods>. Since in many programming languages (like Perl 5,
 Python, Ruby, PHP) static functions are not that differentiated from methods,
@@ -338,11 +338,9 @@ sent), C<-arg_part_len> (length of part that is being sent). Example (in Perl):
 
 By setting this property to true, function can specify that it accepts streaming
 data for this argument. It is useful when argument value is large or of
-undetermined/infinite length. Currently there must be at most one argument that
-has this property set to true. To send value as a stream, caller must set
-special argument C<-arg_stream> to true and pass a filehandle or an object that
-responds to getline/getitem method. Function can then read data from this
-handle.
+undetermined/infinite length. To send value as a stream, caller must send a
+subroutine reference (callback) instead which the function will call repeatedly
+until it gets undef to signify exhaustion of data.
 
 =item * B<cmdline_aliases> => HASH
 
@@ -724,7 +722,15 @@ example:
      },
  }
 
-=item * partial => bool
+=item * B<stream> => bool
+
+Specify that function returns streaming output. Note that function can also
+signify streaming output by setting result metadata property C<stream> to true.
+
+Function must then return a subroutine reference (callback) as its actual result
+which the caller can call repeatedly until it gets undef to signify exhaustion.
+
+=item * B<partial> => bool
 
 If set to true, specify that it is possible to request partial result. An
 example is in a function that reads contents from (potentially large) files:
