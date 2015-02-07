@@ -1,5 +1,15 @@
 Revision history for Rinci
 
+1.1.72  2015-02-07 (PERLANCAR)
+
+	- Introduce function property 'args_groups' to allow things like
+	  requiring {only one,all} members of a group of args must be
+	  specified (and possibly others in the future).
+
+	- Specify argument specification property 'deps', to allow an
+	  argument to depend on others.
+
+
 1.1.71  2015-01-17 (PERLANCAR)
 
 	- Specify that streaming input and output now uses coderef instead of
