@@ -85,9 +85,24 @@ $SCHEMAS{rinci_function} = [hash => {
                 cmdline_src => {},
                 meta => 'fix',
                 element_meta => 'fix',
+                deps => {
+                    _keys => {
+                        arg => {},
+                        all => {},
+                        any => {},
+                        none => {},
+                    },
+                },
             },
         },
         args_as => {},
+        args_groups => {
+            _elem_prop => {
+                %dh_props,
+                args => {},
+                rel => {},
+            },
+        },
         result => {
             _prop => {
                 %dh_props,
