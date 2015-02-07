@@ -458,6 +458,32 @@ This allows specifying argument element submetadata, used e.g. when dealing with
 forms (a form field/widget can contain an array of records/subforms). Value is
 Rinci function metadata.
 
+=item * B<deps> => hash
+
+This property specifies argument's dependencies to other arguments (but possibly
+to other things too, in the future). This is similar to function's C<deps>
+property. It is a hash or dep types and values. The most important dep type is
+C<arg> (dependency to another argument). Some dep types are special: C<all>,
+C<any>, C<none>. Example:
+
+ args => {
+     delete => {
+         schema=>'bool',
+     },
+     force => {
+         summary => 'Force deletion',
+         schema => 'bool',
+         deps => {arg=>'delete'},
+     },
+
+The above example states that argument C<force> "depends on" C<delete>. What it
+means (usually) is that specifying C<force> only makes sense when C<delete> is
+also specified. In a CLI context:
+
+ % prog --delete --force
+
+Specifying C<--force> without C<--delete> doesn't make sense.
+
 =back
 
 Example function metadata and its implementation in Perl:
