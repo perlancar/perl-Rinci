@@ -1,5 +1,12 @@
 Revision history for Rinci
 
+1.1.73  2015-02-07 (PERLANCAR)
+
+	- No spec changes.
+
+	- Forgot to update schema.
+
+
 1.1.72  2015-02-07 (PERLANCAR)
 
 	- Introduce function property 'args_groups' to allow things like
