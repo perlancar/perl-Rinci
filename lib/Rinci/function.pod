@@ -704,6 +704,43 @@ When C<delete_users> is executed over the command line:
  $ delete-users charlie c<tab> ; # will complete with users but exclude charlie
  $ delete-users charlie chucky <tab> ; # and so on
 
+=head2 Property: args_groups => array
+
+This property can be used to specify relationship between groups of arguments.
+Value is array of group specifications. Group specification is a defhash
+containing these keys:
+
+=over
+
+=item * args => array
+
+The members of the group.
+
+=item * rel => str
+
+Relationship type. Can be one of 'one_of' (at most only one of the arguments
+must be specified), 'all' (if one of the arguments is specified, then all must
+be specified).
+
+=back
+
+Example:
+
+ args_groups => [
+     {args => ['delete', 'add', 'edit'], rel=>'one_of'},
+     {args => ['red', 'green', 'blue'], rel=>'all'},
+ ]
+
+The above example says that only one of C<delete>, C<add>, C<edit> can be
+specified. And all of C<red>, C<green>, C<blue> must be specified. In CLI
+context:
+
+ % prog --delete item
+ % prog --delete --add item ; # error, both --delete and --add specified
+
+ % prog --red 255 --green 255 --blue 0
+ % prog --red 255 --blue 0 ; # error, --green is missing
+
 =head2 Property: args_as => STR
 
 Specify in what form the function expects the arguments. The value is actually
