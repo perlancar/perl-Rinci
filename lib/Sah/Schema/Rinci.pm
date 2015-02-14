@@ -33,8 +33,7 @@ $SCHEMAS{rinci} = [hash => {
             _elem_prop => {
                 %dh_props,
 
-                uri => {},
-                title => {},
+                url => {},
             },
         },
     },
