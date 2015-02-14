@@ -351,14 +351,14 @@ LINKS sections in documentation. Each link is a defhash with the following keys:
 
 =over 4
 
-=item * uri => STR (required)
+=item * url => STR (required)
 
 URI is used as a common syntax to refer to resources. If URI scheme is not
 specified, tools can assume that it is a C<riap> URI (see L<Riap>).
 
-=item * title => STR
+=item * caption => STR
 
-A short plaintext title for the link.
+From DefHash. A short plaintext title for the link.
 
 =item * description => STR
 
@@ -377,13 +377,13 @@ Example:
  # links in the Bar::foo function metadata
  links => [
      {
-         url   => "http://example.org/foo-with-bar-algo.html",
-         title => "Article describing foo using Bar algorithm",
+         url     => "http://example.org/foo-with-bar-algo.html",
+         caption => "Article describing foo using Bar algorithm",
      },
      {
-         url   => "../Bar2/",
-         title => "Another implementation of the Bar algorithm",
-         tags  => ['see'],
+         url     => "../Bar2/",
+         caption => "Another implementation of the Bar algorithm",
+         tags    => ['see'],
      },
  ],
 
