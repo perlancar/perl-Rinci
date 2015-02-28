@@ -469,7 +469,7 @@ Revision history for Rinci
          - New transaction statuses: v (rollback of undoing process), e
            (rollback of redoing process).
 
-         - Recovery does not always means rollback (to R). For transactions in u
+         - Recovery does not always mean rollback (to R). For transactions in u
            and d status, we continue the undoing/redoing. For transactions in v
            and e status, we continue the rollback to final status C and U,
            respectively.
