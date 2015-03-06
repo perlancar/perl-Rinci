@@ -97,7 +97,9 @@ Revision history for Rinci
           properties: 'partial'. New features: 'partial_arg', 'partial_res'. New
           special arguments: '-arg_part_start', '-arg_part_len',
           '-res_part_start', '-res_part_len'. New result metadata properties:
-          'res_part_start', 'res_part_len'.
+          'res_part_start', 'res_part_len'. UPDATE in 1.1.67: 'partial_res' is
+          removed, '-res_part_start' & '-res_part_len' renamed to 'part_start &
+          part_len'.
 
 
 1.1.63  2014-10-28 (PERLANCAR)
@@ -129,7 +131,7 @@ Revision history for Rinci
         - Introduce 'encoding' property in result specification, to give hints
           to tools that function wants to encode its result by default. Said
           tool can encode the result and set the 'encoding' property in the
-          result metadata.
+          result metadata. UPDATE in 1.1.62: removed.
 
 
 1.1.60  2014-10-22 (PERLANCAR)
@@ -152,13 +154,13 @@ Revision history for Rinci
           but this is not widely supported across languages like JSON). Tools
           can be written to support automatic decoding of function arguments and
           automatic encoding of function result. In Perl, see CPAN module
-          Perinci::Sub::Wrapper.
+          Perinci::Sub::Wrapper. UPDATE in 1.1.62: removed.
 
         - Introduce 'arg_errors' and 'arg_warnings' properties in result
           metadata. This is for functions that do form processing, because often
           we want to send the error message for all non-validating arguments
           (form fields) instead of just the first one found. In Perl, see CPAN
-          module Borang.
+          module Borang. UPDATE in 1.1.63: replaced with 'results'.
 
         - Introduce '-action' special argument and the 'check_arg' feature. The
           '-action' can toggle special invocation modes to the function. This is
@@ -241,16 +243,12 @@ Revision history for Rinci
 
          - Rename args_as to args/as, result_naked to result/is_naked to make
            top-level properties cleaner. Implementation should still support the
-           old properties for a while.
+           old properties for a while. UPDATE in 1.1.50: renamed back.
 
         [BUG FIXES]
 
         - Checking dep func/pkg should be done using Riap info action and not
           meta.
-
-        [UPDATES]
-
-        - Update Sah schema.
 
 
 1.1.48   2014-05-28 (SHARYANTO)
@@ -294,7 +292,7 @@ Revision history for Rinci
 1.1.43   2013-12-25 (SHARYANTO) - Ho ho ho!
 
          - function: Add argument spec's 'cmdline_on_getopt' and
-           'cmdline_on_getarg'.
+           'cmdline_on_getarg'. UPDATE in 1.1.44: 'cmdline_on_getarg' removed.
 
 
 1.1.42   2013-11-14 (SHARYANTO)
@@ -356,7 +354,8 @@ Revision history for Rinci
 1.1.33   2012-11-07 (SHARYANTO)
 
          - No spec changes. (Temporarily?) split Rinci::Schema to its own dist
-           so I can release them often separately.
+           so I can release them often separately. UPDATE in 1.1.44:
+           Rinci::Schema replaced with Sah::Schema::Rinci.
 
 
 1.1.32   2012-11-01 (SHARYANTO)
@@ -497,6 +496,7 @@ Revision history for Rinci
 1.1.20   2012-07-21 (SHARYANTO)
 
          - function: Add argument specification keys 'src' and 'cmdline_src'.
+           UPDATE in 1.1.21: 'src' removed.
 
 
 1.1.19   2012-06-22 (SHARYANTO)
@@ -520,14 +520,16 @@ Revision history for Rinci
 
          - Specify transactional system (Rinci::function::Transaction). Split
            specification for undo to Rinci::function::Undo and specify undo/redo
-           protocol under transaction.
+           protocol under transaction. UPDATE in 1.1.24: Undo protocol
+           deprecated.
 
 
 1.1.16   2012-05-03 (SHARYANTO)
 
          - Refine undo protocol documentation. Specify interaction with
            undo/transaction manager. '-undo_hint' is now replaced by
-           '-undo_storage'. Declare 'undo_storage' dependency clause.
+           '-undo_storage'. Declare 'undo_storage' dependency clause. UPDATE
+           in 1.1.24: Undo protocol deprecated in favor of transaction.
 
 
 1.1.15   2012-05-02 (SHARYANTO)
@@ -572,7 +574,8 @@ Revision history for Rinci
 
          [ENHANCEMENTS]
 
-         - Add property 'entity_version'.
+         - Add property 'entity_version'. UPDATE in 1.1.36: renamed to
+           'entity_v'.
 
 
 1.1.10   2012-02-28 (SHARYANTO)
@@ -608,12 +611,14 @@ Revision history for Rinci
 
 1.1.7    2012-02-23 (SHARYANTO)
 
-         - package: Add property 'pkg_version'.
+         - package: Add property 'pkg_version'. UPDATE in 1.1.11 & 1.1.36:
+           replaced by 'entity_v'.
 
 
 1.1.6    2012-02-21 (SHARYANTO)
 
-         - function: Add 'alias_for' argument specification.
+         - function: Add 'alias_for' argument specification. UPDATE 1.1.8:
+           removed.
 
 
 1.1.5    2012-02-10 (SHARYANTO)
@@ -671,7 +676,8 @@ Revision history for Rinci
 
          - Default text markup format changed from Org to Markdown, but a new
            properties 'text_markup' is added to allow specifying 'org' or
-           'markdown' (or 'none').
+           'markdown' (or 'none'). UPDATE in 1.1.31: 'text_markup' property
+           removed.
 
          - 'v' clause is now required to declare Rinci spec version (with value
            1.1, if unspecified then assumed spec is old Sub::Spec 1.0).
@@ -690,7 +696,9 @@ Revision history for Rinci
          - function: Other properties which are also removed/replaced: 'timeout'
            (non-core), 'retry' (non-core), 'scope' (can be replaced by using
            tags), 'result_naked' (replaced by 'result_envelope'), 'args_as'
-           (replaced by 'arg_pass_style').
+           (replaced by 'arg_pass_style'). UPDATE in 1.1.4: 'arg_pass_style'
+           renamed back to 'args_as', 'result_envelope' renamed back to
+           'result_naked'.
 
          - function: property 'deps': terminology change ('dep clause' -> 'dep
            type'), rename dep types: 'sub' -> 'func', 'mod' -> 'perl_module'.
