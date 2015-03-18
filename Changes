@@ -1,5 +1,14 @@
 Revision history for Rinci
 
+1.1.74  2015-03-18 (PERLANCAR)
+
+        - [Incompatible change] Use DefHash's 'caption' property for link title,
+          instead of using another ('title').
+
+        - Introduce another value for 'cmdline_src' argument spec property:
+          'stdin_or_file' (in addition to 'stdin_or_files').
+
+
 1.1.73  2015-02-07 (PERLANCAR)
 
 	- No spec changes.
