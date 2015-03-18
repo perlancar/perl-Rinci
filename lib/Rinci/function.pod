@@ -420,18 +420,20 @@ Specify how to get the value for this argument, when function is run as a
 command-line program. Valid values include: C<file> (command-line argument value
 will be treated as filename and function argument will be set to content of the
 file), C<stdin> (means that program should get function argument from the whole
-standard input until EOF), or C<stdin_or_files> (means that program should get
-value from content of files, or if none is specified, from standard input), or
-C<stdin_line> (means that program should get value from a line of standard
-input; newline ending will be removed from the argument value). Other sources
-might be defined in the future.
+standard input until EOF), or C<stdin_or_file> (means that program should get
+value from content of file [from a single command-line argument], or if none is
+specified, from standard input), or C<stdin_or_files> (means that program should
+get value from content of files [from all command-line arguments], or if none is
+specified, from standard input), or C<stdin_line> (means that program should get
+value from a line of standard input; newline ending will be removed from the
+argument value). Other sources might be defined in the future.
 
 When source is stdin/files, the whole standard input and files will be slurped
 into memory and fed as argument value. It is possible to stream the value
 instead: see the C<stream> argument specification property.
 
 There should only be one argument with C<src> set to C<stdin> or
-C<stdin_or_files>.
+C<stdin_or_file> or C<stdin_or_files>.
 
 Arguments with C<cmdline_src> of C<stdin_line> will be processed before
 C<stdin>.
