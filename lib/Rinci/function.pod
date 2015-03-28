@@ -486,6 +486,11 @@ also specified. In a CLI context:
 
 Specifying C<--force> without C<--delete> doesn't make sense.
 
+=item * filters => [array of str|code]
+
+Experimental. Filters to apply before argument is converted from text and
+validated.
+
 =back
 
 Example function metadata and its implementation in Perl:

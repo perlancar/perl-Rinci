@@ -61,6 +61,7 @@ $SCHEMAS{rinci_function} = [hash => {
                 links => {},
 
                 schema => {},
+                filters => {},
                 default => {},
                 req => {},
                 pos => {},
