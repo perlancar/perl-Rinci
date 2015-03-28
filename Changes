@@ -1,5 +1,10 @@
 Revision history for Rinci
 
+1.1.75  2015-03-28 (PERLANCAR)
+
+	- Add (experimental) argument specification: filters.
+
+
 1.1.74  2015-03-18 (PERLANCAR)
 
         - [Incompatible change] Use DefHash's 'caption' property for link title,
