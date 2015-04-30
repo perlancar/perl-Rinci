@@ -714,12 +714,15 @@ When C<delete_users> is executed over the command line:
 =head2 Property: args_rels => hash
 
 This property is used to expression relationships between arguments. The value
-is a L<Sah> schema hash clause set (see hash type in L<Sah::Type>). The
-arguments are presented as a hash, and you can use the various Sah clauses.
+is actually L<Sah> schema hash clause set (see hash type in L<Sah::Type>). The
+arguments are represented as a hash, and you can use the various Sah clauses to
+express relationships between the arguments (hash keys) because the Sah hash
+type supports such clauses, e.g. C<choose_one>, C<choose_all>, C<req_one>,
+C<req_all>, C<dep_one>, C<dep_all>, C<req_dep_one>, C<req_dep_all>.
 
 Examples:
 
- args_schema => {
+ args_rels => {
      choose_one => ['delete', 'add', 'edit'],
      choose_all => ['red', 'green', 'blue'],
  }

@@ -96,7 +96,7 @@ $SCHEMAS{rinci_function} = [hash => {
             },
         },
         args_as => {},
-        args_schema => {},
+        args_rels => {},
         result => {
             _prop => {
                 %dh_props,
