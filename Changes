@@ -1,5 +1,14 @@
 Revision history for Rinci
 
+1.1.76  2015-04-30 (PERLANCAR)
+
+	- Replace function property 'args_groups' with 'args_schema'. This
+          allows us to reuse the Sah 0.9.34+ specification, since the hash type
+          now also contains clauses that specifies relationships between keys
+          (arguments), e.g. choose_one, choose_all, req_one, req_all, dep_one,
+          dep_all, req_dep_one, req_dep_all.
+
+
 1.1.75  2015-03-28 (PERLANCAR)
 
 	- Add (experimental) argument specification: filters.
@@ -24,11 +33,12 @@ Revision history for Rinci
 1.1.72  2015-02-07 (PERLANCAR)
 
 	- Introduce function property 'args_groups' to allow things like
-	  requiring {only one,all} members of a group of args must be
-	  specified (and possibly others in the future).
+	  requiring {only one,all} members of a group of args must be specified
+	  (and possibly others in the future). UPDATE: Now replaced with
+	  'args_schema'.
 
-	- Specify argument specification property 'deps', to allow an
-	  argument to depend on others.
+	- Specify argument specification property 'deps', to allow an argument
+	  to depend on others.
 
 
 1.1.71  2015-01-17 (PERLANCAR)
