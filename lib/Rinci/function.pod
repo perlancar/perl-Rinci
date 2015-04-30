@@ -711,42 +711,32 @@ When C<delete_users> is executed over the command line:
  $ delete-users charlie c<tab> ; # will complete with users but exclude charlie
  $ delete-users charlie chucky <tab> ; # and so on
 
-=head2 Property: args_groups => array
+=head2 Property: args_rels => hash
 
-This property can be used to specify relationship between groups of arguments.
-Value is array of group specifications. Group specification is a defhash
-containing these keys:
+This property is used to expression relationships between arguments. The value
+is a L<Sah> schema hash clause set (see hash type in L<Sah::Type>). The
+arguments are presented as a hash, and you can use the various Sah clauses.
 
-=over
+Examples:
 
-=item * args => array
-
-The members of the group.
-
-=item * rel => str
-
-Relationship type. Can be one of 'one_of' (at most only one of the arguments
-must be specified), 'all' (if one of the arguments is specified, then all must
-be specified).
-
-=back
-
-Example:
-
- args_groups => [
-     {args => ['delete', 'add', 'edit'], rel=>'one_of'},
-     {args => ['red', 'green', 'blue'], rel=>'all'},
- ]
+ args_schema => {
+     choose_one => ['delete', 'add', 'edit'],
+     choose_all => ['red', 'green', 'blue'],
+ }
 
 The above example says that only one of C<delete>, C<add>, C<edit> can be
-specified. And all of C<red>, C<green>, C<blue> must be specified. In CLI
-context:
+specified. And if any of C<red>, C<green>, C<blue> is specified then all must be
+specified. In CLI context this translates to:
 
  % prog --delete item
  % prog --delete --add item ; # error, both --delete and --add specified
 
  % prog --red 255 --green 255 --blue 0
  % prog --red 255 --blue 0 ; # error, --green is missing
+
+Another example:
+
+ XXX
 
 =head2 Property: args_as => STR
 
