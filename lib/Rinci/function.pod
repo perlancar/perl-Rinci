@@ -718,7 +718,7 @@ is actually L<Sah> schema hash clause set (see hash type in L<Sah::Type>). The
 arguments are represented as a hash, and you can use the various Sah clauses to
 express relationships between the arguments (hash keys) because the Sah hash
 type supports such clauses, e.g. C<choose_one>, C<choose_all>, C<req_one>,
-C<req_all>, C<dep_one>, C<dep_all>, C<req_dep_one>, C<req_dep_all>.
+C<req_all>, C<dep_any>, C<dep_all>, C<req_dep_any>, C<req_dep_all>.
 
 Examples:
 
