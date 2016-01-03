@@ -72,19 +72,19 @@ validate input (using information from the C<args> property), validate return
 value (the C<result> property), add execution time-limiting (C<timeout>), add
 automatic retries (C<retry>), interactive confirmation, logging, and more.
 
-=item * L<Perinci::Exporter>
+=item * L<Perinci::Exporter>, L<Exporter::Rinci>
 
-A replacement for L<Exporter> or L<Sub::Exporter> if your functions are equipped
-with Rinci metadata. Automatically provide export tags (using information in the
-C<tags> property). Can automatically wrap functions using Perinci::Sub::Wrapper
-when exporting.
+More convenient replacements/wrappers for L<Exporter> or L<Sub::Exporter> if
+your functions are equipped with Rinci metadata. Automatically provide export
+tags (using information in the C<tags> property). Automatically wrap functions
+using Perinci::Sub::Wrapper when exporting (Perinci::Exporter).
 
 =item * Perinci::To::* modules
 
 Convert metadata to various other documents, for example L<Perinci::To::POD> to
 generate documentation.
 
-=item * L<Perinci::CmdLine>
+=item * L<Perinci::CmdLine> (several flavors: L<Perinci::CmdLine::Classic>, L<Perinci::CmdLine::Lite>, L<Perinci::CmdLine::Inline>)
 
 L<Riap> command-line client. Call local/remote functions. Automatically convert
 command-line options/arguments to function arguments. Generate help/usage
