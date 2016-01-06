@@ -522,7 +522,7 @@ Example function metadata and its implementation in Perl:
              cmdline_aliases => {
                  r=>{},
                  R=>{summary=>'Equivalent to --round=0',
-                     code=>sub {$_[0]{round}=0}},
+                     code=>sub { my ($args, $val) = @_; $args->{round}=0 }},
              },
          },
      }
