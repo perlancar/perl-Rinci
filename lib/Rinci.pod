@@ -271,8 +271,8 @@ preamble like "This function ..." or "Function to ..." since that is redundant.
 Also avoid describing the arguments and its values like "..., accepts a single
 integer argument" as that should go to the C<args> property.
 
-To specify translations in other language, use the L<summary.alt.lang.CODE>.
-Or change the C<default_lang> property. Examples:
+To specify translations in other language, use the C<summary.alt.lang.CODE>. Or
+change the C<default_lang> property. Examples:
 
  # default language is 'en_US'
  summary => 'Perform the foo ritual',
@@ -342,7 +342,7 @@ Example:
  }
 
 Like in C<summary>, to specify translations in other language, use the
-L<description.alt.lang.CODE> property.
+C<description.alt.lang.CODE> property.
 
 =head3 Property: links => ARRAY OF HASHES
 
