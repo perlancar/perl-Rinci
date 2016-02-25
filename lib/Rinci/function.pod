@@ -416,27 +416,64 @@ value from standard input. Or they can redact values to C<****> when logging.
 
 =item * B<cmdline_src> => STR
 
-Specify how to get the value for this argument, when function is run as a
-command-line program. Valid values include: C<file> (command-line argument value
-will be treated as filename and function argument will be set to content of the
-file), C<stdin> (means that program should get function argument from the whole
-standard input until EOF), or C<stdin_or_file> (means that program should get
-value from content of file [from a single command-line argument], or if none is
-specified, from standard input), or C<stdin_or_files> (means that program should
-get value from content of files [from all command-line arguments], or if none is
-specified, from standard input), or C<stdin_line> (means that program should get
-value from a line of standard input; newline ending will be removed from the
-argument value). Other sources might be defined in the future.
+Normally in a command-line program, command-line options and arguments will map
+to function arguments, e.g. C<--arg 2> will set the C<foo> argument to C<2> and
+positional arguments (argument which specifies the C<pos> property and
+optionally also a C<greedy> property with true value) will get or slurp
+command-line arguments.
 
-When source is stdin/files, the whole standard input and files will be slurped
-into memory and fed as argument value. It is possible to stream the value
-instead: see the C<stream> argument specification property.
+In some cases, this is not convenient. When supplying larger amount of data, a
+complex structures, or a stream, we might want to use other sources. The
+C<cmdline_src> property can be set to one of the following value for this
+purpose:
 
-There should only be one argument with C<src> set to C<stdin> or
-C<stdin_or_file> or C<stdin_or_files>.
+=over
+
+=item * C<file>
+
+Command-line option/argument value will be treated as filename and function
+argument will be set to content of the file (or in the case of streaming
+argument, to a callback which can be used to get the file's content).
+
+=item * C<stdin>
+
+This means that program should get function argument from the whole standard
+input until EOF.
+
+Note that only one argument can have its source set to C<stdin> or
+C<stdin_or_file> or C<stdin_or_files> or C<stdin_or_args>.
+
+=item * C<stdin_or_file>
+
+This means that program should get value from content of file (the name of which
+is given from the first remaining command-line argument after all other
+arguments/options have been processed), or, if none is
+provided, from standard input.
+
+=item * C<stdin_or_files>
+
+This means that program should get value from content of files (the names of
+which are taken from the remaining command-line arguments after all other
+arguments/options have been processed), or, or if no command-line argument
+remains, from standard input. This behavior is similar to the C<< <> >> (diamond
+operator) in Perl.
+
+=item * C<stdin_or_args>
+
+This means that program should get value from remaining command-line
+argument(s), or if no command-line argument remains, from standard input.
+
+=item * C<stdin_line>
+
+This means that program should get value from a line of standard input; newline
+ending will be removed from the argument value.
 
 Arguments with C<cmdline_src> of C<stdin_line> will be processed before
-C<stdin>.
+C<stdin>/C<stdin_or_file>/C<stdin_or_files>/C<stdin_or_args>.
+
+=back
+
+Other sources might be defined in the future.
 
 TODO: Define C<web_src> property?
 
