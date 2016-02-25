@@ -1,5 +1,11 @@
 Revision history for Rinci
 
+1.1.79  2016-02-25 (PERLANCAR)
+
+	- Define new command-line source for function argument
+	  (cmdline_src): stdin_or_args.
+
+
 1.1.78  2015-09-03 (PERLANCAR)
 
 	- No spec changes.
