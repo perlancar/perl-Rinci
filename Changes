@@ -1,11 +1,12 @@
 Revision history for Rinci
 
-1.1.80  2016-05-10 (PERLANCAR) (unreleased)
+1.1.80  2016-05-10 (PERLANCAR)
 
 	- No spec changes.
 
-	- Follow Sah::Schemas spec (each individual schema is put in a separate
-          Sah::Schema::* package).
+	- [Incompatible change] Follow Sah::Schemas spec (each individual schema
+          is put in a separate Sah::Schema::* package). Sah::Schema::Rinci is
+          now replaced with Sah::Schema::rinci::* packages.
 
 
 1.1.79  2016-02-25 (PERLANCAR)
