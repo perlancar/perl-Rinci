@@ -1,5 +1,13 @@
 Revision history for Rinci
 
+1.1.80  2016-05-10 (PERLANCAR) (unreleased)
+
+	- No spec changes.
+
+	- Follow Sah::Schemas spec (each individual schema is put in a separate
+          Sah::Schema::* package).
+
+
 1.1.79  2016-02-25 (PERLANCAR)
 
 	- Define new command-line source for function argument

@@ -1,4 +1,4 @@
-package Sah::Schema::Rinci;
+package Sah::Schema::rinci::function_meta;
 
 # DATE
 # VERSION
@@ -7,43 +7,16 @@ use 5.010001;
 use strict;
 use warnings;
 
-our %SCHEMAS;
+use Data::Sah::Normalize ();
+use Sah::Schema::rinci::meta ();
 
-my %dh_props = (
-    v => {},
-    defhash_v => {},
-    name => {},
-    caption => {},
-    summary => {},
-    description => {},
-    tags => {},
-    default_lang => {},
-    x => {},
-);
+our $schema = [hash => {
+    summary => 'Rinci function metadata',
 
-$SCHEMAS{rinci} = [hash => {
-    # tmp
-    _ver => 1.1, # this has the effect of version checking
-    _prop => {
-        %dh_props,
-
-        entity_v => {},
-        entity_date => {},
-        links => {
-            _elem_prop => {
-                %dh_props,
-
-                url => {},
-            },
-        },
-    },
-}];
-
-$SCHEMAS{rinci_function} = [hash => {
     # tmp
     _ver => 1.1,
     _prop => {
-        %dh_props,
+        %Sah::Schema::rinci::meta::_dh_props,
 
         # from common rinci metadata
         entity_v => {},
@@ -55,7 +28,7 @@ $SCHEMAS{rinci_function} = [hash => {
         is_class_meth => {},
         args => {
             _value_prop => {
-                %dh_props,
+                %Sah::Schema::rinci::meta::_dh_props,
 
                 # common rinci metadata
                 links => {},
@@ -99,7 +72,7 @@ $SCHEMAS{rinci_function} = [hash => {
         args_rels => {},
         result => {
             _prop => {
-                %dh_props,
+                %Sah::Schema::rinci::meta::_dh_props,
 
                 schema => {},
                 statuses => {
@@ -117,7 +90,7 @@ $SCHEMAS{rinci_function} = [hash => {
         result_naked => {},
         examples => {
             _elem_prop => {
-                %dh_props,
+                %Sah::Schema::rinci::meta::_dh_props,
 
                 args => {},
                 argv => {},
@@ -154,36 +127,15 @@ $SCHEMAS{rinci_function} = [hash => {
             },
         },
     },
-}];
-$SCHEMAS{rinci_function}[1]{_prop}{args}{_value_prop}{meta} =
-    $SCHEMAS{rinci_function}[1];
-$SCHEMAS{rinci_function}[1]{_prop}{args}{_value_prop}{element_meta} =
-    $SCHEMAS{rinci_function}[1];
+}, {}];
 
-# rinci_package
-# rinci_variable
+$schema->[1]{_prop}{args}{_value_prop}{meta} = $schema->[1];
+$schema->[1]{_prop}{args}{_value_prop}{element_meta} = $schema->[1];
 
-$SCHEMAS{rinci_resmeta} = [hash => {
-    # tmp
-    _ver => 1.1,
-    _prop => {
-        %dh_props,
+# just so the dzil plugin won't complain about schema not being normalized.
+# because this is a circular structure and normalizing creates a shallow copy.
 
-        perm_err => {},
-        func => {}, # XXX func.*
-        cmdline => {}, # XXX cmdline.*
-        logs => {},
-        prev => {},
-        results => {},
-        part_start => {},
-        part_len => {},
-        len => {},
-        stream => {},
-    },
-}];
-
-# list of known special arguments: -dry_run, -action, -tx_action,
-# -res_part_start, -res_part_len, -arg_part_start, -arg_part_len
+$schema = Data::Sah::Normalize::normalize_schema($schema);
 
 1;
-# ABSTRACT: Sah schemas for Rinci metadata
+# ABSTRACT:
