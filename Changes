@@ -1,5 +1,13 @@
 Revision history for Rinci
 
+1.1.81  2016-07-28 (PERLANCAR)
+
+	- No spec changes.
+
+	- Split Sah schemas to Sah-Schemas-Rinci so that schema tweaks
+	  don't require releasing a new spec release.
+
+
 1.1.80  2016-05-10 (PERLANCAR)
 
 	- No spec changes.
