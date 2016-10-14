@@ -924,7 +924,7 @@ against expected result). Known properties:
 =item * args => HASH
 
 Arguments used to produce result. Can be converted to C<argv> by tool, e.g. when
-displaying command-line eamples
+displaying command-line examples.
 
 =item * argv => ARRAY
 
