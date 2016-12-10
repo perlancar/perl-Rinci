@@ -403,10 +403,27 @@ loading C<mod1> won't search in C<dir2> as that directory has not been added by
 
 A code to supply argument value completion. Will be explained in the examples.
 
+=item * B<index_completion> => CODE
+
+A code to supply argument element index completion. Applicable to the following
+argument types:
+
+B<hash>: for completing hash pair keys. (See also C<element_completion> for
+completing hash pair values).
+
+See examples for how to use this property.
+
 =item * B<element_completion> => CODE
 
-A code to supply argument element value completion. Only applicable if argument
-type is C<array>. Will be explained in the examples.
+A code to supply argument element value completion. Applicable to the following
+argument types:
+
+B<array>: for completing array element values.
+
+B<hash>: for completing hash pair values. (See also C<index_completion> for
+completing hash keys).
+
+See examples for how to use this property.
 
 =item * B<is_password> => STR
 
@@ -713,8 +730,8 @@ pressed:
 
 then B<bash> will try to complete with usernames starting with C<fo>.
 
-B<element_completion>. This is like B<completion>, but for array elements.
-Argument type must be C<array>. Example:
+B<element_completion>. This is like B<completion>, but for array or hash
+elements. Argument type must be C<array> or C<hash>. Example for array:
 
  $SPEC{delete_users} = {
      v => 1.1,
@@ -747,6 +764,63 @@ When C<delete_users> is executed over the command line:
  $ delete-users c<tab> ; # will complete with all users beginning with c
  $ delete-users charlie c<tab> ; # will complete with users but exclude charlie
  $ delete-users charlie chucky <tab> ; # and so on
+
+Example for hash (as well as B<index_completion> property to complete hash
+keys):
+
+ $SPEC{create_file} = {
+     v => 1.1,
+     args => {
+         filename => {
+             schema => 'str*',
+             req => 1,
+             pos => 0,
+         },
+         content => {
+             schema => 'buf*',
+             req => 1,
+             pos => 1,
+         },
+         mode => {
+             summary => 'Permission mode',
+             schema => 'posint*',
+         },
+         extra_attrs => {
+             'x.name.is_plural' => 1,
+             'x.name.singular' => 'extra_attr',
+             schema     => ['hash*' => of => 'str*'],
+             index_completion => sub {
+                 # complete with list of known attributes
+                 my %args = @_;
+                 require Complete::Util;
+                 Complete::Util::complete_array_elem(
+                     word => $args{word},
+                     array => [qw/mtime ctime owner group/],
+                 );
+             },
+             element_completion => sub {
+                 my %args = @_;
+                 my $word  = $args{word} // "";
+                 my $index = $args{index};
+
+                 if ($index eq 'owner') {
+                     require Complete::Unix;
+                     return Complete::Unix::complete_user(word=>$word);
+                 } elsif ($index es 'group') {
+                     require Complete::Unix;
+                     return Complete::Unix::complete_group(word=>$word);
+                 } else {
+                     return undef;
+                 }
+             },
+         },
+     },
+ };
+
+When C<create_file> is executed over the command line:
+
+ $ create-file file1 "hello filesystem" --extra-attr <tab>; # will complete with list of known attributes
+ $ create-file file1 "hello filesystem" --extra-attr owner=<tab>; # will complete with list of Unix users
 
 =head2 Property: args_rels => hash
 
