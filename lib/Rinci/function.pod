@@ -806,7 +806,7 @@ keys):
                  if ($index eq 'owner') {
                      require Complete::Unix;
                      return Complete::Unix::complete_user(word=>$word);
-                 } elsif ($index es 'group') {
+                 } elsif ($index eq 'group') {
                      require Complete::Unix;
                      return Complete::Unix::complete_group(word=>$word);
                  } else {
