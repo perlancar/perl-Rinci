@@ -1,5 +1,12 @@
 Revision history for Rinci
 
+1.1.82  2016-12-10 (PERLANCAR)
+
+	- Introduce argument spec property 'index_completion'.
+
+	- Typo [RT#118381].
+
+
 1.1.81  2016-07-28 (PERLANCAR)
 
 	- No spec changes.
