@@ -1140,10 +1140,11 @@ protocol version, default if not specified is 1).
 
 Please see Rinci::Transaction for more details on transaction.
 
-=item * feature: dry_run => BOOL (default: 0)
+=item * feature: dry_run => bool|hash
 
-Default is false. If set to true, specifies that function supports dry-run
-(simulation) mode. Example:
+If set to a true value, specifies that function supports dry-run (simulation)
+mode. Can also be set to a hash like this: C<<{default=>1}>> to mean that
+function supports dry-run and the default is dry-run mode. Example:
 
  use Log::Any '$log';
 
