@@ -1,5 +1,11 @@
 Revision history for Rinci
 
+1.1.83  2016-12-15 (PERLANCAR)
+
+	- Specify that dry_run feature can also be a hash, to be able to
+	  set default dry_run mode.
+
+
 1.1.82  2016-12-10 (PERLANCAR)
 
 	- Introduce argument spec property 'index_completion'.
