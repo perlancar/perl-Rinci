@@ -1,5 +1,15 @@
 Revision history for Rinci
 
+1.1.84  2016-12-28 (PERLANCAR)
+
+        - No spec changes.
+
+        - [dist] Remove spec prereq to Sah::Schemas since Sah::Schema::rinci::*
+          have been split to Sah-Schemas-Rinci.
+
+        - [dist] Fix expressing spec prereq relationship with x_spec.
+
+
 1.1.83  2016-12-15 (PERLANCAR)
 
 	- Specify that dry_run feature can also be a hash, to be able to
