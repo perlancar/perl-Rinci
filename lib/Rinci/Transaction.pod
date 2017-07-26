@@ -51,8 +51,8 @@ transaction (violates isolation principle).
 =head2 How transaction works
 
 The basic idea is that actions are performed by function calls. For each action,
-TM will call the function twice. First for getting undo information, and second
-for actually performing the action. The undo information can be used to perform
+TM will call the function twice. First to get undo information, and second to
+actually perform the action. The undo information can be used to perform
 rollback, undo, and redo. All functions performing actions in the transaction
 must be able to supply undo information.
 
