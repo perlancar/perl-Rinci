@@ -214,9 +214,9 @@ be fixed.
 For example:
 
  [200, "Directory $path needs to be created", undef,
-  {undo_actions => [rmdir => {path=>$path}]}]  # e.g. in a mkdir() function
+  {undo_actions => [ [rmdir => {path=>$path}] ]}]  # e.g. in a mkdir() function
  [200, "User $u should be created with UID $uid", undef,
-  {undo_actions => [delete_user=>{user=>$u}]}] # e.g. in create_user()
+  {undo_actions => [ [delete_user=>{user=>$u}] ]}] # e.g. in create_user()
 
 =item * unfixable
 
@@ -273,7 +273,8 @@ return:
       ['My::deluser', {group=>'bob'}],
       ['My::delgroup', {group=>'bob'}],
       ['My::rmdir', {path=>'/home/bob'}],
-  }]
+  ]},
+ ]
 
 4) TM records these undo actions in its journal:
 
@@ -307,11 +308,13 @@ return C<do_actions> in its result metadata, for example:
       ['My::adduser', {group=>'bob'}],
       ['My::addgroup', {group=>'bob'}],
       ['My::mkdir', {path=>'/home/bob'}],
+   ],
    undo_actions=>[
       ['My::deluser', {group=>'bob'}],
       ['My::delgroup', {group=>'bob'}],
       ['My::rmdir', {path=>'/home/bob'}],
-  }]
+   ]},
+ ]
 
 In this case, instead of calling function the second time, TM will just call the
 actions provided by the function, using a nested C<< $tm->action(actions =>
