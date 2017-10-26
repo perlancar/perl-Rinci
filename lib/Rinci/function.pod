@@ -1030,9 +1030,9 @@ Required if C<src> is specified.
 
 Status from envelope. If unspecified, assumed to be 200.
 
-=item * result => DATA
+=item * result => envres
 
-Expected result.
+Expected result. This should always be in enveloped form.
 
 =item * summary => STR
 
@@ -1067,18 +1067,18 @@ Example:
  examples => [
      {
          args => {num=>10},
-         result => 0,
+         result => [200, "OK", 0],
          # summary no needed here, already clear.
      },
      {
          args => {},
-         result => 400,
+         result => [400],
          summary => 'Num argument is required',
      },
 
      {
          argv => [-5],
-         result => 1,
+         result => [200, "OK", 1],
          summary => 'Also works for negative integers',
      },
  ],
