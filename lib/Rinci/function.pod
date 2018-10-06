@@ -462,28 +462,28 @@ C<stdin_or_file> or C<stdin_or_files> or C<stdin_or_args>.
 
 =item * C<stdin_or_file>
 
-This means that program should get value from content of file (the name of which
-is given from the first remaining command-line argument after all other
-arguments/options have been processed), or, if none is
-provided, from standard input.
+This means that program should get argument value from content of file (the name
+of which is given from the first remaining command-line argument after all other
+arguments/options have been processed), or, if none is provided, from standard
+input.
 
 =item * C<stdin_or_files>
 
-This means that program should get value from content of files (the names of
-which are taken from the remaining command-line arguments after all other
-arguments/options have been processed), or, or if no command-line argument
+This means that program should get argument value from content of files (the
+names of which are taken from the remaining command-line arguments after all
+other arguments/options have been processed), or, or if no command-line argument
 remains, from standard input. This behavior is similar to the C<< <> >> (diamond
 operator) in Perl.
 
 =item * C<stdin_or_args>
 
-This means that program should get value from remaining command-line
+This means that program should get argument value from remaining command-line
 argument(s), or if no command-line argument remains, from standard input.
 
 =item * C<stdin_line>
 
-This means that program should get value from a line of standard input; newline
-ending will be removed from the argument value.
+This means that program should get argument value from a line of standard input;
+newline ending will be removed from the argument value.
 
 Arguments with C<cmdline_src> of C<stdin_line> will be processed before
 C<stdin>/C<stdin_or_file>/C<stdin_or_files>/C<stdin_or_args>.
