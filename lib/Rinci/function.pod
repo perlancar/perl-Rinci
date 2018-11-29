@@ -546,6 +546,10 @@ Specifying C<--force> without C<--delete> doesn't make sense.
 Experimental. Array of string, or code. Filters to apply before argument is
 converted from text and validated.
 
+=head3 examples (argument property)
+
+Array. Each element is sample argument values. But if it is a hash, will be
+assumed as a DefHash.
 
 Example function metadata and its implementation in Perl:
 
