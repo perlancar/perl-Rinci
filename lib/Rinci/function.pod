@@ -250,13 +250,11 @@ underscores (and do not start with a number).
 
 Argument specification is a hash containing these keys:
 
-=over 4
-
-=item * schema (argument property)
+=head3 schema (argument property)
 
 L<Data::Sah> schema for argument value.
 
-=item * default
+=head3 default
 
 Any. Give default value for argument. This takes precedence over schema, which
 can also specify default value. This is useful if you want to share a common
@@ -265,7 +263,7 @@ argument. For example, you have a C<ticket_status> schema. In C<create_ticket>
 function you want the default C<status> argument to be C<new>, while in
 C<reply_ticket> you want the default C<status> to be C<answered>.
 
-=item * summary (argument property)
+=head3 summary (argument property)
 
 Str. From DefHash. A one-line plaintext summary, much like the C<summary>
 property in variable metadata.
@@ -275,27 +273,27 @@ property in variable metadata.
 Bool. Specify that argument is required (although its value can be undef/null).
 Default is false.
 
-=item * description (argument property)
+=head3 description (argument property)
 
 Str. From DefHash. A longer description of marked up text, much like the
 C<description> property. It is suggested to format the text to 74 columns.
 
-=item * tags (argument property)
+=head3 tags (argument property)
 
 Array of (str|hash). From DefHash. An array of tags, can be used by tools to
 categorize arguments. Not unlike the C<tags> property.
 
-=item * pos
+=head3 pos
 
 Non-negative integer. Argument position when specified in an ordered fashion,
 e.g. in an array. Starts from zero.
 
-=item * greedy
+=head3 greedy
 
 Bool. Only relevant if B<pos> is specified, specify whether argument should
 gobble up all remaining values in an ordered argument list into an array.
 
-=item * partial (argument property)
+=head3 partial (argument property)
 
 Bool. Whether or not argument value can be sent partially. Only argument types
 that have a length notion can be set as partial (e.g. C<str> where the unit is
@@ -334,7 +332,7 @@ sent), C<-arg_part_len> (length of part that is being sent). Example (in Perl):
              -arg_part_start => 20_000_000,
              -arg_part_len   =>  4_500_000);
 
-=item * stream (argument property)
+=head3 stream (argument property)
 
 Bool. By setting this property to true, function can specify that it accepts
 streaming data for this argument. It is useful when argument value is large or
@@ -342,7 +340,7 @@ of undetermined/infinite length. To send value as a stream, caller must send a
 subroutine reference (callback) instead which the function will call repeatedly
 until it gets undef to signify exhaustion of data.
 
-=item * cmdline_aliases
+=head3 cmdline_aliases
 
 Hash. Specify aliases for use in command-line options (or other possibly
 suitable situation where arguments are parsed from command-line-like options).
@@ -353,7 +351,7 @@ is a shortcut for specifying C<schema> to C<< ["bool", {"is":1}] >>), C<code> (a
 code to set argument value, optional, will be given C<< (\%args, $val) >>); if
 not set, the default behavior is simply to set the argument value).
 
-=item * cmdline_on_getopt
+=head3 cmdline_on_getopt
 
 Code. A hook that will be called when argument is specified as a command-line
 option. In Perl, hook will be called with a hash argument containing this key:
@@ -399,12 +397,12 @@ command-line. With the hooks, the function can load modules correctly (e.g.
 loading C<mod1> won't search in C<dir2> as that directory has not been added by
 -I).
 
-=item * completion (argument property)
+=head3 completion (argument property)
 
 Code. A code to supply argument value completion. Will be explained in the
 examples.
 
-=item * index_completion
+=head3 index_completion
 
 Code. A code to supply argument element index completion. Applicable to the
 following argument types:
@@ -414,7 +412,7 @@ completing hash pair values).
 
 See examples for how to use this property.
 
-=item * element_completion
+=head3 element_completion
 
 Code. A code to supply argument element value completion. Applicable to the
 following argument types:
@@ -426,14 +424,14 @@ completing hash keys).
 
 See examples for how to use this property.
 
-=item * is_password
+=head3 is_password
 
 Experimental. Bool. Describe that argument holds password. Programs can react to
 this in several ways, for example they can turn off echoing to terminal when
 asking value from standard input. Or they can redact values to C<****> when
 logging.
 
-=item * cmdline_src
+=head3 cmdline_src
 
 Str. Normally in a command-line program, command-line options and arguments will
 map to function arguments, e.g. C<--arg 2> will set the C<foo> argument to C<2>
@@ -498,26 +496,26 @@ TODO: Define C<web_src> property?
 
 TODO: A way to define record separator?
 
-=item * cmdline_prompt
+=head3 cmdline_prompt
 
 Str. String to display when asking for argument value from stdin (if
 C<cmdline_src> property value is C<stdin_line>.
 
 TODO: cmdline_prompt_template?
 
-=item * meta
+=head3 meta
 
 Experimental. Hash. This allows specifying argument submetadata, used e.g. when
 dealing with forms (a form field/widget can be a subform). Value is Rinci
 function metadata.
 
-=item * element_meta
+=head3 element_meta
 
 Experimental. Hash. This allows specifying argument element submetadata, used
 e.g. when dealing with forms (a form field/widget can contain an array of
 records/subforms). Value is Rinci function metadata.
 
-=item * deps (argument property)
+=head3 deps (argument property)
 
 Hash. This property specifies argument's dependencies to other arguments (but
 possibly to other things too, in the future). This is similar to function's
@@ -543,12 +541,11 @@ also specified. In a CLI context:
 
 Specifying C<--force> without C<--delete> doesn't make sense.
 
-=item * filters
+=head3 filters
 
 Experimental. Array of string, or code. Filters to apply before argument is
 converted from text and validated.
 
-=back
 
 Example function metadata and its implementation in Perl:
 
