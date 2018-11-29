@@ -268,7 +268,7 @@ C<reply_ticket> you want the default C<status> to be C<answered>.
 Str. From DefHash. A one-line plaintext summary, much like the C<summary>
 property in variable metadata.
 
-=item * req
+=head3 req
 
 Bool. Specify that argument is required (although its value can be undef/null).
 Default is false.
