@@ -288,10 +288,16 @@ categorize arguments. Not unlike the C<tags> property.
 Non-negative integer. Argument position when specified in an ordered fashion,
 e.g. in an array. Starts from zero.
 
-=head3 greedy
+=head3 slurpy
 
 Bool. Only relevant if B<pos> is specified, specify whether argument should
 gobble up all remaining values in an ordered argument list into an array.
+
+Old alias: L</greedy>
+
+=head3 greedy
+
+Old alias for L</slurpy>. Will be removed in Rinci 1.2.
 
 =head3 partial (argument property)
 
