@@ -442,7 +442,7 @@ logging.
 Str. Normally in a command-line program, command-line options and arguments will
 map to function arguments, e.g. C<--arg 2> will set the C<foo> argument to C<2>
 and positional arguments (argument which specifies the C<pos> property and
-optionally also a C<greedy> property with true value) will get or slurp
+optionally also a C<slurpy> property with true value) will get or slurp
 command-line arguments.
 
 In some cases, this is not convenient. When supplying larger amount of data, a
@@ -662,7 +662,7 @@ Another example (demonstrates C<cmdline_aliases>):
      },
  };
 
-Another example (demonstrates B<greedy>):
+Another example (demonstrates B<slurpy>):
 
  $SPEC{multiply_many} = {
      v => 1.1,
@@ -671,7 +671,7 @@ Another example (demonstrates B<greedy>):
          nums   => {
              schema => ['array*' => {of=>'num*', min_len=>1}],
              pos    => 0,
-             greedy => 1
+             slurpy => 1
          },
      },
  };
@@ -750,7 +750,7 @@ elements. Argument type must be C<array> or C<hash>. Example for array:
              schema     => ['array*' => of => 'str*'],
              req        => 1,
              pos        => 0,
-             greedy     => 1,
+             slurpy     => 1,
              element_completion => sub {
                  my %args = @_;
                  my $word = $args{word} // "";
