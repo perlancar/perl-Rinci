@@ -23,6 +23,11 @@ done so.
 There are currently several properties being used:
 
 
+=head2 Property: schema => SCHEMA
+
+Describe result'ss schema. Override schema from function metadata's result
+property.
+
 =head2 Property: undo_data => ANY
 
 (DEPRECATED) Explained in C<undo> feature section in L<Rinci::function>.
