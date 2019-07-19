@@ -559,8 +559,8 @@ assumed as a DefHash with the actual value put in the C<value> property (so if
 your sample argument is a hash like C<{}> (in JSON), you have to specify it as
 C<< {"value":{}, "summary":"Optional summary..."} >> (in JSON).
 
-Note that a Sah schema can also have an L<examples|Sah/examples> clause which
-you can use to put examples in. And Rinci function metadata also has
+Note that a Sah schema can also have an L<examples|Sah::Type/"examples"> clause
+which you can use to put examples in. And Rinci function metadata also has
 L<examples|/"examples (function property)"> property too.
 
 Example function metadata and its implementation in Perl:
