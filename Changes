@@ -1,3 +1,11 @@
+1.1.92  2019-07-19  Released-By: PERLANCAR; Urgency: low
+
+	- No spec changes.
+
+	- Expand on function argument's 'examples' property, and mention Sah's
+          'examples' clause.
+
+
 1.1.91  2019-05-25  Released-By: PERLANCAR
 
 	- Declare the priority of result schema from result metadata to be
