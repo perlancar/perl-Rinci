@@ -1,3 +1,9 @@
+1.1.94  2020-09-23  Released-By: PERLANCAR; Urgency: medium
+
+	- Introduce function example's env_result and naked_result
+	  properties.
+
+
 1.1.93  2019-07-19  Released-By: PERLANCAR; Urgency: low
 
 	- No spec changes.
@@ -851,4 +857,3 @@
            store extra information.
 
          - New properties: 'tags', 'links', 'examples'.
-
