@@ -1057,6 +1057,14 @@ Int. Status from envelope. If unspecified, assumed to be 200.
 
 Any. Expected result.
 
+=item * env_result
+
+Array. Expected enveloped result.
+
+=item * naked_result
+
+Any. Expected naked result (payload).
+
 =item * summary (function example property)
 
 From DefHash. A one-line summary of the example You should describe, in one
