@@ -65,15 +65,13 @@ sections/documents, but some will be described here:
 
 =over
 
-=item -content_type_ARGNAME
+=item * -content_type_ARGNAME
 
 This special argument can be used to describe the MIME content type of an
 argument, where C<ARGNAME> is the argument name. For example, if you are
 creating a function that accepts data upload (in Perl):
 
  upload(data => '...', -content_type_data => 'image/jpeg');
-
-=item
 
 =back
 
