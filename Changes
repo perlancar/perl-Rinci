@@ -860,7 +860,7 @@
            tags), 'result_naked' (replaced by 'result_envelope'), 'args_as'
            (replaced by 'arg_pass_style'). UPDATE in 1.1.4: 'arg_pass_style'
            renamed back to 'args_as', 'result_envelope' renamed back to
-           'result_naked'.
+           'result_naked' because the new names are not deemed as better.
 
          - function: property 'deps': terminology change ('dep clause' -> 'dep
            type'), rename dep types: 'sub' -> 'func', 'mod' -> 'perl_module'.
