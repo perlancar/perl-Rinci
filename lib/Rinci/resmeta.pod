@@ -22,22 +22,9 @@ done so.
 
 There are currently several properties being used:
 
+=head2 Properties: cmdline.*
 
-=head2 Property: schema => SCHEMA
-
-Describe result's schema. Has lower precedence than schema from function
-metadata's result property.
-
-=head2 Property: undo_data => ANY
-
-(DEPRECATED) Explained in C<undo> feature section in L<Rinci::function>.
-
-
-=head2 Property: perm_err => bool
-
-Indicate that error is permanent (instead of temporary/transient). This is to
-provide a feature like that found in SMTP/POP protocol, where 4xx codes indicate
-transient errors and 5xx permanent ones.
+Interpreted by L<Perinci::CmdLine>. See its documentation for more detail.
 
 =head2 Properties: func.* => ANY
 
@@ -49,10 +36,16 @@ module. The function returns C<$args> but from v0.26 it also wants to give hints
 about whether or not there are missing arguments. It can do this via
 C<func.missing_arg> result metadata.
 
-=head2 Properties: cmdline.*
+=head1 Property: len
 
-Interpreted by L<Perinci::CmdLine>. See its documentation for more detail.
+Value: int*
 
+The C<len>, C<part_start> and C<part_len> properties specifies the range of data
+when function sends partial result. Suppose your function is returning a partial
+content of a large file where total file size is 24500000 bytes and the returned
+content is from bytes 10000000 to 15000000, then C<len> is 24500000, C<part_len>
+is 5000000, and C<part_start> is 10000000. When returning partial content,
+status will be 206.
 
 =head2 Property: logs => ARRAY OF HASH
 
@@ -88,6 +81,24 @@ Optional, a stack trace. In Perl this can be produced by using << [caller(1),
 caller(2), ...] >>.
 
 =back
+
+=head1 Property: part_len
+
+Value: int*
+
+See L</"Property: len">
+
+=head1 Property: part_start
+
+Value: int*
+
+See L</"Property: len">.
+
+=head2 Property: perm_err => bool
+
+Indicate that error is permanent (instead of temporary/transient). This is to
+provide a feature like that found in SMTP/POP protocol, where 4xx codes indicate
+transient errors and 5xx permanent ones.
 
 =head2 Property: prev => ARRAY
 
@@ -151,24 +162,20 @@ validation:
       ],
  }]
 
-=head1 Property: part_start => int
+=head2 Property: schema => SCHEMA
 
-=head1 Property: len => int
-
-=head1 Property: part_len => int
-
-The C<len>, C<part_start> and C<part_len> properties specifies the range of data
-when function sends partial result. Suppose your function is returning a partial
-content of a large file where total file size is 24500000 bytes and the returned
-content is from bytes 10000000 to 15000000, then C<len> is 24500000, C<part_len>
-is 5000000, and C<part_start> is 10000000. When returning partial content,
-status will be 206.
+Describe result's schema. Has lower precedence than schema from function
+metadata's result property.
 
 =head1 Property: stream => bool
 
 If set to true, signify that result is an output stream. Usually in
 implementations the result will be a filehandle or an object with C<getline> or
 C<getitem> methods, where caller can then fetch data from it.
+
+=head2 Property: undo_data => ANY
+
+(DEPRECATED) Explained in C<undo> feature section in L<Rinci::function>.
 
 
 =head1 FAQ
