@@ -60,7 +60,22 @@ Special arguments are some known arguments that start with dash (C<->) and serve
 special purposes. You need not specify them in the C<args> metadata property.
 Examples of special arguments include C<-dry_run>, C<-tx_action>, C<-action>,
 C<-confirm/*>, C<-arg_part_start>, C<-arg_part_len>, C<-res_part_start>,
-C<-res_part_len>. They will be explained in other related sections/documents.
+C<-res_part_len>. Many of them will be explained in other related
+sections/documents, but some will be described here:
+
+=over
+
+=item -content_type_ARGNAME
+
+This special argument can be used to describe the MIME content type of an
+argument, where C<ARGNAME> is the argument name. For example, if you are
+creating a function that accepts data upload (in Perl):
+
+ upload(data => '...', -content_type_data => 'image/jpeg');
+
+=item
+
+=back
 
 =head2 Functions vs methods
 
