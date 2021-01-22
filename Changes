@@ -1,3 +1,10 @@
+1.1.97  2021-01-22  Released-By: PERLANCAR; Urgency: low
+
+	- No spec changes.
+
+	- Edit Changes.
+
+
 1.1.96  2021-01-22  Released-By: PERLANCAR; Urgency: medium
 
 	- Introduce result metadata properties: content_type, location,
