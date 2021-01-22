@@ -26,15 +26,50 @@ There are currently several properties being used:
 
 Interpreted by L<Perinci::CmdLine>. See its documentation for more detail.
 
+=head2 Properties: content_type
+
+Value: str* (MIME content type)
+
+Can be used to describe the MIME content type of result. Example enveloped
+result (in Perl):
+
+ [200, "OK", "...", {content_type => "image/jpeg"}]
+
+See also L</"Properties: func_content_type.*">.
+
+Note: borrowed from HTTP.
+
 =head2 Properties: func.* => ANY
 
-These properties allow function to return extra stuffs. Usually done to avoid
+These properties allow function to return extra results. Usually done to avoid
 breaking format of existing result (to maintain API compatibility). The
 attributes after C<func.> is up to the respective function. An example is the
 C<get_args_from_argv()> function in the L<Perinci::Sub::GetArgs::Argv> Perl
 module. The function returns C<$args> but from v0.26 it also wants to give hints
 about whether or not there are missing arguments. It can do this via
-C<func.missing_arg> result metadata.
+C<func.missing_arg> result metadata. Some other examples (in Perl):
+
+ # result from check_user()
+ [200, "OK", 1,         # 1 means valie
+ {
+     "func.detail" => { # detailed check result
+         last_login      => '2021-01-21T01:55:40Z',
+         password_secure => 1,
+         quota_exceeded  => 0,
+     },
+ }]
+
+=head2 Properties: func_content_type.*
+
+Value: str* (MIME content type)
+
+Can be used to describe the MIME content type of each extra result. Example (in
+Perl):
+
+ func.attachment => '...',
+ func_content_type.attachment => 'image/jpeg',
+
+See also L</"Property: content_type">.
 
 =head1 Property: len
 
@@ -46,6 +81,18 @@ content of a large file where total file size is 24500000 bytes and the returned
 content is from bytes 10000000 to 15000000, then C<len> is 24500000, C<part_len>
 is 5000000, and C<part_start> is 10000000. When returning partial content,
 status will be 206.
+
+=head2 Properties: location
+
+Value: str* (URL)
+
+Can be used to specify that the content is elsewhere. Used in combination with
+301 or 302 result status. Example (in Perl):
+
+ # result from a function that generates a chart
+ [301, "Moved", undef, {content_type => "image/jpeg", location=>"file:/tmp/asd9uxzw.png"}]
+
+Note: borrowed from HTTP.
 
 =head2 Property: logs => ARRAY OF HASH
 
