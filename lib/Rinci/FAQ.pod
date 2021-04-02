@@ -14,7 +14,7 @@ package Rinci::FAQ; # just to make PodWeaver happy
 
 =over
 
-=item * Why do you make enveloped result an arary instead of hash?
+=item * Why do you make enveloped result an array instead of hash?
 
 For example, a hash-based enveloped result can be something like:
 
