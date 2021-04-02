@@ -1,10 +1,12 @@
 package Rinci::FAQ; # just to make PodWeaver happy
 
+# AUTHORITY
 # DATE
+# DIST
 # VERSION
 
 1;
-# ABSTRACT: Metadata for your functions/methods
+# ABSTRACT: FAQ on Rinci
 
 =head1 FAQ
 
