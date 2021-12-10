@@ -1,3 +1,16 @@
+1.1.99  2021-12-09  Released-By: PERLANCAR; Urgency: medium
+
+	[Specification]
+
+        - Introduce 'title' property in result metadata.
+
+	[Others]
+
+        - Sort POD headings, fix formatting.
+
+	- Tweak Abstract of Rinci::FAQ.
+
+
 1.1.98  2021-01-22  Released-By: PERLANCAR; Urgency: low
 
 	- No spec changes.

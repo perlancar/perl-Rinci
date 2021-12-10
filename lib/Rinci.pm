@@ -1,5 +1,9 @@
+## no critic: TestingAndDebugging::RequireUseStrict
 package Rinci;
 
+# AUTHORITY
+# DATE
+# DIST
 # VERSION
 
 1;
