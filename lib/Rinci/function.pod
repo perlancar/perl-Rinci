@@ -547,6 +547,7 @@ L</"deps (function property)"> property. It is a hash or dep types and values.
 The most important dep type is C<arg> (dependency to another argument). Some dep
 types are special: C<all>, C<any>, C<none>. Example:
 
+ # function metadata property
  args => {
      delete => {
          schema=>'bool',
@@ -556,6 +557,8 @@ types are special: C<all>, C<any>, C<none>. Example:
          schema => 'bool',
          deps => {arg=>'delete'},
      },
+     ...
+ },
 
 The above example states that argument C<force> "depends on" C<delete>. What it
 means (usually) is that specifying C<force> only makes sense when C<delete> is
@@ -564,6 +567,60 @@ also specified. In a CLI context:
  % prog --delete --force
 
 Specifying C<--force> without C<--delete> doesn't make sense.
+
+To depend on any one of several arguments, use the dep type C<any>, e.g.:
+
+ # function metadata property
+ args => {
+     delete => {
+         schema=>'bool',
+     },
+     replace => {
+         schema=>'bool',
+     },
+     force => {
+         summary => 'Force deletion',
+         schema => 'bool',
+         deps => {any => [
+             {arg=>'delete'},
+             {arg=>'replace'},
+         ]},
+     },
+     ...
+ },
+
+In CLI context, this means C<--force> can be specified when C<--delete> or
+C<--replace> is specified.
+
+To depend on several arguments, use the dep type C<all>, e.g.:
+
+ # function metadata property
+ args => {
+     red => {
+         schema=>'uint',
+         pos => 0,
+     },
+     green => {
+         schema=>'uint',
+         pos => 1,
+     },
+     blue => {
+         schema=>'uint',
+         pos => 2,
+     },
+     rgb16 => {
+         schema => 'Use 3x16bits = 48bits to represent RGB value instead of the default 3x8 = 24bits',
+         deps => {all => [
+             {arg=>'red'},
+             {arg=>'green'},
+             {arg=>'blue'},
+         ]},
+     },
+     ...
+ },
+
+In CLI context, this means specifying C<--rgb16> only makes sense when all of
+C<--ed>, C<--green>, C<--blue> are specified.
 
 =head3 filters
 
