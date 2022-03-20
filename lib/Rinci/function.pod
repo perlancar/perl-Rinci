@@ -1407,8 +1407,8 @@ filesystem should also use Unix-style path, e.g. "C:/Program Files/Foo/Bar.exe".
  prog => '/bin/su' # won't accept any other su
 
 As an alternative to just a string, the dep value can also be a defhash.
-Currently known properties for the defhash: C<name> (program name or path),
-C<min_version> (minimum version).
+Currently known properties for the defhash: C<name> (program name or path,
+required), C<min_version> (minimum version).
 
 =item * pkg
 
