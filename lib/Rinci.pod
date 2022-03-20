@@ -1,5 +1,8 @@
 package Rinci; # just to make PodWeaver happy
 
+# AUTHORITY
+# DATE
+# DIST
 # VERSION
 
 1;
