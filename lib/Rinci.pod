@@ -473,7 +473,7 @@ Below is the general history of the project and major changes to the
 specifications. For more detailed changes between releases, see the B<Changes>
 file in the distribution.
 
-=head1 1.1 (Jan 2012)
+=head2 1.1 (Jan 2012)
 
 To clearly separate specification from implementation, rename specification from
 C<Sub::Spec> to C<Rinci> (the namespace C<Perinci> is now used for the Perl
