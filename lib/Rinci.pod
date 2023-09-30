@@ -466,6 +466,15 @@ Sah is a flexible and extensible schema language, while still not being
 language-specific, making it easy for code generator tools to generate validator
 code in various target languages (Perl, Ruby, etc).
 
+=head2 Where are the metadata stored?
+
+This specification does not specify where the metadata should be stored, for
+flexibility reason. A Perl implementation like L<Perinci::Access::Perl> searches
+for metadata in C<%SPEC> package variable. Another implementation,
+L<Perinci::Access::Lite>, additionally looks for C<_riap()> function in packages
+to request metadata. One can also store the metadata as JSON in database or in
+files.
+
 
 =head1 HISTORY
 
