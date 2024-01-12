@@ -19,7 +19,7 @@ This document describes a transactional system based on functions, where several
 function calls participate in a single transaction. This transactional system
 has the following properties:
 
-=over 4
+=over
 
 =item * Client/server architecture
 
@@ -82,7 +82,7 @@ transaction management.
 For the sake of examples, our TM stores data in a SQL database (like SQLite)
 with the following tables:
 
-=over 4
+=over
 
 =item * tx
 
@@ -196,7 +196,7 @@ between this call and the 'fix_state' call later).
 
 There are 3 possible states that the function must decide which we are in:
 
-=over 4
+=over
 
 =item * fixed
 
@@ -385,7 +385,7 @@ TM will then perform undo for each function, in reverse order, using the undo
 actions previously recorded in C<undo_action> table. The process is similar to
 performing action, except that:
 
-=over 4
+=over
 
 =item * After rollback succeeds, transaction status is changed to C<R>
 
@@ -531,7 +531,7 @@ transaction status is indeed C<C>.
 TM then performs actions specified in the C<undo_action> table. The process is
 similar to performing action, except:
 
-=over 4
+=over
 
 =item * After undo succeeds, transaction status is changed to C<U>
 

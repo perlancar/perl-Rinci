@@ -66,7 +66,7 @@ things to your program. Rinci is designed with code generation and function
 wrapping in mind. At the time of this writing, in Perl there exists several
 tools (mostly modules under L<Perinci> namespace) to do the following:
 
-=over 4
+=over
 
 =item * L<Perinci::Sub::Wrapper>
 
@@ -198,21 +198,22 @@ details.
 
 B<Common properties>. Below are properties common to all metadata:
 
-=head3 Property: v => FLOAT (required)
+=head3 v
 
-From DefHash. Declare specification version. This property is required. It
-should have the value of 1.1. If C<v> is not specified, it is assumed to be 1.0
-and metadata is assumed to be the old, Sub::Spec 1.0.x metadata.
+From DefHash. Float, required. Declare specification version. This property is
+required. It should have the value of 1.1. If C<v> is not specified, it is
+assumed to be 1.0 and metadata is assumed to be the old, Sub::Spec 1.0.x
+metadata.
 
 Example:
 
  v => 1.1
 
 
-=head3 Property: entity_v => STR
+=head3 entity_v
 
-Specify entity version (like package or function version). This is version as in
-software implementation version, not to be confused with C<v> which is the
+Str. Specify entity version (like package or function version). This is version
+as in software implementation version, not to be confused with C<v> which is the
 metadata specification version (1.1).
 
 Example:
@@ -225,9 +226,9 @@ this property from that variable, to relieve authors from manually setting this
 property value.
 
 
-=head3 Property: default_lang => STR
+=head3 default_lang
 
-From DefHash. Specify default language used in the text properties like
+From DefHash. Str. Specify default language used in the text properties like
 C<summary> and C<description>. Default is 'en_US'.
 
 To specify translation texts in other languages, you can use
@@ -237,10 +238,10 @@ C<PROPERTY.alt.lang.CODE>, e.g.:
  "summary.alt.lang.id_ID" => "Laksanakan ritual foo",
 
 
-=head3 Property: name => STR
+=head3 name
 
-From DefHash. The name of the entity. Useful when aliasing entity (and reusing
-the metadata) and wanting to find out the canonical/original entity.
+From DefHash. Str. The name of the entity. Useful when aliasing entity (and
+reusing the metadata) and wanting to find out the canonical/original entity.
 
 Examples:
 
@@ -248,10 +249,10 @@ Examples:
  name => '$var'  # only in languages where variables have prefix
 
 
-=head3 Property: summary => STR
+=head3 summary
 
-From DefHash. A one-line summary. It should be plain text without any markup.
-Please limit to around 72 characters.
+From DefHash. Str. A one-line summary. It should be plain text without any
+markup. Please limit to around 72 characters.
 
 Example:
 
@@ -288,11 +289,11 @@ change the C<default_lang> property. Examples:
  "summary.alt.lang.en_US" => 'Perform the foo ritual',
 
 
-=head3 Property: tags => ARRAY OF (STR OR HASH)
+=head3 tags
 
-From DefHash. A list of tags, useful for categorization. Can also be used by
-tools, e.g. L<Perinci::Exporter> in Perl uses the C<tags> property of the
-function metadata as export tags.
+From DefHash. Array of (str or defhash). A list of tags, useful for
+categorization. Can also be used by tools, e.g. L<Perinci::Exporter> in Perl
+uses the C<tags> property of the function metadata as export tags.
 
 Tag can be a simple string or a tag metadata hash.
 
@@ -311,9 +312,9 @@ Example:
          ]
 
 
-=head3 Property: description => STR
+=head3 description (property)
 
-From DefHash. A longer description text. The text should be in marked up in
+From DefHash. Str. A longer description text. The text should be in marked up in
 format specified by C<text_markup> and is suggested to be formatted to 78
 columns.
 
@@ -347,31 +348,33 @@ Example:
 Like in C<summary>, to specify translations in other language, use the
 C<description.alt.lang.CODE> property.
 
-=head3 Property: links => ARRAY OF HASHES
+=head3 links
 
-List to related entities or resources. Can be used to generate a SEE ALSO and/or
-LINKS sections in documentation. Each link is a defhash with the following keys:
+Array of hashes. List to related entities or resources. Can be used to generate
+a SEE ALSO and/or LINKS sections in documentation. Each link is a defhash with
+the following keys:
 
-=over 4
+=over
 
-=item * url => STR (required)
+=item * url
 
-URI is used as a common syntax to refer to resources. If URI scheme is not
-specified, tools can assume that it is a C<riap> URI (see L<Riap>).
+Str, required. URI is used as a common syntax to refer to resources. If URI
+scheme is not specified, tools can assume that it is a C<riap> URI (see
+L<Riap>).
 
-=item * caption => STR
+=item * caption
 
-From DefHash. A short plaintext title for the link.
+From DefHash. Str. A short plaintext title for the link.
 
-=item * description => STR
+=item * description
 
-From DefHash. A longer marked up text description for the link. Suggested to be
-formatted to 76 columns.
+From DefHash. Str. A longer marked up text description for the link. Suggested
+to be formatted to 76 columns.
 
-=item * tags => ARRAY OF (STR OR HASH)
+=item * tags
 
-From DefHash. Can be used to categorize or select links. For generating SEE ALSO
-sections, use the tag 'see'.
+From DefHash. Array of (str or defhash). Can be used to categorize or select
+links. For generating SEE ALSO sections, use the tag 'see'.
 
 =back
 
@@ -390,14 +393,14 @@ Example:
      },
  ],
 
-=head3 Property: x => ANY
+=head3 x
 
-From DefHash. This property is used to store extended (application-specific)
-attributes, much like the C<X-> prefix in HTTP or email headers. This property
-can be used as an alternative to using underscore prefix (e.g. C<_foo>). Some
-processing tools strip properties/attributes that begin with underscores, so to
-pass extended metadata around, it might be more convenient to use the C<x>
-property.
+From DefHash. Any. This property is used to store extended
+(application-specific) attributes, much like the C<X-> prefix in HTTP or email
+headers. This property can be used as an alternative to using underscore prefix
+(e.g. C<_foo>). Some processing tools strip properties/attributes that begin
+with underscores, so to pass extended metadata around, it might be more
+convenient to use the C<x> property.
 
 It is recommended that you put an application prefix.
 
@@ -415,7 +418,7 @@ Another example:
 Each entity-specific specification is described on a separate subdocument.
 Currently these specifications are defined:
 
-=over 4
+=over
 
 =item * L<Rinci::function> - Metadata for functions/methods
 
@@ -430,7 +433,7 @@ Currently these specifications are defined:
 
 These specifications are planned or considered, but not yet defined:
 
-=over 4
+=over
 
 =item * L<Rinci::class> - Metadata for classes
 

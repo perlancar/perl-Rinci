@@ -229,7 +229,12 @@ codes that must fit in one unsigned byte (like L<Perinci::CmdLine>).
 
 =back
 
-=head2 is_func
+=head2 Properties
+
+Below are properties specific to Rinci function metadata. For properties common
+to all Rinci metadata, see L<Rinci>.
+
+=head3 is_func
 
 Bool. Specify that the function can be called as a static function (i.e.
 procedural, not as a method). Default is true if unspecified, but becomes false
@@ -242,7 +247,7 @@ Example:
  is_func => 1 # if not specified, will default to false after is_meth set to 1
 
 
-=head2 is_meth
+=head3 is_meth
 
 Bool. Specify that the function can be called as an instance (object) method.
 Default is false.
@@ -253,7 +258,7 @@ Example:
  is_meth => 1
 
 
-=head2 is_class_meth
+=head3 is_class_meth
 
 Bool. Specify that the function can be called as a class method. Examples of
 class methods include the constructor, but there are others. Default is false.
@@ -264,7 +269,7 @@ Example:
  is_class_meth => 1
 
 
-=head2 args (function property)
+=head3 args (function property)
 
 Hash. Specify arguments. Property value is defhash of argument names and
 argument specification. Argument name must only contain letters, numbers, and
@@ -272,11 +277,11 @@ underscores (and do not start with a number).
 
 Argument specification is a hash containing these keys:
 
-=head3 schema (argument property)
+=head4 schema (argument property)
 
 L<Data::Sah> schema for argument value.
 
-=head3 default
+=head4 default
 
 Any. Give default value for argument. This takes precedence over schema, which
 can also specify default value. This is useful if you want to share a common
@@ -285,43 +290,43 @@ argument. For example, you have a C<ticket_status> schema. In C<create_ticket>
 function you want the default C<status> argument to be C<new>, while in
 C<reply_ticket> you want the default C<status> to be C<answered>.
 
-=head3 summary (argument property)
+=head4 summary (argument property)
 
 Str. From DefHash. A one-line plaintext summary, much like the C<summary>
 property in variable metadata.
 
-=head3 req
+=head4 req
 
 Bool. Specify that argument is required (although its value can be undef/null).
 Default is false.
 
-=head3 description (argument property)
+=head4 description (argument property)
 
 Str. From DefHash. A longer description of marked up text, much like the
 C<description> property. It is suggested to format the text to 74 columns.
 
-=head3 tags (argument property)
+=head4 tags (argument property)
 
 Array of (str|hash). From DefHash. An array of tags, can be used by tools to
 categorize arguments. Not unlike the C<tags> property.
 
-=head3 pos
+=head4 pos
 
 Non-negative integer. Argument position when specified in an ordered fashion,
 e.g. in an array. Starts from zero.
 
-=head3 slurpy
+=head4 slurpy
 
 Bool. Only relevant if B<pos> is specified, specify whether argument should
 gobble up all remaining values in an ordered argument list into an array.
 
 Old alias: L</greedy>
 
-=head3 greedy
+=head4 greedy
 
 Old alias for L</slurpy>. Will be removed in Rinci 1.2.
 
-=head3 partial (argument property)
+=head4 partial (argument property)
 
 Bool. Whether or not argument value can be sent partially. Only argument types
 that have a length notion can be set as partial (e.g. C<str> where the unit is
@@ -360,7 +365,7 @@ sent), C<-arg_part_len> (length of part that is being sent). Example (in Perl):
              -arg_part_start => 20_000_000,
              -arg_part_len   =>  4_500_000);
 
-=head3 stream (argument property)
+=head4 stream (argument property)
 
 Bool. By setting this property to true, function can specify that it accepts
 streaming data for this argument. It is useful when argument value is large or
@@ -368,7 +373,7 @@ of undetermined/infinite length. To send value as a stream, caller must send a
 subroutine reference (callback) instead which the function will call repeatedly
 until it gets undef to signify exhaustion of data.
 
-=head3 cmdline_aliases
+=head4 cmdline_aliases
 
 Hash. Specify aliases for use in command-line options (or other possibly
 suitable situation where arguments are parsed from command-line-like options).
@@ -379,7 +384,7 @@ is a shortcut for specifying C<schema> to C<< ["bool", {"is":1}] >>), C<code> (a
 code to set argument value, optional, will be given C<< (\%args, $val) >>); if
 not set, the default behavior is simply to set the argument value).
 
-=head3 cmdline_on_getopt
+=head4 cmdline_on_getopt
 
 Code. A hook that will be called when argument is specified as a command-line
 option. In Perl, hook will be called with a hash argument containing this key:
@@ -425,12 +430,12 @@ command-line. With the hooks, the function can load modules correctly (e.g.
 loading C<mod1> won't search in C<dir2> as that directory has not been added by
 -I).
 
-=head3 completion (argument property)
+=head4 completion (argument property)
 
 Code. A code to supply argument value completion. Will be explained in the
 examples.
 
-=head3 index_completion
+=head4 index_completion
 
 Code. A code to supply argument element index completion. Applicable to the
 following argument types:
@@ -440,7 +445,7 @@ completing hash pair values).
 
 See examples for how to use this property.
 
-=head3 element_completion
+=head4 element_completion
 
 Code. A code to supply argument element value completion. Applicable to the
 following argument types:
@@ -452,14 +457,14 @@ completing hash keys).
 
 See examples for how to use this property.
 
-=head3 is_password
+=head4 is_password
 
 Experimental. Bool. Describe that argument holds password. Programs can react to
 this in several ways, for example they can turn off echoing to terminal when
 asking value from standard input. Or they can redact values to C<****> when
 logging.
 
-=head3 cmdline_src
+=head4 cmdline_src
 
 Str. Normally in a command-line program, command-line options and arguments will
 map to function arguments, e.g. C<--arg 2> will set the C<foo> argument to C<2>
@@ -531,19 +536,19 @@ C<cmdline_src> property value is C<stdin_line>.
 
 TODO: cmdline_prompt_template?
 
-=head3 meta
+=head4 meta
 
 Experimental. Hash. This allows specifying argument submetadata, used e.g. when
 dealing with forms (a form field/widget can be a subform). Value is Rinci
 function metadata.
 
-=head3 element_meta
+=head4 element_meta
 
 Experimental. Hash. This allows specifying argument element submetadata, used
 e.g. when dealing with forms (a form field/widget can contain an array of
 records/subforms). Value is Rinci function metadata.
 
-=head3 deps (argument property)
+=head4 deps (argument property)
 
 Hash. This property specifies argument's dependencies to other arguments (but
 possibly to other things too, in the future). This is similar to function's
@@ -626,12 +631,12 @@ To depend on several arguments, use the dep type C<all>, e.g.:
 In CLI context, this means specifying C<--rgb16> only makes sense when all of
 C<--ed>, C<--green>, C<--blue> are specified.
 
-=head3 filters
+=head4 filters
 
 Experimental. Array of string, or code. Filters to apply before argument is
 converted from text and validated.
 
-=head3 examples (argument property)
+=head4 examples (argument property)
 
 Array. Each element is sample argument values. But if it is a hash, will be
 assumed as a DefHash with the actual value put in the C<value> property (so if
@@ -923,7 +928,7 @@ When C<create_file> is executed over the command line:
  $ create-file file1 "hello filesystem" --extra-attr <tab>; # will complete with list of known attributes
  $ create-file file1 "hello filesystem" --extra-attr owner=<tab>; # will complete with list of Unix users
 
-=head2 args_rels
+=head3 args_rels
 
 Hash. This property is used to expression relationships between arguments. The
 value is actually L<Sah> schema hash clause set (see hash type in L<Sah::Type>).
@@ -953,7 +958,7 @@ Another example:
 
  XXX
 
-=head2 args_as
+=head3 args_as
 
 Str. Specify in what form the function expects the arguments. The value is
 actually implementation-specific since it describes the function implementation.
@@ -966,11 +971,11 @@ The default value is also left to the implementation.
 For interimplementation communication (e.g. via L<Riap::HTTP> or L<Riap::TCP>),
 named arguments are always used so this property is irrelevant.
 
-=head2 result
+=head3 result
 
 DefHash. Specify function return value. It is a defhash containing keys:
 
-=over 4
+=over
 
 =item * summary (result property)
 
@@ -1075,7 +1080,7 @@ Examples:
  }
 
 
-=head2 result_naked
+=head3 result_naked
 
 Bool. If set to true, specify that function does not envelope its results. The
 default is false, to encourage functions to create envelopes. However, wrapper
@@ -1084,7 +1089,7 @@ should be able to create or strip envelope if needed. For example, if you have
 to true, and the wrapper can generate the envelope for the functions.
 
 
-=head2 examples (function property)
+=head3 examples (function property)
 
 Array. This property allows you to put examples in a detailed and structured
 way, as an alternative to putting everything in C<description>.
@@ -1095,7 +1100,7 @@ documentation, as well as for testing data. It can also be used for testing
 (function will be run with specified arguments and the result will be matched
 against expected result). Known properties:
 
-=over 4
+=over
 
 =item * args (function example property)
 
@@ -1212,7 +1217,7 @@ Another example demonstrating C<src> for a function called C<list_countries>:
  ],
 
 
-=head2 features
+=head3 features
 
 DefHash. Allows functions to express their features. Each hash key contains
 feature name, which must only contain letters/numbers/underscores.
@@ -1220,7 +1225,7 @@ feature name, which must only contain letters/numbers/underscores.
 Below is the list of defined features. New feature names may be defined by
 extension.
 
-=over 4
+=over
 
 =item * reverse
 
@@ -1283,7 +1288,7 @@ the criteria and would have be deleted.
 
 Specifying a function as supporting dry_run means, among others:
 
-=over 4
+=over
 
 =item * If dry_run is requested, function will have no side effects
 
@@ -1301,7 +1306,7 @@ the value of a global variable, modifies its arguments, writing some data to
 disk, changing system date/time, etc.) Specifying a function as pure means,
 among others:
 
-=over 4
+=over
 
 =item * it can safely be inculded in transaction without recording in journal;
 
@@ -1354,7 +1359,7 @@ should check that argument and immediately return 200 status upon success, or
 =back
 
 
-=head2 deps (function property)
+=head3 deps (function property)
 
 Hash. This property specifies function's dependencies to various things. It is a
 hash of dep types and values. Some dep types are special: C<all>, C<any>, and
@@ -1387,7 +1392,7 @@ satisfied.
 Below is the list of defined dependency types. New dependency type may be
 defined by an extension.
 
-=over 4
+=over
 
 =item * env
 
